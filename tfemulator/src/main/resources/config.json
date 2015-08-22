@@ -1,0 +1,14 @@
+{
+  "devices": [
+    {
+      "type": "BrickletAmbientLight",
+      "uid": "abcc",
+      "enabled": true
+    },
+    {
+      "type": "BrickletColor",
+      "uid": "def",
+      "enabled": true
+    }
+  ]
+}

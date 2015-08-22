@@ -1,0 +1,2 @@
+Main-Class: org.m1theo.tfemulator.Starter
+Main-Verticle: org.m1theo.tfemulator.Brickd

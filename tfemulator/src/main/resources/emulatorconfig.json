@@ -1,0 +1,16 @@
+
+{
+  "port": 3244,
+  "devices": [
+   {
+     "type": "BrickDC",
+     "uid": "dc",
+     "enabled": true
+   },
+   {
+     "type": "BrickIMUV2",
+     "uid": "imu2",
+     "enabled": true
+   }
+  ]
+}
