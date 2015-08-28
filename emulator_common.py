@@ -33,6 +33,9 @@ class JavaDevice(common.Device):
     def get_java_class_name(self):
         return self.get_camel_case_category() + self.get_camel_case_name()
 
+    def get_underscore_device_name(self):
+        return self.get_underscore_category() + self.get_underscore_name()
+
 class JavaPacket(common.Packet):
     def get_java_object_name(self):
         name = self.get_camel_case_name()
