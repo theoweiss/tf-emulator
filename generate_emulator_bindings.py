@@ -729,6 +729,11 @@ public class {0}Test {{
         return (sensors, actors, actor_getters, callback_setters, callback_getters, enablers, disablers, 
                 isEnableds, getIdentity, other_actors, other_sensors, special_setters, others, booleans)
 
+    def get_sensor_fields(self):
+        for field in self.sensor_fields:
+            if field.skip:
+                continue
+            
     def get_readme(self):
         readme = '    * {0} dummy\n'
         readmes = ''
@@ -800,7 +805,6 @@ public class {0}Test {{
 
         source += self.get_call_function()
 
-        # TODO: remove methods for now
         source += self.get_java_methods()
 
         # TODO: a real method implementation is missing for now
@@ -850,8 +854,6 @@ class JavaBindingsPacket(emulator_common.JavaPacket):
         return return_type, test_values, args
 
     def get_emulator_return_values(self):
-        # FIXME: handle 'in' elements
-        # FIXME: should replace get_java_bbgets (remove get_java_bbgets?)
         bufferbytes = 0
         buffers = ""
         buff = """      buffer.appendBytes({0});        
@@ -901,6 +903,7 @@ class JavaBindingsGenerator(common.BindingsGenerator):
     devicesubdir = os.path.join('tfemulator', 'src', 'main', 'java', 'org', 'm1theo', 'tfemulator', 'devices')
     uidgenerator = emulator_common.UidGenerator()
     readme = ''
+    model_config_dir = 'model'
 
     def prepare(self):
         common.recreate_directory(os.path.join(self.get_bindings_root_directory(), self.devicesubdir))
@@ -919,6 +922,7 @@ class JavaBindingsGenerator(common.BindingsGenerator):
         return emulator_common.JavaElement
 
     def generate(self, device):
+        device.load_model_data(os.path.join(self.get_bindings_root_directory(), self.model_config_dir))
         filename = '{0}.java'.format(device.get_java_class_name())
         suffix = ''
 

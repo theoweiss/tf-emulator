@@ -1,17 +1,15 @@
 /*
- *  Copyright (c) 2015 Thomas Weiss <theo@m1theo.org>
+ * Copyright (c) 2015 Thomas Weiss <theo@m1theo.org>
  *
- *  Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
- *  You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except
+ * in compliance with the License. You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software distributed under the License
+ * is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
+ * or implied. See the License for the specific language governing permissions and limitations under
+ * the License.
  *
  */
 package org.m1theo.tfemulator;
@@ -28,11 +26,15 @@ import io.vertx.core.json.JsonObject;
 
 
 public class Utils {
-  private final static String BASE58 =
-      "123456789abcdefghijklmnopqrstuvwxyzABCDEFGHJKLMNPQRSTUVWXYZ";
+  private final static String BASE58 = "123456789abcdefghijkmnopqrstuvwxyzABCDEFGHJKLMNPQRSTUVWXYZ";
   // private final static String BASE58 =
   // "123456789abcdefghijkmnopqrstuvwxyzABCDEFGHJKLMNPQRSTUVWXYZ";
   public final static byte CALLBACK_ENUMERATE = (byte) 253;
+
+  public static enum Step {
+    UP, DOWN
+  };
+
 
   // TODO Start Move to protocol
   public static Buffer getPayloadFromData(Buffer buffer) {
@@ -86,8 +88,7 @@ public class Utils {
     return (byte) ((((int) data[6]) >> 4) & 0x0F);
   }
 
-  public static Buffer createHeader(long uid, byte length, byte functionId, byte options,
-      byte flags) {
+  public static Buffer createHeader(long uid, byte length, byte functionId, byte options, byte flags) {
     Buffer buffer = Buffer.buffer();
     // uid
     byte[] uidbytes = getUInt32(uid);
@@ -252,8 +253,7 @@ public class Utils {
   public static Buffer getEnumerateResponse(String uidString, long uid, int deviceIdentifier) {
     Buffer buffer = Buffer.buffer();
     // header
-    buffer
-        .appendBuffer(createHeader(uid, (byte) 34, (byte) CALLBACK_ENUMERATE, (byte) 0, (byte) 0));
+    buffer.appendBuffer(createHeader(uid, (byte) 34, (byte) CALLBACK_ENUMERATE, (byte) 0, (byte) 0));
     buffer.appendBuffer(getIdentityPayload(uidString, uid, deviceIdentifier));
 
     // enumeration type: short
@@ -310,6 +310,17 @@ public class Utils {
     bytes[3] = (byte) ((num >> 24) & 0xFF);
 
     return bytes;
+  }
+
+
+  public static int unsignedShort(Buffer buffer) {
+    short data = buffer.getShort(0);
+    return (int) data & 0xFFFF;
+  }
+
+  public static long unsignedInt(Buffer buffer) {
+    int data = buffer.getInt(0);
+    return (long) data & 0xFFFFFFFFL;
   }
 
   public static byte[] getUInt32(long num) {
@@ -402,8 +413,7 @@ public class Utils {
         try {
           conf = new JsonObject(sconf);
         } catch (DecodeException e) {
-          System.out
-              .println("Configuration file " + sconf + " does not contain a valid JSON object");
+          System.out.println("Configuration file " + sconf + " does not contain a valid JSON object");
         }
       } catch (FileNotFoundException e) {
         try {

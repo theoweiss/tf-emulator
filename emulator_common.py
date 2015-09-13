@@ -25,18 +25,71 @@ Boston, MA 02111-1307, USA.
 
 import sys
 import os
+import copy
+
 
 sys.path.append(os.path.split(os.getcwd())[0])
 import common
 
 class JavaDevice(common.Device):
+    def __init__(self, raw_data, generator):
+        common.Device.__init__(self, raw_data, generator)
+        self.sensor_packets = []
+        self.actuator_packets = []
+        self.other_packets = []
+        self.sensor_fields = {}
+        self.actor_fields = {}
+        self.other_actor_fields = {}
+        self.other_sensors = {}
+        self.special_fields = {}
+        self.other_fields = {}
+        self.callback_data = {}
+
     def get_java_class_name(self):
         return self.get_camel_case_category() + self.get_camel_case_name()
 
     def get_underscore_device_name(self):
-        return self.get_underscore_category() + self.get_underscore_name()
+        return self.get_underscore_category() + '_' + self.get_underscore_name()
+
+    def load_model_data(self, model_path):
+        if model_path not in sys.path:
+            sys.path.append(model_path)
+        self.sensor_fields = copy.deepcopy(__import__(self.get_underscore_device_name() + '_model_config').sensor_fields)
+        self.actor_fields = copy.deepcopy(__import__(self.get_underscore_device_name() + '_model_config').actor_fields)
+        self.other_fields = copy.deepcopy(__import__(self.get_underscore_device_name() + '_model_config').other_fields)
+        self.other_actor_fields = copy.deepcopy(__import__(self.get_underscore_device_name() + '_model_config').other_actor_fields)
+        self.other_sensors = copy.deepcopy(__import__(self.get_underscore_device_name() + '_model_config').other_sensors)
+        self.special_fields = copy.deepcopy(__import__(self.get_underscore_device_name() + '_model_config').special_fields)
+        callback_data = copy.deepcopy(__import__(self.get_underscore_device_name() + '_model_config').callbacks)
+        self.callback_data = callback_data
+        model_data = copy.deepcopy(__import__(self.get_underscore_device_name() + '_model_config').mod)
+        self.model_data = model_data
+
+        for packet in self.all_function_packets:
+            if packet.get_headless_camel_case_name() in ('getAPIVersion', 'getResponseExpected', 'setResponseExpected',
+                                                         'setResponseExpectedAll', 'getProtocol1BrickletName'):
+                continue
+            packet_data = model_data[packet.get_headless_camel_case_name()]
+            self.subdevice_type = packet_data['subdevice_type']
+            packet.field = packet_data['field']
+            packet.function_type = packet_data['function_type']
+            if packet_data['subdevice_type'] == 'sensor':
+                self.sensor_packets.append(packet)
+            elif packet_data['subdevice_type'] == 'actuator':
+                self.actuator_packets.append(packet)
+            else:
+                self.other_packets.append(packet)
+        for packet in self.callback_packets:
+            packet_data = callback_data[packet.get_headless_camel_case_name()]
+            packet.field = packet_data['field']
 
 class JavaPacket(common.Packet):
+    def __init__(self, raw_data, device, generator):
+        common.Packet.__init__(self, raw_data, device, generator)
+        self.subdevice_type = None
+        self.field = None
+        self.function_type = None
+        
     def get_java_object_name(self):
         name = self.get_camel_case_name()
         if name.startswith('Get'):
