@@ -216,6 +216,24 @@ def get_random_value_function(datatype):
 def get_random_value_function_4test(datatype):
     return random_value_function_4test[datatype]
 
+java_byte_buffer_storage_type = {
+    'int8':   'byte',
+    'uint8':  'byte',
+    'int16':  'short',
+    'uint16': 'short',
+    'int32':  'int',
+    'uint32': 'int',
+    'int64':  'long',
+    'uint64': 'long',
+    'float':  'float',
+    'bool':   'byte',
+    'char':   'byte',
+    'string': 'byte'
+}
+
+def get_java_byte_buffer_storage_type(type_name):
+     return java_byte_buffer_storage_type[type_name]
+
 class JavaElement(common.Element):
     java_byte_buffer_method_suffix = {
         'int8':   '',
@@ -232,20 +250,6 @@ class JavaElement(common.Element):
         'string': ''
     }
 
-    java_byte_buffer_storage_type = {
-        'int8':   'byte',
-        'uint8':  'byte',
-        'int16':  'short',
-        'uint16': 'short',
-        'int32':  'int',
-        'uint32': 'int',
-        'int64':  'long',
-        'uint64': 'long',
-        'float':  'float',
-        'bool':   'byte',
-        'char':   'byte',
-        'string': 'byte'
-    }
 
     def get_random_value_function(self):
         return get_random_value_function(self.get_type())
@@ -257,4 +261,4 @@ class JavaElement(common.Element):
         return JavaElement.java_byte_buffer_method_suffix[self.get_type()]
 
     def get_java_byte_buffer_storage_type(self):
-        return JavaElement.java_byte_buffer_storage_type[self.get_type()]
+        return java_byte_buffer_storage_type[self.get_type()]

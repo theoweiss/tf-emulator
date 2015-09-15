@@ -83,11 +83,7 @@ public class BrickletAmbientLight extends AbstractVerticle {
   private Step illuminance_direction = Step.UP;
   private long illuminance_callback_period;
   private long illuminance_callback_id;
-  private short illuminance_last_called_back;
-
-  private void setIlluminace(short illuminance) {
-    this.illuminance = illuminance;
-  }
+  private short illuminance_last_value_called_back;
 
   private Buffer setIlluminanceCallbackPeriod(Packet packet) {
     logger.debug("function setIlluminanceCallbackPeriod");
@@ -110,23 +106,23 @@ public class BrickletAmbientLight extends AbstractVerticle {
   }
 
   private void startIlluminanceGenerator() {
-    if (illuminance_callback_period == 0) {
+    if (illuminance_step == 0) {
       return;
     }
     vertx.setPeriodic(illuminance_generator_period, id -> {
       if (illuminance_direction == Step.UP) {
         if (illuminance >= illuminance_max) {
           illuminance_direction = Step.DOWN;
-          setIlluminace((short) (illuminance - illuminance_step));
+          this.illuminance = (short) (illuminance - illuminance_step);
         } else {
-          setIlluminace((short) (illuminance + illuminance_step));
+          this.illuminance = (short) (illuminance + illuminance_step);
         }
       } else {
         if (illuminance >= illuminance_min) {
           illuminance_direction = Step.UP;
-          setIlluminace((short) (illuminance + illuminance_step));
+          this.illuminance = (short) (illuminance + illuminance_step);
         } else {
-          setIlluminace((short) (illuminance - illuminance_step));
+          this.illuminance = (short) (illuminance - illuminance_step);
         }
       }
     });
@@ -150,7 +146,7 @@ public class BrickletAmbientLight extends AbstractVerticle {
 
   private void startIlluminanceCallback() {
     illuminance_callback_id = vertx.setPeriodic(illuminance_callback_period, id -> {
-      if (illuminance != illuminance_last_called_back) {
+      if (illuminance != illuminance_last_value_called_back) {
         Set<Object> handlerids = vertx.sharedData().getLocalMap(Brickd.HANDLERIDMAP).keySet();
         if (handlerids != null) {
           logger.debug("sending enumerate answer");

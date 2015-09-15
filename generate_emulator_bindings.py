@@ -730,10 +730,174 @@ public class {0}Test {{
                 isEnableds, getIdentity, other_actors, other_sensors, special_setters, others, booleans)
 
     def get_sensor_fields(self):
-        for field in self.sensor_fields:
-            if field.skip:
+        """
+  private short illuminance;
+  private short illuminance_max = 100;
+  private short illuminance_min = 0;
+  private short illuminance_step = 1;
+  private long illuminance_generator_period = 100;
+  private Step illuminance_direction = Step.UP;
+  private long illuminance_callback_period;
+  private long illuminance_callback_id;
+  private short illuminance_last_value_called_back;
+
+        """
+        fields = ''
+        field_template = """
+  private {field_type} {field_name} = {field_default};
+  private {field_type} {field_name}_max = {max_value};
+  private {field_type} {field_name}_min = {min_value};
+  private {field_type} {field_name}_step = {step_value};
+  private long {field_name}_generator_period = 100;
+  private Step {field_name}_direction = Step.UP;
+  private long {field_name}_callback_period;
+  private long {field_name}_callback_id;
+  private {field_type} {field_name}_last_value_called_back;
+"""
+        
+        for f in self.sensor_fields.keys():
+            field = self.sensor_fields[f]
+            if field['skip']:
                 continue
+            fields += field_template.format(
+                                field_name=field['field'],
+                                field_default=field['default_value'],
+                                max_value=field['max_value'],
+                                min_value=field['min_value'],
+                                step_value=field['step_value'],
+                                field_type=emulator_common.get_java_byte_buffer_storage_type(field['field_type'][0])) # ignore cardinality for now
             
+        return fields
+
+    def get_sensor_value_generator(self):
+        generators = ''
+        generator = """
+  private void start{field_name}Generator() {{
+    if ({field_name}_step == 0) {{
+      return;
+    }}
+    vertx.setPeriodic({field_name}_generator_period, id -> {{
+      if ({field_name}_direction == Step.UP) {{
+        if ({field_name} >= {field_name}_max) {{
+          {field_name}_direction = Step.DOWN;
+          this.{field_name} = ({field_type}) ({field_name} - {field_name}_step);
+        }} else {{
+          this.{field_name} = ({field_type}) ({field_name} + {field_name}_step);
+        }}
+      }} else {{
+        if ({field_name} >= {field_name}_min) {{
+          {field_name}_direction = Step.UP;
+          this.{field_name} = ({field_type}) ({field_name} + {field_name}_step);
+        }} else {{
+          this.{field_name} = ({field_type}) ({field_name} - {field_name}_step);
+        }}
+      }}
+    }});
+  }}
+        """
+
+        for f in self.sensor_fields.keys():
+            field = self.sensor_fields[f]
+            if field['skip']:
+                continue
+            generators += generator.format(
+                                    field_name=field['field'],
+                                    field_type=emulator_common.get_java_byte_buffer_storage_type(field['field_type'][0])) # ignore cardinality for now
+
+
+        return generators
+
+    def get_sensor_callback_methods(self):
+        stop_generator = """
+    private void stop{field_name}Callback() {{
+    vertx.cancelTimer({field_name}_callback_id);
+  }}
+        """
+
+        start_generator = """
+  private void start{field_name}Generator() {{
+    if ({field_name}_step == 0) {{
+      return;
+    }}
+    vertx.setPeriodic({field_name}_generator_period, id -> {{
+      if ({field_name}_direction == Step.UP) {{
+        if ({field_name} >= {field_name}_max) {{
+          {field_name}_direction = Step.DOWN;
+          this.{field_name} = ({field_type}) ({field_name} - {field_name}_step);
+        }} else {{
+          this.{field_name} = ({field_type}) ({field_name} + {field_name}_step);
+        }}
+      }} else {{
+        if ({field_name} >= {field_name}_min) {{
+          {field_name}_direction = Step.UP;
+          this.{field_name} = ({field_type}) ({field_name} + {field_name}_step);
+        }} else {{
+          this.{field_name} = ({field_type}) ({field_name} - {field_name}_step);
+        }}
+      }}
+    }});
+  }}
+        """
+
+        stop_generators = ''
+        start_generators = ''
+        
+        for f in self.sensor_fields.keys():
+            field = self.sensor_fields[f]
+            if field['skip']:
+                continue
+            stop_generators += start_generator.format(
+                                            field_name=field['field'],
+                                            field_type=emulator_common.get_java_byte_buffer_storage_type(field['field_type'][0]) # ignore cardinality for now
+                                            )
+            start_generators += stop_generator.format(
+                                            field_name=field['field']
+                                            )
+            
+        return start_generators, stop_generators
+    
+    def get_sensor_callback_period(self):
+        #FIXME: muss beim methoden generieren erledigt werden
+        period_template = """
+  private Buffer setIlluminanceCallbackPeriod(Packet packet) {
+    logger.debug("function setIlluminanceCallbackPeriod");
+    illuminance_callback_period = Utils.unsignedInt(packet.getPayload());
+    if (illuminance_callback_period == 0) {
+      stopIlluminanceCallback();
+    } else {
+      startIlluminanceCallback();
+    }
+    if (packet.getResponseExpected()) {
+      byte length = (byte) 8 + 0;
+      byte functionId = FUNCTION_SET_ILLUMINANCE_CALLBACK_PERIOD;
+      byte flags = (byte) 0;
+      Buffer header = Utils.createHeader(uidBytes, length, functionId, packet.getOptions(), flags);
+      Buffer buffer = Buffer.buffer();
+      buffer.appendBuffer(header);
+      return buffer;
+    }
+    return null;
+  }
+        """
+        return period_template
+
+    def get_callback_buffer(self):
+        callback_buffer = """
+  private Buffer getIlluminanceCallbackBuffer() {
+    byte length = (byte) 8 + 2;
+    byte functionId = CALLBACK_ILLUMINANCE;
+    byte flags = (byte) 0;
+    byte sequenceNumberAndOptions = (byte) 0;
+    Buffer header = Utils.createHeader(uidBytes, length, functionId, sequenceNumberAndOptions, flags);
+    Buffer buffer = Buffer.buffer();
+    buffer.appendBuffer(header);
+    buffer.appendBytes(Utils.getUInt16(illuminance));
+    return buffer;
+  }
+        """
+        #FIXME: implement this
+        return callback_buffer
+
     def get_readme(self):
         readme = '    * {0} dummy\n'
         readmes = ''
@@ -784,6 +948,15 @@ public class {0}Test {{
         source += self.get_java_function_id_definitions()
         source += self.get_java_constants()
         source += self.get_emulator_actor_fields()
+        source += self.get_sensor_fields()
+        source += self.get_sensor_value_generator()
+        stop_callback, start_callback = self.get_sensor_callback_methods()
+        source += stop_callback
+        source += start_callback
+        source += self.get_sensor_callback_period()
+        source += self.get_callback_buffer()
+        #FIXME: add generator start to verts start function
+        #e.g artIlluminanceGenerator();
         
         #TODO: I think listeners are not needed
         #source += self.get_java_listener_lists()
