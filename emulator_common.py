@@ -43,7 +43,7 @@ class JavaDevice(common.Device):
         self.other_sensors = {}
         self.special_fields = {}
         self.other_fields = {}
-        self.callback_data = {}
+        self.callbacks = {}
 
     def get_java_class_name(self):
         return self.get_camel_case_category() + self.get_camel_case_name()
@@ -60,8 +60,8 @@ class JavaDevice(common.Device):
         self.other_actor_fields = copy.deepcopy(__import__(self.get_underscore_device_name() + '_model_config').other_actor_fields)
         self.other_sensors = copy.deepcopy(__import__(self.get_underscore_device_name() + '_model_config').other_sensors)
         self.special_fields = copy.deepcopy(__import__(self.get_underscore_device_name() + '_model_config').special_fields)
-        callback_data = copy.deepcopy(__import__(self.get_underscore_device_name() + '_model_config').callbacks)
-        self.callback_data = callback_data
+        callbacks = copy.deepcopy(__import__(self.get_underscore_device_name() + '_model_config').callbacks)
+        self.callbacks = callbacks
         model_data = copy.deepcopy(__import__(self.get_underscore_device_name() + '_model_config').mod)
         self.model_data = model_data
 
@@ -80,7 +80,7 @@ class JavaDevice(common.Device):
             else:
                 self.other_packets.append(packet)
         for packet in self.callback_packets:
-            packet_data = callback_data[packet.get_headless_camel_case_name()]
+            packet_data = callbacks[packet.get_headless_camel_case_name()]
             packet.field = packet_data['field']
 
 class JavaPacket(common.Packet):
@@ -209,6 +209,20 @@ random_value_function_4test = {
     'string': 'TestTools.getRandomString()'
 }
 
+extract_value_function = {
+                          'uint8': 'Utils.unsignedByte({0})',
+                          'uint16': 'Utils.unsignedShort({0})',
+                          'uint32': 'Utils.unsignedInt({0})',
+                          'int32': 'Utils.int({0})',
+                          'int64': 'Utils.long({0})',
+                          'uint64': 'Utils.long({0})',
+                          'float': 'Utils.float({0})',
+                          'bool': 'Utils.bool({0})',
+                          'char': 'Utils.char({0})',
+                          'string': 'Utils.string({0})'
+                          }
+def get_extract_value_function(value_type):
+    return extract_value_function[value_type]
 
 def get_random_value_function(datatype):
     return random_value_function[datatype]
@@ -232,7 +246,7 @@ java_byte_buffer_storage_type = {
 }
 
 def get_java_byte_buffer_storage_type(type_name):
-     return java_byte_buffer_storage_type[type_name]
+    return java_byte_buffer_storage_type[type_name]
 
 class JavaElement(common.Element):
     java_byte_buffer_method_suffix = {

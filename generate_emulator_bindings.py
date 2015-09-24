@@ -57,6 +57,7 @@ import java.util.Set;
 import org.m1theo.tfemulator.Brickd;
 import org.m1theo.tfemulator.CommonServices;
 import org.m1theo.tfemulator.Utils;
+import org.m1theo.tfemulator.Utils.Step;
 import org.m1theo.tfemulator.protocol.Packet;
 """
         return include
@@ -808,6 +809,10 @@ public class {0}Test {{
         return generators
 
     def get_sensor_callback_methods(self):
+        #FIXME:
+        dummy_stop_generator = '//fixme stop_generator callback without sensor {field_name}\n'
+        dummy_start_generator = '//fixme start_generator callback without sensor {field_name}\n'
+        dummy_getter = '//fixme getter callback without sensor {field_name}\n'
         stop_generator = """
     private void stop{field_name}Callback() {{
     vertx.cancelTimer({field_name}_callback_id);
@@ -839,64 +844,119 @@ public class {0}Test {{
   }}
         """
 
+        get_for_callback = """
+  private Buffer get{field_name}() {{
+      byte options = (byte) 0;
+      return get{field_name}Buffer(FUNCTION_{functionId}, options)
+  }}
+        """
+
         stop_generators = ''
         start_generators = ''
-        
-        for f in self.sensor_fields.keys():
-            field = self.sensor_fields[f]
-            if field['skip']:
-                continue
-            stop_generators += start_generator.format(
-                                            field_name=field['field'],
-                                            field_type=emulator_common.get_java_byte_buffer_storage_type(field['field_type'][0]) # ignore cardinality for now
-                                            )
-            start_generators += stop_generator.format(
-                                            field_name=field['field']
-                                            )
-            
-        return start_generators, stop_generators
+        getters = ''
+        for f in self.callbacks.keys():
+            if self.sensor_fields.has_key(f):
+                field = self.sensor_fields[f]
+                field_name = field['field']
+                print "field_name*****: " + field_name
+                if field['skip']:
+                    continue
+                stop_generators += start_generator.format(
+                                                field_name=field_name,
+                                                field_type=emulator_common.get_java_byte_buffer_storage_type(field['field_type'][0]) # ignore cardinality for now
+                                                )
+                start_generators += stop_generator.format(
+                                                field_name=field_name
+                                                )
+                getters += get_for_callback.format(field_name=field_name,
+                                                   functionId=self.get_callback_packet_for_fieldname(field_name).get_upper_case_name())
+            else:
+                stop_generators += dummy_stop_generator.format(field_name=f)
+                start_generators += dummy_start_generator.format(field_name=f)
+                getters += dummy_getter.format(field_name=f)
+                
+        return start_generators, stop_generators, getters
     
+    def get_callback_packet_for_fieldname(self, field_name):
+        for packet in self.callback_packets:
+            if packet.field == field_name:
+                return packet
+            
     def get_sensor_callback_period(self):
         #FIXME: muss beim methoden generieren erledigt werden
+        period_setters = ''
         period_template = """
-  private Buffer setIlluminanceCallbackPeriod(Packet packet) {
-    logger.debug("function setIlluminanceCallbackPeriod");
-    illuminance_callback_period = Utils.unsignedInt(packet.getPayload());
-    if (illuminance_callback_period == 0) {
-      stopIlluminanceCallback();
-    } else {
-      startIlluminanceCallback();
-    }
-    if (packet.getResponseExpected()) {
+  private Buffer {headless_camel_case_name}(Packet packet) {{
+    {field_name} = {payload_function} Utils.unsignedInt(packet.getPayload());
+    if ({field_name} == 0) {{
+      stop{field_name}Callback();
+    }} else {{
+      start{field_name}Callback();
+    }}
+    if (packet.getResponseExpected()) {{
       byte length = (byte) 8 + 0;
-      byte functionId = FUNCTION_SET_ILLUMINANCE_CALLBACK_PERIOD;
+      byte functionId = FUNCTION_{functionId};
       byte flags = (byte) 0;
       Buffer header = Utils.createHeader(uidBytes, length, functionId, packet.getOptions(), flags);
       Buffer buffer = Buffer.buffer();
       buffer.appendBuffer(header);
       return buffer;
-    }
+    }}
     return null;
-  }
+  }}
         """
-        return period_template
+        for packet in self.get_packets('function'):
+            if packet.function_type == 'callback_period_setter':
+                headless_camel_case_name=packet.get_headless_camel_case_name()
+                name_lower = packet.get_headless_camel_case_name()
+                name_upper = packet.get_upper_case_name()
+                payload_function = packet.get_emulator_return_values2()[0]
+                
+                die stop{field_name}Callback(); braucht nicht {field_name} sondern das feld in mit grossbuchstaben am anfang
+                besser wäre es hier ueberall den fieldname der betroffen ist zur verfuegung zu haben
+
+                period_setters += period_template.format(
+                                                         headless_camel_case_name=headless_camel_case_name,
+                                                         name_lower=name_lower,
+                                                         field_name=packet.field,
+                                                         functionId=name_upper,
+                                                         payload_function=payload_function
+                                                         )
+        return period_setters
 
     def get_callback_buffer(self):
-        callback_buffer = """
-  private Buffer getIlluminanceCallbackBuffer() {
-    byte length = (byte) 8 + 2;
-    byte functionId = CALLBACK_ILLUMINANCE;
+        #drei funktionen
+        # 1/ getIlluminanceBuffer(byte functionId, byte options)
+        # 2/ getIlluminance() diese wird von callback aufgerufen und ruft getIlluminanceBuffer(Buffer options) mit  options gleich 0 auf
+        # 3/ getIlluminance(Packet packet) wird von den gettern aufgerufen und ruft getIlluminanceBuffer(Buffer options) mit den options aus dem Packet auf
+        code = ''
+        buffer_function = """
+  private Buffer get{field_name}Buffer(byte functionId, byte options) {{
+    byte length = (byte) 8 + {bufferbytes};
     byte flags = (byte) 0;
-    byte sequenceNumberAndOptions = (byte) 0;
-    Buffer header = Utils.createHeader(uidBytes, length, functionId, sequenceNumberAndOptions, flags);
+    Buffer header = Utils.createHeader(uidBytes, length, functionId, options, flags);
     Buffer buffer = Buffer.buffer();
     buffer.appendBuffer(header);
-    buffer.appendBytes(Utils.getUInt16(illuminance));
+    {buffers}
     return buffer;
-  }
+  }}
         """
-        #FIXME: implement this
-        return callback_buffer
+        
+        get_for_packet = """
+  private Buffer get{field_name}Buffer(Packet packet) {{
+      byte options = packet.getOptions();
+      return get{field_name}Buffer(FUNCTION_{functionId}, options)
+  }}
+        """
+        for packet in self.get_packets('function'):
+            if packet.subdevice_type == 'sensor':
+                bufferbytes = packet.get_emulator_return_values2()[1]
+                code += buffer_function.format(field_name=packet.field,
+                                               bufferbytes=bufferbytes)
+                code += get_for_packet.format(field_name=packet.field,
+                                                functionId=packet.get_upper_case_name())
+                
+        return code
 
     def get_readme(self):
         readme = '    * {0} dummy\n'
@@ -950,9 +1010,10 @@ public class {0}Test {{
         source += self.get_emulator_actor_fields()
         source += self.get_sensor_fields()
         source += self.get_sensor_value_generator()
-        stop_callback, start_callback = self.get_sensor_callback_methods()
+        stop_callback, start_callback, getters = self.get_sensor_callback_methods()
         source += stop_callback
         source += start_callback
+        source += getters
         source += self.get_sensor_callback_period()
         source += self.get_callback_buffer()
         #FIXME: add generator start to verts start function
@@ -1025,6 +1086,51 @@ class JavaBindingsPacket(emulator_common.JavaPacket):
                 args.append(element.get_java_type())
 
         return return_type, test_values, args
+
+    def get_emulator_return_values2(self):
+        bufferbytes = 0
+        buffers = ""
+        buff = """    buffer.appendBytes({0});
+"""
+        for element in self.get_elements('out'):
+            call = ""
+            element_type = element.get_type()
+            if element_type == 'int8':
+                call = emulator_common.extract_value_function(element_type)
+                bufferbytes += 1 * element.get_cardinality()
+            elif element_type == 'uint8':
+                call = emulator_common.extract_value_function(element_type)
+                bufferbytes += 1 * element.get_cardinality()
+            elif element_type == 'int16':
+                call = emulator_common.extract_value_function(element_type)
+                bufferbytes += 2 * element.get_cardinality()
+            elif element_type == 'uint16':
+                call = emulator_common.extract_value_function(element_type)
+                bufferbytes += 2 * element.get_cardinality()
+            elif element_type == 'int32':
+                call = emulator_common.extract_value_function(element_type)
+                bufferbytes += 4 * element.get_cardinality()
+            elif element_type == 'uint32':
+                call = emulator_common.extract_value_function(element_type)
+                bufferbytes += 4 * element.get_cardinality()
+            elif element_type == 'uint64':
+                call = emulator_common.extract_value_function(element_type)
+                bufferbytes += 8 * element.get_cardinality()
+            elif element_type == 'bool':
+                call = emulator_common.extract_value_function(element_type)
+                bufferbytes += 1 * element.get_cardinality()
+            elif element_type == 'char':
+                call = emulator_common.extract_value_function(element_type)
+                bufferbytes += 1 * element.get_cardinality()
+            elif element_type == 'string':
+                call = emulator_common.extract_value_function(element_type)
+                bufferbytes += 1 * element.get_cardinality()
+            elif element_type == 'float':
+                call = emulator_common.extract_value_function(element_type)
+                bufferbytes += 4 * element.get_cardinality()
+            
+            buffers += buff.format(call.format(self.field))
+        return buffers, bufferbytes
 
     def get_emulator_return_values(self):
         bufferbytes = 0

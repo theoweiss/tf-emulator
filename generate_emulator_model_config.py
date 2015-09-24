@@ -112,7 +112,7 @@ callbacks = {}
                             'field': '<fieldname>',
                             'field_type': 'uint8|uint16|char|...',
                             'subdevice_type': 'sensor|actuator|((identity|other?)',
-                            'function_type': 'getter|setter|callback',
+                            'function_type': 'getter|setter|callback_setter',
                             'default_value': <defaultvalue>',
                             'max_value': <maxvalue>,
                             'min_value': <minvalue>,
@@ -148,7 +148,6 @@ mod['{name}'] = {{
             'skip': False
             }}
 """
-
         callbacks = ''
         callback = """
 callbacks['{0}'] = {{
@@ -187,6 +186,7 @@ callbacks['{0}'] = {{
         actor_getters.update(self.get_actor_getters())
         actor_getters.update(self.get_callback_getters())
         actor_getters.update(self.get_isEnableds())
+        actor_getters.update(self.get_callback_period_getters())
         for key in actor_getters.keys():
             field_category = 'actor_fields'
             packet = actor_getters[key][0]
@@ -207,7 +207,18 @@ callbacks['{0}'] = {{
                                              'field_type_cardinality': cardinality
                                              })
 
-
+        callback_setters = self.get_callback_period_setters()
+        for key in callback_setters.keys():
+            packet = callback_setters[key][0]
+            name_lower = packet.get_headless_camel_case_name()
+            functions += function.format(**{
+                                     'name': name_lower,
+                                     'field': callback_setters[key][1],
+                                     'function_type': 'callback_period_setter',
+                                     'subdevice_type': 'actor'
+                                     })
+        
+        
         setter = {}
         setter.update(self.get_actors())
         setter.update(self.get_callback_setters())
@@ -376,6 +387,12 @@ callbacks['{0}'] = {{
     def get_booleans(self):
         return self.get_method_categories()[13]
 
+    def get_callback_period_setters(self):
+        return self.get_method_categories()[14]
+
+    def get_callback_period_getters(self):
+        return self.get_method_categories()[15]
+
     def get_method_categories(self):
         def down_case_first(name):
             return name[0].lower() + name[1:]
@@ -387,6 +404,8 @@ callbacks['{0}'] = {{
         sensors = {}
         actors = {}
         actor_getters = {}
+        callback_period_setters = {}
+        callback_period_getters = {}
         callback_setters = {}
         callback_getters = {}
         enablers = {}
@@ -499,7 +518,12 @@ callbacks['{0}'] = {{
                     # TODO: hier muss auch noch das packet dazu das brauch ich später noch
                     sensors[getter.get(name)[0]] = (getter.get(name)[1], down_case_first(name))
             else:
-                if "CallbackPeriod" in name or "CallbackThreshold" in name or "DebouncePeriod" in name:
+                if "CallbackPeriod" in name:
+                    setter_packet = setter.get(name)[1]
+                    getter_packet = getter.get(name)[1]
+                    callback_period_setters[setter.get(name)[0]] = (setter_packet, setter_packet.get_underscore_name()[4:])
+                    callback_period_getters[getter.get(name)[0]] = (getter_packet, getter_packet.get_underscore_name()[4:])
+                elif "CallbackThreshold" in name or "DebouncePeriod" in name:
                     callback_setters[setter.get(name)[0]] = (setter.get(name)[1], down_case_first(name))
                     callback_getters[getter.get(name)[0]] = (getter.get(name)[1], down_case_first(name))
                 else:
@@ -510,7 +534,8 @@ callbacks['{0}'] = {{
                     actors[setter.get(name)[0]] = (setter.get(name)[1], down_case_first(name))
                     actor_getters[getter.get(name)[0]] = (getter.get(name)[1], down_case_first(name))
         return (sensors, actors, actor_getters, callback_setters, callback_getters, enablers, disablers, 
-                isEnableds, getIdentity, other_actors, other_sensors, special_setters, others, booleans)
+                isEnableds, getIdentity, other_actors, other_sensors, special_setters, others, booleans,
+                callback_period_setters, callback_period_getters)
 
     def get_callbacks(self):
         callbacks = {}
