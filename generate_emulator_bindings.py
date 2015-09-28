@@ -301,7 +301,7 @@ public final static String DEVICE_DISPLAY_NAME = "{3}";
         sensors = self.get_sensors()
     # get sensors
         for key in sensors.keys():
-            packet = sensors[key]
+            packet = sensors[key][0]
     #for packet in self.get_packets('function'):
             name_lower = packet.get_headless_camel_case_name()
             name_upper = packet.get_upper_case_name()
@@ -527,7 +527,7 @@ public class {0}Test {{
 """        
         sensors = self.get_sensors()
         for key in sensors.keys():
-            packet = sensors[key]
+            packet = sensors[key][0]
             method_args = []
             #0: methodname,  1: type of return value, 2: asserts
             return_type, test_asserts, args = packet.get_test_return_values()
@@ -552,184 +552,6 @@ public class {0}Test {{
 
         return methods
 
-    def get_sensors(self):
-        return self.get_method_categories()[0]
-
-    def get_actors(self):
-        return  self.get_method_categories()[1]
-
-    def get_actor_getters(self):
-        return  self.get_method_categories()[2]
-
-    def get_callback_setters(self):
-        return self.get_method_categories()[3]
-
-    def get_callback_getters(self):
-        return self.get_method_categories()[4]
-
-    def get_enablers(self):
-        return self.get_method_categories()[5]
-
-    def get_disablers(self):
-        return self.get_method_categories()[6]
-
-    def get_isEnableds(self):
-        return self.get_method_categories()[7]
-
-    def get_getIdentity(self):
-        return self.get_method_categories()[8]
-
-    def get_otherActorMethods(self):
-        return self.get_method_categories()[9]
-
-    def get_otherSensorMethods(self):
-        return self.get_method_categories()[10]
-
-    def get_special_setterMethods(self):
-        return self.get_method_categories()[11]
-
-    def get_otherMethods(self):
-        return self.get_method_categories()[12]
-
-    def get_booleans(self):
-        return self.get_method_categories()[13]
-
-    def get_method_categories(self):
-        def down_case_first(name):
-            return name[0].lower() + name[1:]
-    
-        # some heuristics on method names
-        cls = self.get_camel_case_name()
-        setter = {}
-        getter = {}
-        sensors = {}
-        actors = {}
-        actor_getters = {}
-        callback_setters = {}
-        callback_getters = {}
-        enablers = {}
-        disablers = {}
-        isEnableds = {}
-        booleans = {} # key is the name, value is a tuple (packet, enabler name, disabler name, isEnabled name
-        getIdentity = {}
-        other_actors = {}
-        other_sensors = {}
-        special_setters = {}
-        others = {}
-        special_setter_methods = {'setSelectedState': 'state',
-                                  'setSelectedLEDState':'lEDState',
-                                  'setEthernetHostname': 'ethernetConfiguration',
-                                  'setEthernetMACAddress': 'ethernetConfiguration',
-                                  'setEthernetHostname': 'ethernetConfiguration',
-                                  'isSyncRect': 'syncRect',
-                                  'setSyncRect': 'syncRect',
-                                  'setSelectedValues': 'values'}
-        other_boolean_methods = {('ledOn', 'ledOff', 'isLEDOn'): 'led', 
-                                 ('ledsOn', 'ledsOff', 'areLedsOn'): 'leds', 
-                                 ('lightOn', 'lightOff', 'isLightOn'): 'light', 
-                                 ('backlightOn', 'backlightOff', 'isBacklightOn'): 'backlight'
-                                 }
-        other_actor_methods = ('fullBrake', 'reset', 'calibrate', 'tare', 'recalibrate', 'startCounter', 'fullBrake',
-                               'driveForward', 'driveBackward', 'stop', 'morseCode', 'beep', 'saveCalibration',
-                               'clearDisplay', 'writeLine', 'setSyncRect')
-        other_sensor_methods = ('isOverCurrent', 'isSensorConnected', 'isChibiPresent', 'isButtonPressed', 
-                                'isEthernetPresent')
-        for packet in self.get_packets('function'):
-            name_lower = packet.get_headless_camel_case_name()
-            #print "name_lower " + name_lower
-            if name_lower in special_setter_methods.keys():
-                print "special setter method : " + name_lower
-                name = name_lower
-                special_setters[name_lower] = (packet, name)
-            elif name_lower.startswith("set"):
-                setter[name_lower[3:]] = (name_lower, packet)
-            elif name_lower.startswith("get"):
-                getter[name_lower[3:]] = (name_lower, packet)
-            elif name_lower.startswith("enable"):
-                if name_lower == "enable":
-                    name = "enabled"
-                else:
-                    name = name_lower[6:]
-                enablers[name_lower] = (packet, name)
-                booleans[name] = []
-                booleans[name].insert(1, name_lower)
-            elif name_lower.startswith("disable"):
-                if name_lower == "disable":
-                    name = "enabled"
-                else:
-                    name = name_lower[7:]
-                disablers[name_lower] = (packet, name)
-                booleans[name].insert(2, name_lower)
-            elif name_lower.startswith("is") and name_lower.endswith("Enabled"):
-                if name_lower == "isEnabled":
-                    name = "enabled"
-                else:
-                    name = name_lower[2:-7]
-                isEnableds[name_lower] = (packet, name)
-                booleans[name].insert(0, packet)
-                booleans[name].insert(3, name_lower)
-            else:
-                if name_lower in other_actor_methods:
-                    print "other actor method: " + name_lower
-                    name = name_lower
-                    other_actors[name_lower] = (packet, name)
-                    continue
-                elif name_lower in other_sensor_methods:
-                    print "other actor sensor: " + name_lower
-                    name = name_lower
-                    other_sensors[name_lower] = (packet, name)
-                    continue
-                else:
-                    found = False
-                    for keys, name in other_boolean_methods.items(): 
-                        if name_lower in keys:
-                            if keys.index(name_lower) == 0:
-                                enablers[name_lower] = (packet, name)
-                                booleans[name] = []
-                                booleans[name].insert(1, name_lower)
-                                found = True
-                                continue
-                            elif keys.index(name_lower) == 1:
-                                disablers[name_lower] = (packet, name)
-                                booleans[name].insert(2, name_lower)
-                                found = True
-                                continue
-                            else:
-                                isEnableds[name_lower] = (packet, name)
-                                booleans[name].insert(0, packet)
-                                booleans[name].insert(3, name_lower)
-                                found = True
-                                continue
-                
-                    # we should not reach this point
-                    if not found:
-                        print "other unknown method: " + name_lower
-                        name = name_lower
-                        others[name_lower] = (packet, name)
-
-        for name in getter.keys():
-            if name not in setter:
-                if name == "Identity":
-                    getIdentity[getter.get(name)[0]] = getter.get(name)[1]
-                elif name != "Protocol1BrickletName":
-                    print "sensor " + name
-                    # sensors is a list of function names
-                    # TODO: hier muss auch noch das packet dazu das brauch ich später noch
-                    sensors[getter.get(name)[0]] = getter.get(name)[1]
-            else:
-                if "CallbackPeriod" in name or "CallbackThreshold" in name or "DebouncePeriod" in name:
-                    callback_setters[setter.get(name)[0]] = (setter.get(name)[1], down_case_first(name))
-                    callback_getters[getter.get(name)[0]] = (getter.get(name)[1], down_case_first(name))
-                else:
-                    print "actor: " + name
-                    # function names as keys, property name as value
-                    # e.g. {"setProperty": "Property",
-                    #       "getProperty": "Property"} 
-                    actors[setter.get(name)[0]] = (setter.get(name)[1], down_case_first(name))
-                    actor_getters[getter.get(name)[0]] = (getter.get(name)[1], down_case_first(name))
-        return (sensors, actors, actor_getters, callback_setters, callback_getters, enablers, disablers, 
-                isEnableds, getIdentity, other_actors, other_sensors, special_setters, others, booleans)
-
     def get_sensor_fields(self):
         """
   private short illuminance;
@@ -751,7 +573,7 @@ public class {0}Test {{
   private {field_type} {field_name}_step = {step_value};
   private long {field_name}_generator_period = 100;
   private Step {field_name}_direction = Step.UP;
-  private long {field_name}_callback_period;
+  private long {field_name}CallbackPeriod;
   private long {field_name}_callback_id;
   private {field_type} {field_name}_last_value_called_back;
 """
@@ -773,7 +595,7 @@ public class {0}Test {{
     def get_sensor_value_generator(self):
         generators = ''
         generator = """
-  private void start{field_name}Generator() {{
+  private void start{field_name_upper}Generator() {{
     if ({field_name}_step == 0) {{
       return;
     }}
@@ -801,8 +623,10 @@ public class {0}Test {{
             field = self.sensor_fields[f]
             if field['skip']:
                 continue
+            field_name = field['field']
             generators += generator.format(
-                                    field_name=field['field'],
+                                    field_name=field_name,
+                                    field_name_upper=field_name[0].upper() + field_name[1:],
                                     field_type=emulator_common.get_java_byte_buffer_storage_type(field['field_type'][0])) # ignore cardinality for now
 
 
@@ -814,13 +638,13 @@ public class {0}Test {{
         dummy_start_generator = '//fixme start_generator callback without sensor {field_name}\n'
         dummy_getter = '//fixme getter callback without sensor {field_name}\n'
         stop_generator = """
-    private void stop{field_name}Callback() {{
+    private void stop{field_name_upper}Callback() {{
     vertx.cancelTimer({field_name}_callback_id);
   }}
         """
 
         start_generator = """
-  private void start{field_name}Generator() {{
+  private void start{field_name_upper}Callback() {{
     if ({field_name}_step == 0) {{
       return;
     }}
@@ -858,15 +682,17 @@ public class {0}Test {{
             if self.sensor_fields.has_key(f):
                 field = self.sensor_fields[f]
                 field_name = field['field']
-                print "field_name*****: " + field_name
+                print "field_name=====: " + field_name
                 if field['skip']:
                     continue
                 stop_generators += start_generator.format(
                                                 field_name=field_name,
+                                                field_name_upper=field_name[0].upper() + field_name[1:],
                                                 field_type=emulator_common.get_java_byte_buffer_storage_type(field['field_type'][0]) # ignore cardinality for now
                                                 )
                 start_generators += stop_generator.format(
-                                                field_name=field_name
+                                                field_name=field_name,
+                                                field_name_upper=field_name[0].upper() + field_name[1:]
                                                 )
                 getters += get_for_callback.format(field_name=field_name,
                                                    functionId=self.get_callback_packet_for_fieldname(field_name).get_upper_case_name())
@@ -889,9 +715,9 @@ public class {0}Test {{
   private Buffer {headless_camel_case_name}(Packet packet) {{
     {field_name} = {payload_function} Utils.unsignedInt(packet.getPayload());
     if ({field_name} == 0) {{
-      stop{field_name}Callback();
+      stop{affected_field}Callback();
     }} else {{
-      start{field_name}Callback();
+      start{affected_field}Callback();
     }}
     if (packet.getResponseExpected()) {{
       byte length = (byte) 8 + 0;
@@ -912,13 +738,14 @@ public class {0}Test {{
                 name_upper = packet.get_upper_case_name()
                 payload_function = packet.get_emulator_return_values2()[0]
                 
-                die stop{field_name}Callback(); braucht nicht {field_name} sondern das feld in mit grossbuchstaben am anfang
-                besser wäre es hier ueberall den fieldname der betroffen ist zur verfuegung zu haben
+                #die stop{field_name}Callback(); braucht nicht {field_name} sondern das feld in mit grossbuchstaben am anfang
+                #besser wäre es hier ueberall den fieldname der betroffen ist zur verfuegung zu haben
 
                 period_setters += period_template.format(
                                                          headless_camel_case_name=headless_camel_case_name,
                                                          name_lower=name_lower,
                                                          field_name=packet.field,
+                                                         affected_field=packet.field[0].upper() + packet.field[1:-14],
                                                          functionId=name_upper,
                                                          payload_function=payload_function
                                                          )
@@ -1007,7 +834,7 @@ public class {0}Test {{
         source += self.get_java_class()
         source += self.get_java_function_id_definitions()
         source += self.get_java_constants()
-        source += self.get_emulator_actor_fields()
+        #source += self.get_emulator_actor_fields()
         source += self.get_sensor_fields()
         source += self.get_sensor_value_generator()
         stop_callback, start_callback, getters = self.get_sensor_callback_methods()
