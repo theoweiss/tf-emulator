@@ -315,6 +315,7 @@ public final static String DEVICE_DISPLAY_NAME = "{3}";
         actor_getters = {}
         actor_getters.update(self.get_actor_getters())
         actor_getters.update(self.get_callback_getters())
+        actor_getters.update(self.get_callback_period_getters())
         actor_getters.update(self.get_isEnableds())
         for key in actor_getters.keys():
             packet = actor_getters[key][0]
@@ -593,6 +594,7 @@ public class {0}Test {{
         return fields
 
     def get_sensor_value_generator(self):
+        generator_inits = ''
         generators = ''
         generator = """
   private void start{field_name_upper}Generator() {{
@@ -619,59 +621,56 @@ public class {0}Test {{
   }}
         """
 
+        generator_init = '    start{field_name_upper}Generator();\n'
+
         for f in self.sensor_fields.keys():
             field = self.sensor_fields[f]
             if field['skip']:
                 continue
             field_name = field['field']
+            field_name_upper = field_name[0].upper() + field_name[1:]
             generators += generator.format(
                                     field_name=field_name,
-                                    field_name_upper=field_name[0].upper() + field_name[1:],
+                                    field_name_upper=field_name_upper,
                                     field_type=emulator_common.get_java_byte_buffer_storage_type(field['field_type'][0])) # ignore cardinality for now
+            generator_inits += generator_init.format(field_name_upper=field_name_upper)
 
-
-        return generators
+        return generators, generator_inits
 
     def get_sensor_callback_methods(self):
         #FIXME:
         dummy_stop_generator = '//fixme stop_generator callback without sensor {field_name}\n'
         dummy_start_generator = '//fixme start_generator callback without sensor {field_name}\n'
         dummy_getter = '//fixme getter callback without sensor {field_name}\n'
-        stop_generator = """
+        stop_callback = """
     private void stop{field_name_upper}Callback() {{
-    vertx.cancelTimer({field_name}_callback_id);
+        vertx.cancelTimer({field_name}_callback_id);
   }}
         """
 
-        start_generator = """
+        start_callback = """
   private void start{field_name_upper}Callback() {{
-    if ({field_name}_step == 0) {{
-      return;
-    }}
-    vertx.setPeriodic({field_name}_generator_period, id -> {{
-      if ({field_name}_direction == Step.UP) {{
-        if ({field_name} >= {field_name}_max) {{
-          {field_name}_direction = Step.DOWN;
-          this.{field_name} = ({field_type}) ({field_name} - {field_name}_step);
+    {field_name}_callback_id = vertx.setPeriodic({field_name}CallbackPeriod, id -> {{
+      if ({field_name} != {field_name}_last_value_called_back) {{
+        Set<Object> handlerids = vertx.sharedData().getLocalMap(Brickd.HANDLERIDMAP).keySet();
+        if (handlerids != null) {{
+          logger.debug("sending callback value");
+          for (Object handlerid : handlerids) {{
+            vertx.eventBus().publish((String) handlerid, get{field_name_upper}());
+          }}
         }} else {{
-          this.{field_name} = ({field_type}) ({field_name} + {field_name}_step);
-        }}
-      }} else {{
-        if ({field_name} >= {field_name}_min) {{
-          {field_name}_direction = Step.UP;
-          this.{field_name} = ({field_type}) ({field_name} + {field_name}_step);
-        }} else {{
-          this.{field_name} = ({field_type}) ({field_name} - {field_name}_step);
+          logger.info("no handlerids found in {field_name} callback");
         }}
       }}
     }});
   }}
-        """
 
+"""
+        
         get_for_callback = """
-  private Buffer get{field_name}() {{
+  private Buffer get{field_name_upper}() {{
       byte options = (byte) 0;
-      return get{field_name}Buffer(FUNCTION_{functionId}, options)
+      return get{field_name_upper}Buffer(FUNCTION_GET_{functionId}, options);
   }}
         """
 
@@ -679,23 +678,23 @@ public class {0}Test {{
         start_generators = ''
         getters = ''
         for f in self.callbacks.keys():
-            if self.sensor_fields.has_key(f):
-                field = self.sensor_fields[f]
-                field_name = field['field']
-                print "field_name=====: " + field_name
-                if field['skip']:
-                    continue
-                stop_generators += start_generator.format(
-                                                field_name=field_name,
-                                                field_name_upper=field_name[0].upper() + field_name[1:],
-                                                field_type=emulator_common.get_java_byte_buffer_storage_type(field['field_type'][0]) # ignore cardinality for now
-                                                )
-                start_generators += stop_generator.format(
-                                                field_name=field_name,
-                                                field_name_upper=field_name[0].upper() + field_name[1:]
-                                                )
-                getters += get_for_callback.format(field_name=field_name,
-                                                   functionId=self.get_callback_packet_for_fieldname(field_name).get_upper_case_name())
+            for key in self.sensor_fields.keys():
+                if self.sensor_fields[key]['field'] == f:
+                    field = self.sensor_fields[key]
+                    field_name = field['field']
+                    if field['skip']:
+                        continue
+                    stop_generators += start_callback.format(
+                                                    field_name=field_name,
+                                                    field_name_upper=field_name[0].upper() + field_name[1:],
+                                                    field_type=emulator_common.get_java_byte_buffer_storage_type(field['field_type'][0]) # ignore cardinality for now
+                                                    )
+                    start_generators += stop_callback.format(
+                                                    field_name=field_name,
+                                                    field_name_upper=field_name[0].upper() + field_name[1:]
+                                                    )
+                    getters += get_for_callback.format(field_name_upper=field_name[0].upper() + field_name[1:],
+                                                       functionId=self.get_callback_packet_for_fieldname(field_name).get_upper_case_name())
             else:
                 stop_generators += dummy_stop_generator.format(field_name=f)
                 start_generators += dummy_start_generator.format(field_name=f)
@@ -764,7 +763,7 @@ public class {0}Test {{
     Buffer header = Utils.createHeader(uidBytes, length, functionId, options, flags);
     Buffer buffer = Buffer.buffer();
     buffer.appendBuffer(header);
-    {buffers}
+{buffers}
     return buffer;
   }}
         """
@@ -772,15 +771,17 @@ public class {0}Test {{
         get_for_packet = """
   private Buffer get{field_name}Buffer(Packet packet) {{
       byte options = packet.getOptions();
-      return get{field_name}Buffer(FUNCTION_{functionId}, options)
+      return get{field_name}Buffer(FUNCTION_{functionId}, options);
   }}
         """
         for packet in self.get_packets('function'):
             if packet.subdevice_type == 'sensor':
-                bufferbytes = packet.get_emulator_return_values2()[1]
-                code += buffer_function.format(field_name=packet.field,
-                                               bufferbytes=bufferbytes)
-                code += get_for_packet.format(field_name=packet.field,
+                buffers, bufferbytes = packet.get_emulator_return_values2()
+                affected_field = packet.field[0].upper() + packet.field[1:]
+                code += buffer_function.format(field_name=affected_field,
+                                               bufferbytes=bufferbytes,
+                                               buffers=buffers)
+                code += get_for_packet.format(field_name=affected_field,
                                                 functionId=packet.get_upper_case_name())
                 
         return code
@@ -836,7 +837,23 @@ public class {0}Test {{
         source += self.get_java_constants()
         #source += self.get_emulator_actor_fields()
         source += self.get_sensor_fields()
-        source += self.get_sensor_value_generator()
+
+        generators, generator_inits = self.get_sensor_value_generator()
+        source += self.get_start_method()
+
+        #TODO: need this?
+        #source += self.get_java_response_expected()
+
+        # TODO: remove listener definitions for now
+        #source += self.get_java_callback_listener_definitions()
+        source += generator_inits
+        
+        source += self.get_start_method_end()
+
+        source += self.get_call_function()
+
+        source += generators
+
         stop_callback, start_callback, getters = self.get_sensor_callback_methods()
         source += stop_callback
         source += start_callback
@@ -854,17 +871,6 @@ public class {0}Test {{
 
         #TODO: I think listeners are not needed
         #source += self.get_java_listener_definitions()
-
-        source += self.get_start_method()
-
-        #TODO: need this?
-        #source += self.get_java_response_expected()
-
-        # TODO: remove listener definitions for now
-        #source += self.get_java_callback_listener_definitions()
-        source += self.get_start_method_end()
-
-        source += self.get_call_function()
 
         source += self.get_java_methods()
 
@@ -923,37 +929,37 @@ class JavaBindingsPacket(emulator_common.JavaPacket):
             call = ""
             element_type = element.get_type()
             if element_type == 'int8':
-                call = emulator_common.extract_value_function(element_type)
+                call = emulator_common.get_extract_value_function(element_type)
                 bufferbytes += 1 * element.get_cardinality()
             elif element_type == 'uint8':
-                call = emulator_common.extract_value_function(element_type)
+                call = emulator_common.get_extract_value_function(element_type)
                 bufferbytes += 1 * element.get_cardinality()
             elif element_type == 'int16':
-                call = emulator_common.extract_value_function(element_type)
+                call = emulator_common.get_extract_value_function(element_type)
                 bufferbytes += 2 * element.get_cardinality()
             elif element_type == 'uint16':
-                call = emulator_common.extract_value_function(element_type)
+                call = emulator_common.get_extract_value_function(element_type)
                 bufferbytes += 2 * element.get_cardinality()
             elif element_type == 'int32':
-                call = emulator_common.extract_value_function(element_type)
+                call = emulator_common.get_extract_value_function(element_type)
                 bufferbytes += 4 * element.get_cardinality()
             elif element_type == 'uint32':
-                call = emulator_common.extract_value_function(element_type)
+                call = emulator_common.get_extract_value_function(element_type)
                 bufferbytes += 4 * element.get_cardinality()
             elif element_type == 'uint64':
-                call = emulator_common.extract_value_function(element_type)
+                call = emulator_common.get_extract_value_function(element_type)
                 bufferbytes += 8 * element.get_cardinality()
             elif element_type == 'bool':
-                call = emulator_common.extract_value_function(element_type)
+                call = emulator_common.get_extract_value_function(element_type)
                 bufferbytes += 1 * element.get_cardinality()
             elif element_type == 'char':
-                call = emulator_common.extract_value_function(element_type)
+                call = emulator_common.get_extract_value_function(element_type)
                 bufferbytes += 1 * element.get_cardinality()
             elif element_type == 'string':
-                call = emulator_common.extract_value_function(element_type)
+                call = emulator_common.get_extract_value_function(element_type)
                 bufferbytes += 1 * element.get_cardinality()
             elif element_type == 'float':
-                call = emulator_common.extract_value_function(element_type)
+                call = emulator_common.get_extract_value_function(element_type)
                 bufferbytes += 4 * element.get_cardinality()
             
             buffers += buff.format(call.format(self.field))

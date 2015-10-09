@@ -70,7 +70,7 @@ class JavaDevice(common.Device):
                                                          'setResponseExpectedAll', 'getProtocol1BrickletName'):
                 continue
             packet_data = model_data[packet.get_headless_camel_case_name()]
-            self.subdevice_type = packet_data['subdevice_type']
+            packet.subdevice_type = packet_data['subdevice_type']
             packet.field = packet_data['field']
             packet.function_type = packet_data['function_type']
             if packet_data['subdevice_type'] == 'sensor':
@@ -176,7 +176,7 @@ class JavaDevice(common.Device):
             name_lower = packet.get_headless_camel_case_name()
             #print "name_lower " + name_lower
             if name_lower in special_setter_methods.keys():
-                print "special setter method : " + name_lower
+                # print "special setter method : " + name_lower
                 name = name_lower
                 special_setters[name_lower] = (packet, name)
             elif name_lower.startswith("set"):
@@ -208,12 +208,12 @@ class JavaDevice(common.Device):
                 booleans[name].insert(3, name_lower)
             else:
                 if name_lower in other_actor_methods:
-                    print "other actor method: " + name_lower
+                    # print "other actor method: " + name_lower
                     name = name_lower
                     other_actors[name_lower] = (packet, name)
                     continue
                 elif name_lower in other_sensor_methods:
-                    print "other actor sensor: " + name_lower
+                    # print "other actor sensor: " + name_lower
                     name = name_lower
                     other_sensors[name_lower] = (packet, name)
                     continue
@@ -241,7 +241,7 @@ class JavaDevice(common.Device):
                 
                     # we should not reach this point
                     if not found:
-                        print "other unknown method: " + name_lower
+                        # print "other unknown method: " + name_lower
                         name = name_lower
                         others[name_lower] = (packet, name)
 
@@ -250,7 +250,7 @@ class JavaDevice(common.Device):
                 if name == "Identity":
                     getIdentity[getter.get(name)[0]] = getter.get(name)[1]
                 elif name != "Protocol1BrickletName":
-                    print "sensor " + name
+                    # print "sensor " + name
                     # sensors is a list of function names
                     # TODO: hier muss auch noch das packet dazu das brauch ich später noch
                     sensors[getter.get(name)[0]] = (getter.get(name)[1], down_case_first(name))
@@ -264,7 +264,7 @@ class JavaDevice(common.Device):
                     callback_setters[setter.get(name)[0]] = (setter.get(name)[1], down_case_first(name))
                     callback_getters[getter.get(name)[0]] = (getter.get(name)[1], down_case_first(name))
                 else:
-                    print "actor: " + name
+                    # print "actor: " + name
                     # function names as keys, property name as value
                     # e.g. {"setProperty": "Property",
                     #       "getProperty": "Property"} 
@@ -402,8 +402,10 @@ random_value_function_4test = {
 }
 
 extract_value_function = {
+                          'int8': 'Utils.byte({0})',
                           'uint8': 'Utils.unsignedByte({0})',
                           'uint16': 'Utils.unsignedShort({0})',
+                          'int16': 'Utils.short({0})',
                           'uint32': 'Utils.unsignedInt({0})',
                           'int32': 'Utils.int({0})',
                           'int64': 'Utils.long({0})',
