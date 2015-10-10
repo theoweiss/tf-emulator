@@ -248,22 +248,23 @@ public final static String DEVICE_DISPLAY_NAME = "{3}";
             
         return funcstart + ifelse + funcend
 
-    def get_emulator_actor_fields(self):
-        field = "  private Buffer {0} = {1}Default();\n"
-        fields = ""
-#FIXME:  hier sollten wohl besser die  getter verwendet werden und dann sowas wie
-#packet.get_emulater_buffer_values implementiert werden
-# noch einfacher einfach den entsprechenden getter aufrufen
-# private Buffer state = getState(true);\n
-        setter = {}
-        setter.update(self.get_actor_getters())
-        setter.update(self.get_callback_getters())
-        setter.update(self.get_isEnableds())
-        for key in setter.keys():
-            packet = setter[key][0]
-            fields += field.format(setter[key][1], packet.get_headless_camel_case_name())
-            
-        return fields
+#     def get_emulator_actor_fields(self):
+#         field = "  private Buffer {0} = {1}Default();\n"
+#         fields = ""
+# #FIXME:  hier sollten wohl besser die  getter verwendet werden und dann sowas wie
+# #packet.get_emulater_buffer_values implementiert werden
+# # noch einfacher einfach den entsprechenden getter aufrufen
+# # private Buffer state = getState(true);\n
+#         setter = {}
+#         setter.update(self.get_actor_getters())
+#         setter.update(self.get_callback_getters())
+#         setter.update(self.get_isEnableds())
+#         for key in setter.keys():
+#             packet = setter[key][0]
+#             if packet.function_type != 'callback_period_setter':
+#                 fields += field.format(setter[key][1], packet.get_headless_camel_case_name())
+#             
+#         return fields
 
     def get_java_methods(self):
         methods = ''
@@ -290,7 +291,8 @@ public final static String DEVICE_DISPLAY_NAME = "{3}";
         default_method = """
   private Buffer {0}Default() {{
       Buffer buffer = Buffer.buffer();
-{1}      return buffer;
+{1}
+      return buffer;
   }}
 """
 
@@ -298,28 +300,28 @@ public final static String DEVICE_DISPLAY_NAME = "{3}";
         set_field = ''
         
         cls = self.get_camel_case_name()
-        sensors = self.get_sensors()
-    # get sensors
-        for key in sensors.keys():
-            packet = sensors[key][0]
-    #for packet in self.get_packets('function'):
-            name_lower = packet.get_headless_camel_case_name()
-            name_upper = packet.get_upper_case_name()
-            buffers, bufferbytes = packet.get_emulator_return_values()
-
-            methods += method.format(name_lower,
-                                     name_upper,
-                                     buffers, 
-                                     bufferbytes,
-                                     set_field)
+#         sensors = self.get_sensors()
+#     # get sensors
+#         for key in sensors.keys():
+#             packet = sensors[key][0]
+#     #for packet in self.get_packets('function'):
+#             name_lower = packet.get_headless_camel_case_name()
+#             name_upper = packet.get_upper_case_name()
+#             buffers, bufferbytes = packet.get_emulator_return_values()
+#             
+#             methods += method.format(name_lower,
+#                                      name_upper,
+#                                      buffers, 
+#                                      bufferbytes,
+#                                      set_field)
         actor_getters = {}
         actor_getters.update(self.get_actor_getters())
         actor_getters.update(self.get_callback_getters())
-        actor_getters.update(self.get_callback_period_getters())
         actor_getters.update(self.get_isEnableds())
         for key in actor_getters.keys():
             packet = actor_getters[key][0]
-            value_field = value_buffer.format(actor_getters[key][1])
+            field = actor_getters[key][1]
+            value_field = value_buffer.format(field)
             name_lower = packet.get_headless_camel_case_name()
             name_upper = packet.get_upper_case_name()
             buffers, bufferbytes = packet.get_emulator_return_values()
@@ -331,6 +333,20 @@ public final static String DEVICE_DISPLAY_NAME = "{3}";
                                      set_field)
             methods += default_method.format(name_lower, buffers)
 
+        callback_period_getters = self.get_callback_period_getters()
+        for key in callback_period_getters:
+            packet = callback_period_getters[key][0]
+            field = callback_period_getters[key][1]
+            name_lower = packet.get_headless_camel_case_name()
+            name_upper = packet.get_upper_case_name()
+            buffers, bufferbytes = packet.get_emulator_return_values2()
+
+            methods += method.format(name_lower,
+                                     name_upper,
+                                     buffers, 
+                                     bufferbytes,
+                                     set_field)
+            
         setter = {}
         setter.update(self.get_actors())
         setter.update(self.get_callback_setters())
@@ -553,6 +569,25 @@ public class {0}Test {{
 
         return methods
 
+    def get_actuator_fields(self):
+        fields = ''
+        field_template = """
+  private Buffer {field_name} = {field_default};
+        """
+    
+        for f in self.actor_fields.keys():
+            field = self.actor_fields[f]
+            if field['skip']:
+                continue
+            field_name = field['field']
+            packet = self.get_packet_for_fieldname(field_name)
+            if packet.function_type != 'callback_period_setter':
+                fields += field_template.format(field_name=field_name,
+                                                field_default="get{0}Default()".format(field_name[0].upper() + field_name[1:])
+                                                )
+        
+        return fields
+    
     def get_sensor_fields(self):
         """
   private short illuminance;
@@ -610,7 +645,7 @@ public class {0}Test {{
           this.{field_name} = ({field_type}) ({field_name} + {field_name}_step);
         }}
       }} else {{
-        if ({field_name} >= {field_name}_min) {{
+        if ({field_name} <= {field_name}_min) {{
           {field_name}_direction = Step.UP;
           this.{field_name} = ({field_type}) ({field_name} + {field_name}_step);
         }} else {{
@@ -650,17 +685,21 @@ public class {0}Test {{
 
         start_callback = """
   private void start{field_name_upper}Callback() {{
+    logger.trace("illuminanceCallbackPeriod is {{}}", illuminanceCallbackPeriod);
     {field_name}_callback_id = vertx.setPeriodic({field_name}CallbackPeriod, id -> {{
       if ({field_name} != {field_name}_last_value_called_back) {{
+        {field_name}_last_value_called_back = {field_name};
         Set<Object> handlerids = vertx.sharedData().getLocalMap(Brickd.HANDLERIDMAP).keySet();
         if (handlerids != null) {{
-          logger.debug("sending callback value");
+          logger.debug("{field_name} sending callback value");
           for (Object handlerid : handlerids) {{
-            vertx.eventBus().publish((String) handlerid, get{field_name_upper}());
+            vertx.eventBus().publish((String) handlerid, get{field_name_upper}4Callback());
           }}
         }} else {{
           logger.info("no handlerids found in {field_name} callback");
         }}
+      }} else {{
+        logger.debug("{field_name} value already called back");
       }}
     }});
   }}
@@ -668,9 +707,9 @@ public class {0}Test {{
 """
         
         get_for_callback = """
-  private Buffer get{field_name_upper}() {{
+  private Buffer get{field_name_upper}4Callback() {{
       byte options = (byte) 0;
-      return get{field_name_upper}Buffer(FUNCTION_GET_{functionId}, options);
+      return get{field_name_upper}Buffer(CALLBACK_{functionId}, options);
   }}
         """
 
@@ -695,6 +734,8 @@ public class {0}Test {{
                                                     )
                     getters += get_for_callback.format(field_name_upper=field_name[0].upper() + field_name[1:],
                                                        functionId=self.get_callback_packet_for_fieldname(field_name).get_upper_case_name())
+                else:
+                    print "sensorfield not found " + f
             else:
                 stop_generators += dummy_stop_generator.format(field_name=f)
                 start_generators += dummy_start_generator.format(field_name=f)
@@ -706,7 +747,12 @@ public class {0}Test {{
         for packet in self.callback_packets:
             if packet.field == field_name:
                 return packet
-            
+    
+    def get_packet_for_fieldname(self, field_name):
+        for packet in self.all_function_packets:
+            if packet.field == field_name:
+                return packet
+    
     def get_sensor_callback_period(self):
         #FIXME: muss beim methoden generieren erledigt werden
         period_setters = ''
@@ -773,7 +819,16 @@ public class {0}Test {{
       byte options = packet.getOptions();
       return get{field_name}Buffer(FUNCTION_{functionId}, options);
   }}
-        """
+"""
+        get_for_caller = """
+  private Buffer get{field_name}(Packet packet) {{
+    logger.debug("function get{field_name}");
+    if (packet.getResponseExpected()) {{
+      return get{field_name}Buffer(packet);
+    }}
+    return null;
+  }}
+"""
         for packet in self.get_packets('function'):
             if packet.subdevice_type == 'sensor':
                 buffers, bufferbytes = packet.get_emulator_return_values2()
@@ -783,6 +838,7 @@ public class {0}Test {{
                                                buffers=buffers)
                 code += get_for_packet.format(field_name=affected_field,
                                                 functionId=packet.get_upper_case_name())
+                code += get_for_caller.format(field_name=affected_field)
                 
         return code
 
@@ -836,6 +892,7 @@ public class {0}Test {{
         source += self.get_java_function_id_definitions()
         source += self.get_java_constants()
         #source += self.get_emulator_actor_fields()
+        source += self.get_actuator_fields()
         source += self.get_sensor_fields()
 
         generators, generator_inits = self.get_sensor_value_generator()
@@ -968,7 +1025,7 @@ class JavaBindingsPacket(emulator_common.JavaPacket):
     def get_emulator_return_values(self):
         bufferbytes = 0
         buffers = ""
-        buff = """      buffer.appendBytes({0});        
+        buff = """      buffer.appendBytes({0});
 """
         for element in self.get_elements('out'):
             call = ""

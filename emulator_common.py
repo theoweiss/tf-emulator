@@ -402,18 +402,18 @@ random_value_function_4test = {
 }
 
 extract_value_function = {
-                          'int8': 'Utils.byte({0})',
-                          'uint8': 'Utils.unsignedByte({0})',
-                          'uint16': 'Utils.unsignedShort({0})',
-                          'int16': 'Utils.short({0})',
-                          'uint32': 'Utils.unsignedInt({0})',
-                          'int32': 'Utils.int({0})',
-                          'int64': 'Utils.long({0})',
-                          'uint64': 'Utils.long({0})',
-                          'float': 'Utils.float({0})',
-                          'bool': 'Utils.bool({0})',
-                          'char': 'Utils.char({0})',
-                          'string': 'Utils.string({0})'
+                          'int8': 'Utils.getUInt8({0})',
+                          'uint8': 'Utils.getUInt8({0})',
+                          'uint16': 'Utils.getUInt16({0})',
+                          'int16': 'Utils.getUInt16({0})',
+                          'uint32': 'Utils.getUInt32({0})',
+                          'int32': 'Utils.getUInt32({0})',
+                          'int64': 'Utils.longBuffer({0})',
+                          'uint64': 'Utils.longBuffer({0})',
+                          'float': 'Utils.floatBuffer({0})',
+                          'bool': 'Utils.getUInt8({0})',
+                          'char': 'Utils.getUInt8({0})',
+                          'string': 'Utils.stringBuffer({0})'
                           }
 def get_extract_value_function(value_type):
     return extract_value_function[value_type]

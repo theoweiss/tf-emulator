@@ -3,12 +3,12 @@
   "port": 3244,
   "devices": [
    {
-     "type": "BrickDC",
+     "type": "BrickletAmbientLight",
      "uid": "dc",
      "enabled": true
    },
    {
-     "type": "BrickIMUV2",
+     "type": "BrickletAmbientLightV2",
      "uid": "imu2",
      "enabled": true
    }

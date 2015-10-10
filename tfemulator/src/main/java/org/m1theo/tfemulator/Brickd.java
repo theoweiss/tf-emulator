@@ -27,11 +27,10 @@ import io.vertx.core.json.JsonObject;
  */
 public class Brickd extends AbstractVerticle {
   public static String HANDLERIDMAP = "handlerids";
-  private Logger logger;
+  private Logger logger = LoggerFactory.getLogger(getClass());
 
   @Override
   public void start() throws Exception {
-    logger = LoggerFactory.getLogger(getClass());
     Integer port = config().getInteger("port");
     if (port == null) {
       port = 1234;

@@ -33,6 +33,7 @@ import java.util.Set;
 import org.m1theo.tfemulator.Brickd;
 import org.m1theo.tfemulator.CommonServices;
 import org.m1theo.tfemulator.Utils;
+import org.m1theo.tfemulator.Utils.Step;
 import org.m1theo.tfemulator.protocol.Packet;
 
 /**
@@ -81,14 +82,72 @@ public final static String DEVICE_DISPLAY_NAME = "DC Brick";
   public final static short DRIVE_MODE_DRIVE_BRAKE = (short)0;
   public final static short DRIVE_MODE_DRIVE_COAST = (short)1;
   String uidString;
+
   private Buffer pWMFrequency = getPWMFrequencyDefault();
+        
   private Buffer currentVelocityPeriod = getCurrentVelocityPeriodDefault();
+        
   private Buffer velocity = getVelocityDefault();
-  private Buffer driveMode = getDriveModeDefault();
-  private Buffer enabled = isEnabledDefault();
+        
+  private Buffer enabled = getEnabledDefault();
+        
   private Buffer minimumVoltage = getMinimumVoltageDefault();
-  private Buffer StatusLED = isStatusLEDEnabledDefault();
+        
+  private Buffer driveMode = getDriveModeDefault();
+        
+  private Buffer StatusLED = getStatusLEDDefault();
+        
   private Buffer acceleration = getAccelerationDefault();
+        
+  private short currentVelocity = 100;
+  private short currentVelocity_max = 1000;
+  private short currentVelocity_min = 0;
+  private short currentVelocity_step = 1;
+  private long currentVelocity_generator_period = 100;
+  private Step currentVelocity_direction = Step.UP;
+  private long currentVelocityCallbackPeriod;
+  private long currentVelocity_callback_id;
+  private short currentVelocity_last_value_called_back;
+
+  private short stackInputVoltage = 100;
+  private short stackInputVoltage_max = 1000;
+  private short stackInputVoltage_min = 0;
+  private short stackInputVoltage_step = 1;
+  private long stackInputVoltage_generator_period = 100;
+  private Step stackInputVoltage_direction = Step.UP;
+  private long stackInputVoltageCallbackPeriod;
+  private long stackInputVoltage_callback_id;
+  private short stackInputVoltage_last_value_called_back;
+
+  private short externalInputVoltage = 100;
+  private short externalInputVoltage_max = 1000;
+  private short externalInputVoltage_min = 0;
+  private short externalInputVoltage_step = 1;
+  private long externalInputVoltage_generator_period = 100;
+  private Step externalInputVoltage_direction = Step.UP;
+  private long externalInputVoltageCallbackPeriod;
+  private long externalInputVoltage_callback_id;
+  private short externalInputVoltage_last_value_called_back;
+
+  private short currentConsumption = 100;
+  private short currentConsumption_max = 1000;
+  private short currentConsumption_min = 0;
+  private short currentConsumption_step = 1;
+  private long currentConsumption_generator_period = 100;
+  private Step currentConsumption_direction = Step.UP;
+  private long currentConsumptionCallbackPeriod;
+  private long currentConsumption_callback_id;
+  private short currentConsumption_last_value_called_back;
+
+  private short chipTemperature = 100;
+  private short chipTemperature_max = 1000;
+  private short chipTemperature_min = 0;
+  private short chipTemperature_step = 1;
+  private long chipTemperature_generator_period = 100;
+  private Step chipTemperature_direction = Step.UP;
+  private long chipTemperatureCallbackPeriod;
+  private long chipTemperature_callback_id;
+  private short chipTemperature_last_value_called_back;
 
   /**
    * Starts a verticle for the device with the unique device ID \c uid.
@@ -142,6 +201,11 @@ public final static String DEVICE_DISPLAY_NAME = "DC Brick";
           }
         });
 
+    startCurrentVelocityGenerator();
+    startStackInputVoltageGenerator();
+    startExternalInputVoltageGenerator();
+    startCurrentConsumptionGenerator();
+    startChipTemperatureGenerator();
   }
 
   private Buffer callFunction(Packet packet) {
@@ -235,103 +299,280 @@ public final static String DEVICE_DISPLAY_NAME = "DC Brick";
   }
 
 
-  /**
-   * 
-   */
+  private void startCurrentVelocityGenerator() {
+    if (currentVelocity_step == 0) {
+      return;
+    }
+    vertx.setPeriodic(currentVelocity_generator_period, id -> {
+      if (currentVelocity_direction == Step.UP) {
+        if (currentVelocity >= currentVelocity_max) {
+          currentVelocity_direction = Step.DOWN;
+          this.currentVelocity = (short) (currentVelocity - currentVelocity_step);
+        } else {
+          this.currentVelocity = (short) (currentVelocity + currentVelocity_step);
+        }
+      } else {
+        if (currentVelocity <= currentVelocity_min) {
+          currentVelocity_direction = Step.UP;
+          this.currentVelocity = (short) (currentVelocity + currentVelocity_step);
+        } else {
+          this.currentVelocity = (short) (currentVelocity - currentVelocity_step);
+        }
+      }
+    });
+  }
+        
+  private void startStackInputVoltageGenerator() {
+    if (stackInputVoltage_step == 0) {
+      return;
+    }
+    vertx.setPeriodic(stackInputVoltage_generator_period, id -> {
+      if (stackInputVoltage_direction == Step.UP) {
+        if (stackInputVoltage >= stackInputVoltage_max) {
+          stackInputVoltage_direction = Step.DOWN;
+          this.stackInputVoltage = (short) (stackInputVoltage - stackInputVoltage_step);
+        } else {
+          this.stackInputVoltage = (short) (stackInputVoltage + stackInputVoltage_step);
+        }
+      } else {
+        if (stackInputVoltage <= stackInputVoltage_min) {
+          stackInputVoltage_direction = Step.UP;
+          this.stackInputVoltage = (short) (stackInputVoltage + stackInputVoltage_step);
+        } else {
+          this.stackInputVoltage = (short) (stackInputVoltage - stackInputVoltage_step);
+        }
+      }
+    });
+  }
+        
+  private void startExternalInputVoltageGenerator() {
+    if (externalInputVoltage_step == 0) {
+      return;
+    }
+    vertx.setPeriodic(externalInputVoltage_generator_period, id -> {
+      if (externalInputVoltage_direction == Step.UP) {
+        if (externalInputVoltage >= externalInputVoltage_max) {
+          externalInputVoltage_direction = Step.DOWN;
+          this.externalInputVoltage = (short) (externalInputVoltage - externalInputVoltage_step);
+        } else {
+          this.externalInputVoltage = (short) (externalInputVoltage + externalInputVoltage_step);
+        }
+      } else {
+        if (externalInputVoltage <= externalInputVoltage_min) {
+          externalInputVoltage_direction = Step.UP;
+          this.externalInputVoltage = (short) (externalInputVoltage + externalInputVoltage_step);
+        } else {
+          this.externalInputVoltage = (short) (externalInputVoltage - externalInputVoltage_step);
+        }
+      }
+    });
+  }
+        
+  private void startCurrentConsumptionGenerator() {
+    if (currentConsumption_step == 0) {
+      return;
+    }
+    vertx.setPeriodic(currentConsumption_generator_period, id -> {
+      if (currentConsumption_direction == Step.UP) {
+        if (currentConsumption >= currentConsumption_max) {
+          currentConsumption_direction = Step.DOWN;
+          this.currentConsumption = (short) (currentConsumption - currentConsumption_step);
+        } else {
+          this.currentConsumption = (short) (currentConsumption + currentConsumption_step);
+        }
+      } else {
+        if (currentConsumption <= currentConsumption_min) {
+          currentConsumption_direction = Step.UP;
+          this.currentConsumption = (short) (currentConsumption + currentConsumption_step);
+        } else {
+          this.currentConsumption = (short) (currentConsumption - currentConsumption_step);
+        }
+      }
+    });
+  }
+        
+  private void startChipTemperatureGenerator() {
+    if (chipTemperature_step == 0) {
+      return;
+    }
+    vertx.setPeriodic(chipTemperature_generator_period, id -> {
+      if (chipTemperature_direction == Step.UP) {
+        if (chipTemperature >= chipTemperature_max) {
+          chipTemperature_direction = Step.DOWN;
+          this.chipTemperature = (short) (chipTemperature - chipTemperature_step);
+        } else {
+          this.chipTemperature = (short) (chipTemperature + chipTemperature_step);
+        }
+      } else {
+        if (chipTemperature <= chipTemperature_min) {
+          chipTemperature_direction = Step.UP;
+          this.chipTemperature = (short) (chipTemperature + chipTemperature_step);
+        } else {
+          this.chipTemperature = (short) (chipTemperature - chipTemperature_step);
+        }
+      }
+    });
+  }
+        //fixme start_generator callback without sensor underVoltage
+//fixme start_generator callback without sensor emergencyShutdown
+//fixme start_generator callback without sensor velocityReached
+
+    private void stopCurrentVelocityCallback() {
+        vertx.cancelTimer(currentVelocity_callback_id);
+  }
+        //fixme start_generator callback without sensor currentVelocity
+//fixme stop_generator callback without sensor underVoltage
+//fixme stop_generator callback without sensor emergencyShutdown
+//fixme stop_generator callback without sensor velocityReached
+
+  private void startCurrentVelocityCallback() {
+    logger.trace("illuminanceCallbackPeriod is {}", illuminanceCallbackPeriod);
+    currentVelocity_callback_id = vertx.setPeriodic(currentVelocityCallbackPeriod, id -> {
+      if (currentVelocity != currentVelocity_last_value_called_back) {
+        currentVelocity_last_value_called_back = currentVelocity;
+        Set<Object> handlerids = vertx.sharedData().getLocalMap(Brickd.HANDLERIDMAP).keySet();
+        if (handlerids != null) {
+          logger.debug("currentVelocity sending callback value");
+          for (Object handlerid : handlerids) {
+            vertx.eventBus().publish((String) handlerid, getCurrentVelocity4Callback());
+          }
+        } else {
+          logger.info("no handlerids found in currentVelocity callback");
+        }
+      } else {
+        logger.debug("currentVelocity value already called back");
+      }
+    });
+  }
+
+//fixme stop_generator callback without sensor currentVelocity
+//fixme getter callback without sensor underVoltage
+//fixme getter callback without sensor emergencyShutdown
+//fixme getter callback without sensor velocityReached
+
+  private Buffer getCurrentVelocity4Callback() {
+      byte options = (byte) 0;
+      return getCurrentVelocityBuffer(CALLBACK_CURRENT_VELOCITY, options);
+  }
+        //fixme getter callback without sensor currentVelocity
+
+  private Buffer getCurrentVelocityBuffer(byte functionId, byte options) {
+    byte length = (byte) 8 + 2;
+    byte flags = (byte) 0;
+    Buffer header = Utils.createHeader(uidBytes, length, functionId, options, flags);
+    Buffer buffer = Buffer.buffer();
+    buffer.appendBuffer(header);
+    buffer.appendBytes(Utils.getUInt16(currentVelocity));
+
+    return buffer;
+  }
+        
+  private Buffer getCurrentVelocityBuffer(Packet packet) {
+      byte options = packet.getOptions();
+      return getCurrentVelocityBuffer(FUNCTION_GET_CURRENT_VELOCITY, options);
+  }
+
   private Buffer getCurrentVelocity(Packet packet) {
     logger.debug("function getCurrentVelocity");
     if (packet.getResponseExpected()) {
-      byte length = (byte) 8 + 2;
-      byte functionId = FUNCTION_GET_CURRENT_VELOCITY;
-      byte flags = (byte) 0;
-      Buffer header = Utils.createHeader(uidBytes, length, functionId, packet.getOptions(), flags);
-      Buffer buffer = Buffer.buffer();
-      buffer.appendBuffer(header);
-      buffer.appendBytes(Utils.get2ByteRandomValue(1));        
-
-      return buffer;
+      return getCurrentVelocityBuffer(packet);
     }
-
     return null;
   }
 
-  /**
-   * 
-   */
+  private Buffer getStackInputVoltageBuffer(byte functionId, byte options) {
+    byte length = (byte) 8 + 2;
+    byte flags = (byte) 0;
+    Buffer header = Utils.createHeader(uidBytes, length, functionId, options, flags);
+    Buffer buffer = Buffer.buffer();
+    buffer.appendBuffer(header);
+    buffer.appendBytes(Utils.getUInt16(stackInputVoltage));
+
+    return buffer;
+  }
+        
+  private Buffer getStackInputVoltageBuffer(Packet packet) {
+      byte options = packet.getOptions();
+      return getStackInputVoltageBuffer(FUNCTION_GET_STACK_INPUT_VOLTAGE, options);
+  }
+
   private Buffer getStackInputVoltage(Packet packet) {
     logger.debug("function getStackInputVoltage");
     if (packet.getResponseExpected()) {
-      byte length = (byte) 8 + 2;
-      byte functionId = FUNCTION_GET_STACK_INPUT_VOLTAGE;
-      byte flags = (byte) 0;
-      Buffer header = Utils.createHeader(uidBytes, length, functionId, packet.getOptions(), flags);
-      Buffer buffer = Buffer.buffer();
-      buffer.appendBuffer(header);
-      buffer.appendBytes(Utils.get2ByteURandomValue(1));        
-
-      return buffer;
+      return getStackInputVoltageBuffer(packet);
     }
-
     return null;
   }
 
-  /**
-   * 
-   */
+  private Buffer getExternalInputVoltageBuffer(byte functionId, byte options) {
+    byte length = (byte) 8 + 2;
+    byte flags = (byte) 0;
+    Buffer header = Utils.createHeader(uidBytes, length, functionId, options, flags);
+    Buffer buffer = Buffer.buffer();
+    buffer.appendBuffer(header);
+    buffer.appendBytes(Utils.getUInt16(externalInputVoltage));
+
+    return buffer;
+  }
+        
+  private Buffer getExternalInputVoltageBuffer(Packet packet) {
+      byte options = packet.getOptions();
+      return getExternalInputVoltageBuffer(FUNCTION_GET_EXTERNAL_INPUT_VOLTAGE, options);
+  }
+
   private Buffer getExternalInputVoltage(Packet packet) {
     logger.debug("function getExternalInputVoltage");
     if (packet.getResponseExpected()) {
-      byte length = (byte) 8 + 2;
-      byte functionId = FUNCTION_GET_EXTERNAL_INPUT_VOLTAGE;
-      byte flags = (byte) 0;
-      Buffer header = Utils.createHeader(uidBytes, length, functionId, packet.getOptions(), flags);
-      Buffer buffer = Buffer.buffer();
-      buffer.appendBuffer(header);
-      buffer.appendBytes(Utils.get2ByteURandomValue(1));        
-
-      return buffer;
+      return getExternalInputVoltageBuffer(packet);
     }
-
     return null;
   }
 
-  /**
-   * 
-   */
+  private Buffer getCurrentConsumptionBuffer(byte functionId, byte options) {
+    byte length = (byte) 8 + 2;
+    byte flags = (byte) 0;
+    Buffer header = Utils.createHeader(uidBytes, length, functionId, options, flags);
+    Buffer buffer = Buffer.buffer();
+    buffer.appendBuffer(header);
+    buffer.appendBytes(Utils.getUInt16(currentConsumption));
+
+    return buffer;
+  }
+        
+  private Buffer getCurrentConsumptionBuffer(Packet packet) {
+      byte options = packet.getOptions();
+      return getCurrentConsumptionBuffer(FUNCTION_GET_CURRENT_CONSUMPTION, options);
+  }
+
   private Buffer getCurrentConsumption(Packet packet) {
     logger.debug("function getCurrentConsumption");
     if (packet.getResponseExpected()) {
-      byte length = (byte) 8 + 2;
-      byte functionId = FUNCTION_GET_CURRENT_CONSUMPTION;
-      byte flags = (byte) 0;
-      Buffer header = Utils.createHeader(uidBytes, length, functionId, packet.getOptions(), flags);
-      Buffer buffer = Buffer.buffer();
-      buffer.appendBuffer(header);
-      buffer.appendBytes(Utils.get2ByteURandomValue(1));        
-
-      return buffer;
+      return getCurrentConsumptionBuffer(packet);
     }
-
     return null;
   }
 
-  /**
-   * 
-   */
+  private Buffer getChipTemperatureBuffer(byte functionId, byte options) {
+    byte length = (byte) 8 + 2;
+    byte flags = (byte) 0;
+    Buffer header = Utils.createHeader(uidBytes, length, functionId, options, flags);
+    Buffer buffer = Buffer.buffer();
+    buffer.appendBuffer(header);
+    buffer.appendBytes(Utils.getUInt16(chipTemperature));
+
+    return buffer;
+  }
+        
+  private Buffer getChipTemperatureBuffer(Packet packet) {
+      byte options = packet.getOptions();
+      return getChipTemperatureBuffer(FUNCTION_GET_CHIP_TEMPERATURE, options);
+  }
+
   private Buffer getChipTemperature(Packet packet) {
     logger.debug("function getChipTemperature");
     if (packet.getResponseExpected()) {
-      byte length = (byte) 8 + 2;
-      byte functionId = FUNCTION_GET_CHIP_TEMPERATURE;
-      byte flags = (byte) 0;
-      Buffer header = Utils.createHeader(uidBytes, length, functionId, packet.getOptions(), flags);
-      Buffer buffer = Buffer.buffer();
-      buffer.appendBuffer(header);
-      buffer.appendBytes(Utils.get2ByteRandomValue(1));        
-
-      return buffer;
+      return getChipTemperatureBuffer(packet);
     }
-
     return null;
   }
 
@@ -356,7 +597,8 @@ public final static String DEVICE_DISPLAY_NAME = "DC Brick";
 
   private Buffer getPWMFrequencyDefault() {
       Buffer buffer = Buffer.buffer();
-      buffer.appendBytes(Utils.get2ByteURandomValue(1));        
+      buffer.appendBytes(Utils.get2ByteURandomValue(1));
+
       return buffer;
   }
 
@@ -381,7 +623,8 @@ public final static String DEVICE_DISPLAY_NAME = "DC Brick";
 
   private Buffer getCurrentVelocityPeriodDefault() {
       Buffer buffer = Buffer.buffer();
-      buffer.appendBytes(Utils.get2ByteURandomValue(1));        
+      buffer.appendBytes(Utils.get2ByteURandomValue(1));
+
       return buffer;
   }
 
@@ -406,7 +649,8 @@ public final static String DEVICE_DISPLAY_NAME = "DC Brick";
 
   private Buffer getVelocityDefault() {
       Buffer buffer = Buffer.buffer();
-      buffer.appendBytes(Utils.get2ByteRandomValue(1));        
+      buffer.appendBytes(Utils.get2ByteRandomValue(1));
+
       return buffer;
   }
 
@@ -431,7 +675,8 @@ public final static String DEVICE_DISPLAY_NAME = "DC Brick";
 
   private Buffer getDriveModeDefault() {
       Buffer buffer = Buffer.buffer();
-      buffer.appendBytes(Utils.get1ByteURandomValue(1));        
+      buffer.appendBytes(Utils.get1ByteURandomValue(1));
+
       return buffer;
   }
 
@@ -456,7 +701,8 @@ public final static String DEVICE_DISPLAY_NAME = "DC Brick";
 
   private Buffer isEnabledDefault() {
       Buffer buffer = Buffer.buffer();
-      buffer.appendBytes(Utils.getBoolRandomValue(1));        
+      buffer.appendBytes(Utils.getBoolRandomValue(1));
+
       return buffer;
   }
 
@@ -481,7 +727,8 @@ public final static String DEVICE_DISPLAY_NAME = "DC Brick";
 
   private Buffer getMinimumVoltageDefault() {
       Buffer buffer = Buffer.buffer();
-      buffer.appendBytes(Utils.get2ByteURandomValue(1));        
+      buffer.appendBytes(Utils.get2ByteURandomValue(1));
+
       return buffer;
   }
 
@@ -506,7 +753,8 @@ public final static String DEVICE_DISPLAY_NAME = "DC Brick";
 
   private Buffer isStatusLEDEnabledDefault() {
       Buffer buffer = Buffer.buffer();
-      buffer.appendBytes(Utils.getBoolRandomValue(1));        
+      buffer.appendBytes(Utils.getBoolRandomValue(1));
+
       return buffer;
   }
 
@@ -531,7 +779,8 @@ public final static String DEVICE_DISPLAY_NAME = "DC Brick";
 
   private Buffer getAccelerationDefault() {
       Buffer buffer = Buffer.buffer();
-      buffer.appendBytes(Utils.get2ByteURandomValue(1));        
+      buffer.appendBytes(Utils.get2ByteURandomValue(1));
+
       return buffer;
   }
 

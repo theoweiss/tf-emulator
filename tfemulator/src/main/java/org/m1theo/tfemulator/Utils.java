@@ -319,13 +319,18 @@ public class Utils {
   }
 
   public static long unsignedInt(Buffer buffer) {
-    int data = buffer.getInt(0);
-    return (long) data & 0xFFFFFFFFL;
+    // http://stackoverflow.com/questions/1026761/how-to-convert-a-byte-array-to-its-numeric-value-java
+    byte[] bytes = buffer.getBytes(0, 3);
+    long value = 0;
+    for (int i = 0; i < bytes.length; i++) {
+      value += ((long) bytes[i] & 0xffL) << (8 * i);
+    }
+    return value;
   }
 
   public static byte[] getUInt32(long num) {
     // java long is used for storing uint32 from / for network bufferes
-    // extract 4 bytes from the 8 byte java int
+    // extract 4 bytes from the 8 byte java long
     byte[] bytes = new byte[4];
     bytes[0] = (byte) (num & 0xFF);
     bytes[1] = (byte) ((num >> 8) & 0xFF);
@@ -350,6 +355,10 @@ public class Utils {
     // extract one byte from the 2 byte java short
     byte b = (byte) (num & 0xFF);
     return b;
+  }
+
+  public static byte[] unsignedShort(short illuminance) {
+    return getUInt16(illuminance);
   }
 
   public static long uid2long(String uid) {
@@ -459,4 +468,6 @@ public class Utils {
   public static byte getRandomByte() {
     return 100;
   }
+
+
 }
