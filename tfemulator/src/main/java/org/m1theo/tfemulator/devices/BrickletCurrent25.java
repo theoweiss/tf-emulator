@@ -275,7 +275,7 @@ public final static String DEVICE_DISPLAY_NAME = "Current25 Bricklet";
 //fixme start_generator callback without sensor analogValueReached
 
   private void startCurrentCallback() {
-    logger.trace("illuminanceCallbackPeriod is {}", illuminanceCallbackPeriod);
+    logger.trace("currentCallbackPeriod is {}", currentCallbackPeriod);
     current_callback_id = vertx.setPeriodic(currentCallbackPeriod, id -> {
       if (current != current_last_value_called_back) {
         current_last_value_called_back = current;
@@ -297,7 +297,7 @@ public final static String DEVICE_DISPLAY_NAME = "Current25 Bricklet";
 //fixme stop_generator callback without sensor current
 
   private void startAnalogValueCallback() {
-    logger.trace("illuminanceCallbackPeriod is {}", illuminanceCallbackPeriod);
+    logger.trace("analogValueCallbackPeriod is {}", analogValueCallbackPeriod);
     analogValue_callback_id = vertx.setPeriodic(analogValueCallbackPeriod, id -> {
       if (analogValue != analogValue_last_value_called_back) {
         analogValue_last_value_called_back = analogValue;
@@ -404,7 +404,7 @@ public final static String DEVICE_DISPLAY_NAME = "Current25 Bricklet";
     Buffer header = Utils.createHeader(uidBytes, length, functionId, options, flags);
     Buffer buffer = Buffer.buffer();
     buffer.appendBuffer(header);
-    buffer.appendBytes(Utils.getUInt8(isOverCurrent));
+    buffer.appendBytes(Utils.getUInt8A(isOverCurrent));
 
     return buffer;
   }

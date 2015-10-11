@@ -201,7 +201,7 @@ public final static String DEVICE_DISPLAY_NAME = "Sound Intensity Bricklet";
 //fixme start_generator callback without sensor intensityReached
 
   private void startIntensityCallback() {
-    logger.trace("illuminanceCallbackPeriod is {}", illuminanceCallbackPeriod);
+    logger.trace("intensityCallbackPeriod is {}", intensityCallbackPeriod);
     intensity_callback_id = vertx.setPeriodic(intensityCallbackPeriod, id -> {
       if (intensity != intensity_last_value_called_back) {
         intensity_last_value_called_back = intensity;

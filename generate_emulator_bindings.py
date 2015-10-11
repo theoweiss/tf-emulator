@@ -685,7 +685,7 @@ public class {0}Test {{
 
         start_callback = """
   private void start{field_name_upper}Callback() {{
-    logger.trace("illuminanceCallbackPeriod is {{}}", illuminanceCallbackPeriod);
+    logger.trace("{field_name}CallbackPeriod is {{}}", {field_name}CallbackPeriod);
     {field_name}_callback_id = vertx.setPeriodic({field_name}CallbackPeriod, id -> {{
       if ({field_name} != {field_name}_last_value_called_back) {{
         {field_name}_last_value_called_back = {field_name};

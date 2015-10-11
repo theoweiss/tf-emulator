@@ -613,7 +613,7 @@ public final static String DEVICE_DISPLAY_NAME = "IMU Brick";
         //fixme start_generator callback without sensor allData
 
   private void startAccelerationCallback() {
-    logger.trace("illuminanceCallbackPeriod is {}", illuminanceCallbackPeriod);
+    logger.trace("accelerationCallbackPeriod is {}", accelerationCallbackPeriod);
     acceleration_callback_id = vertx.setPeriodic(accelerationCallbackPeriod, id -> {
       if (acceleration != acceleration_last_value_called_back) {
         acceleration_last_value_called_back = acceleration;
@@ -635,7 +635,7 @@ public final static String DEVICE_DISPLAY_NAME = "IMU Brick";
 //fixme stop_generator callback without sensor acceleration
 
   private void startOrientationCallback() {
-    logger.trace("illuminanceCallbackPeriod is {}", illuminanceCallbackPeriod);
+    logger.trace("orientationCallbackPeriod is {}", orientationCallbackPeriod);
     orientation_callback_id = vertx.setPeriodic(orientationCallbackPeriod, id -> {
       if (orientation != orientation_last_value_called_back) {
         orientation_last_value_called_back = orientation;
@@ -657,7 +657,7 @@ public final static String DEVICE_DISPLAY_NAME = "IMU Brick";
 //fixme stop_generator callback without sensor orientation
 
   private void startMagneticFieldCallback() {
-    logger.trace("illuminanceCallbackPeriod is {}", illuminanceCallbackPeriod);
+    logger.trace("magneticFieldCallbackPeriod is {}", magneticFieldCallbackPeriod);
     magneticField_callback_id = vertx.setPeriodic(magneticFieldCallbackPeriod, id -> {
       if (magneticField != magneticField_last_value_called_back) {
         magneticField_last_value_called_back = magneticField;
@@ -679,7 +679,7 @@ public final static String DEVICE_DISPLAY_NAME = "IMU Brick";
 //fixme stop_generator callback without sensor magneticField
 
   private void startAngularVelocityCallback() {
-    logger.trace("illuminanceCallbackPeriod is {}", illuminanceCallbackPeriod);
+    logger.trace("angularVelocityCallbackPeriod is {}", angularVelocityCallbackPeriod);
     angularVelocity_callback_id = vertx.setPeriodic(angularVelocityCallbackPeriod, id -> {
       if (angularVelocity != angularVelocity_last_value_called_back) {
         angularVelocity_last_value_called_back = angularVelocity;
@@ -701,7 +701,7 @@ public final static String DEVICE_DISPLAY_NAME = "IMU Brick";
 //fixme stop_generator callback without sensor angularVelocity
 
   private void startQuaternionCallback() {
-    logger.trace("illuminanceCallbackPeriod is {}", illuminanceCallbackPeriod);
+    logger.trace("quaternionCallbackPeriod is {}", quaternionCallbackPeriod);
     quaternion_callback_id = vertx.setPeriodic(quaternionCallbackPeriod, id -> {
       if (quaternion != quaternion_last_value_called_back) {
         quaternion_last_value_called_back = quaternion;
@@ -723,7 +723,7 @@ public final static String DEVICE_DISPLAY_NAME = "IMU Brick";
 //fixme stop_generator callback without sensor quaternion
 
   private void startAllDataCallback() {
-    logger.trace("illuminanceCallbackPeriod is {}", illuminanceCallbackPeriod);
+    logger.trace("allDataCallbackPeriod is {}", allDataCallbackPeriod);
     allData_callback_id = vertx.setPeriodic(allDataCallbackPeriod, id -> {
       if (allData != allData_last_value_called_back) {
         allData_last_value_called_back = allData;

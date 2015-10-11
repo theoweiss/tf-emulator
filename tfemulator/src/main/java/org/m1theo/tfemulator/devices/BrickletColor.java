@@ -340,7 +340,7 @@ public final static String DEVICE_DISPLAY_NAME = "Color Bricklet";
         //fixme start_generator callback without sensor illuminance
 
   private void startColorCallback() {
-    logger.trace("illuminanceCallbackPeriod is {}", illuminanceCallbackPeriod);
+    logger.trace("colorCallbackPeriod is {}", colorCallbackPeriod);
     color_callback_id = vertx.setPeriodic(colorCallbackPeriod, id -> {
       if (color != color_last_value_called_back) {
         color_last_value_called_back = color;
@@ -363,7 +363,7 @@ public final static String DEVICE_DISPLAY_NAME = "Color Bricklet";
 //fixme stop_generator callback without sensor colorReached
 
   private void startColorTemperatureCallback() {
-    logger.trace("illuminanceCallbackPeriod is {}", illuminanceCallbackPeriod);
+    logger.trace("colorTemperatureCallbackPeriod is {}", colorTemperatureCallbackPeriod);
     colorTemperature_callback_id = vertx.setPeriodic(colorTemperatureCallbackPeriod, id -> {
       if (colorTemperature != colorTemperature_last_value_called_back) {
         colorTemperature_last_value_called_back = colorTemperature;

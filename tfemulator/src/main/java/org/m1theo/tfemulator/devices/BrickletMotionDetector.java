@@ -171,7 +171,7 @@ public final static String DEVICE_DISPLAY_NAME = "Motion Detector Bricklet";
 //fixme stop_generator callback without sensor detectionCycleEnded
 
   private void startMotionDetectedCallback() {
-    logger.trace("illuminanceCallbackPeriod is {}", illuminanceCallbackPeriod);
+    logger.trace("motionDetectedCallbackPeriod is {}", motionDetectedCallbackPeriod);
     motionDetected_callback_id = vertx.setPeriodic(motionDetectedCallbackPeriod, id -> {
       if (motionDetected != motionDetected_last_value_called_back) {
         motionDetected_last_value_called_back = motionDetected;
@@ -205,7 +205,7 @@ public final static String DEVICE_DISPLAY_NAME = "Motion Detector Bricklet";
     Buffer header = Utils.createHeader(uidBytes, length, functionId, options, flags);
     Buffer buffer = Buffer.buffer();
     buffer.appendBuffer(header);
-    buffer.appendBytes(Utils.getUInt8(motionDetected));
+    buffer.appendBytes(Utils.getUInt8A(motionDetected));
 
     return buffer;
   }

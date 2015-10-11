@@ -426,7 +426,7 @@ public final static String DEVICE_DISPLAY_NAME = "DC Brick";
 //fixme stop_generator callback without sensor velocityReached
 
   private void startCurrentVelocityCallback() {
-    logger.trace("illuminanceCallbackPeriod is {}", illuminanceCallbackPeriod);
+    logger.trace("currentVelocityCallbackPeriod is {}", currentVelocityCallbackPeriod);
     currentVelocity_callback_id = vertx.setPeriodic(currentVelocityCallbackPeriod, id -> {
       if (currentVelocity != currentVelocity_last_value_called_back) {
         currentVelocity_last_value_called_back = currentVelocity;

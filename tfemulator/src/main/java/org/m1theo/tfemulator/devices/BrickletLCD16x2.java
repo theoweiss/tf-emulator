@@ -181,7 +181,7 @@ public final static String DEVICE_DISPLAY_NAME = "LCD 16x2 Bricklet";
     Buffer header = Utils.createHeader(uidBytes, length, functionId, options, flags);
     Buffer buffer = Buffer.buffer();
     buffer.appendBuffer(header);
-    buffer.appendBytes(Utils.getUInt8(isButtonPressed));
+    buffer.appendBytes(Utils.getUInt8A(isButtonPressed));
 
     return buffer;
   }

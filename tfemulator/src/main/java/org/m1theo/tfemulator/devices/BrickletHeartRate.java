@@ -219,7 +219,7 @@ public final static String DEVICE_DISPLAY_NAME = "Heart Rate Bricklet";
 //fixme start_generator callback without sensor beatStateChanged
 
   private void startHeartRateCallback() {
-    logger.trace("illuminanceCallbackPeriod is {}", illuminanceCallbackPeriod);
+    logger.trace("heartRateCallbackPeriod is {}", heartRateCallbackPeriod);
     heartRate_callback_id = vertx.setPeriodic(heartRateCallbackPeriod, id -> {
       if (heartRate != heartRate_last_value_called_back) {
         heartRate_last_value_called_back = heartRate;

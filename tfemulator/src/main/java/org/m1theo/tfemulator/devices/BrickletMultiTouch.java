@@ -190,7 +190,7 @@ public final static String DEVICE_DISPLAY_NAME = "Multi Touch Bricklet";
         //fixme start_generator callback without sensor touchState
 
   private void startTouchStateCallback() {
-    logger.trace("illuminanceCallbackPeriod is {}", illuminanceCallbackPeriod);
+    logger.trace("touchStateCallbackPeriod is {}", touchStateCallbackPeriod);
     touchState_callback_id = vertx.setPeriodic(touchStateCallbackPeriod, id -> {
       if (touchState != touchState_last_value_called_back) {
         touchState_last_value_called_back = touchState;

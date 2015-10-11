@@ -275,7 +275,7 @@ public final static String DEVICE_DISPLAY_NAME = "Distance IR Bricklet";
 //fixme start_generator callback without sensor distanceReached
 
   private void startAnalogValueCallback() {
-    logger.trace("illuminanceCallbackPeriod is {}", illuminanceCallbackPeriod);
+    logger.trace("analogValueCallbackPeriod is {}", analogValueCallbackPeriod);
     analogValue_callback_id = vertx.setPeriodic(analogValueCallbackPeriod, id -> {
       if (analogValue != analogValue_last_value_called_back) {
         analogValue_last_value_called_back = analogValue;
@@ -297,7 +297,7 @@ public final static String DEVICE_DISPLAY_NAME = "Distance IR Bricklet";
 //fixme stop_generator callback without sensor analogValue
 
   private void startDistanceCallback() {
-    logger.trace("illuminanceCallbackPeriod is {}", illuminanceCallbackPeriod);
+    logger.trace("distanceCallbackPeriod is {}", distanceCallbackPeriod);
     distance_callback_id = vertx.setPeriodic(distanceCallbackPeriod, id -> {
       if (distance != distance_last_value_called_back) {
         distance_last_value_called_back = distance;

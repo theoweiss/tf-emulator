@@ -203,7 +203,7 @@ public final static String DEVICE_DISPLAY_NAME = "Industrial Digital Out 4 Brick
     Buffer header = Utils.createHeader(uidBytes, length, functionId, options, flags);
     Buffer buffer = Buffer.buffer();
     buffer.appendBuffer(header);
-    buffer.appendBytes(Utils.getUInt8(availableForGroup));
+    buffer.appendBytes(Utils.getUInt8A(availableForGroup));
 
     return buffer;
   }

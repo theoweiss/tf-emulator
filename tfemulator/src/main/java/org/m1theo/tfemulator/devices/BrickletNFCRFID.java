@@ -281,9 +281,9 @@ public final static String DEVICE_DISPLAY_NAME = "NFC/RFID Bricklet";
     Buffer header = Utils.createHeader(uidBytes, length, functionId, options, flags);
     Buffer buffer = Buffer.buffer();
     buffer.appendBuffer(header);
-    buffer.appendBytes(Utils.getUInt8(tagID));
-    buffer.appendBytes(Utils.getUInt8(tagID));
-    buffer.appendBytes(Utils.getUInt8(tagID));
+    buffer.appendBytes(Utils.getUInt8A(tagID));
+    buffer.appendBytes(Utils.getUInt8A(tagID));
+    buffer.appendBytes(Utils.getUInt8A(tagID));
 
     return buffer;
   }
@@ -307,8 +307,8 @@ public final static String DEVICE_DISPLAY_NAME = "NFC/RFID Bricklet";
     Buffer header = Utils.createHeader(uidBytes, length, functionId, options, flags);
     Buffer buffer = Buffer.buffer();
     buffer.appendBuffer(header);
-    buffer.appendBytes(Utils.getUInt8(state));
-    buffer.appendBytes(Utils.getUInt8(state));
+    buffer.appendBytes(Utils.getUInt8A(state));
+    buffer.appendBytes(Utils.getUInt8A(state));
 
     return buffer;
   }
@@ -332,7 +332,7 @@ public final static String DEVICE_DISPLAY_NAME = "NFC/RFID Bricklet";
     Buffer header = Utils.createHeader(uidBytes, length, functionId, options, flags);
     Buffer buffer = Buffer.buffer();
     buffer.appendBuffer(header);
-    buffer.appendBytes(Utils.getUInt8(page));
+    buffer.appendBytes(Utils.getUInt8A(page));
 
     return buffer;
   }

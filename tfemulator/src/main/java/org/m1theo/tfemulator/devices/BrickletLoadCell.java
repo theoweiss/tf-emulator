@@ -249,7 +249,7 @@ public final static String DEVICE_DISPLAY_NAME = "Load Cell Bricklet";
 //fixme stop_generator callback without sensor weightReached
 
   private void startWeightCallback() {
-    logger.trace("illuminanceCallbackPeriod is {}", illuminanceCallbackPeriod);
+    logger.trace("weightCallbackPeriod is {}", weightCallbackPeriod);
     weight_callback_id = vertx.setPeriodic(weightCallbackPeriod, id -> {
       if (weight != weight_last_value_called_back) {
         weight_last_value_called_back = weight;

@@ -579,7 +579,7 @@ public final static String DEVICE_DISPLAY_NAME = "Stepper Brick";
 //fixme stop_generator callback without sensor newState
 
   private void startAllDataCallback() {
-    logger.trace("illuminanceCallbackPeriod is {}", illuminanceCallbackPeriod);
+    logger.trace("allDataCallbackPeriod is {}", allDataCallbackPeriod);
     allData_callback_id = vertx.setPeriodic(allDataCallbackPeriod, id -> {
       if (allData != allData_last_value_called_back) {
         allData_last_value_called_back = allData;

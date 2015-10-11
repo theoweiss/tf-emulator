@@ -201,7 +201,7 @@ public final static String DEVICE_DISPLAY_NAME = "Line Bricklet";
 //fixme start_generator callback without sensor reflectivityReached
 
   private void startReflectivityCallback() {
-    logger.trace("illuminanceCallbackPeriod is {}", illuminanceCallbackPeriod);
+    logger.trace("reflectivityCallbackPeriod is {}", reflectivityCallbackPeriod);
     reflectivity_callback_id = vertx.setPeriodic(reflectivityCallbackPeriod, id -> {
       if (reflectivity != reflectivity_last_value_called_back) {
         reflectivity_last_value_called_back = reflectivity;

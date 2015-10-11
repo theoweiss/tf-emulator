@@ -239,7 +239,7 @@ public final static String DEVICE_DISPLAY_NAME = "Hall Effect Bricklet";
         //fixme start_generator callback without sensor edgeCount
 
   private void startEdgeCountCallback() {
-    logger.trace("illuminanceCallbackPeriod is {}", illuminanceCallbackPeriod);
+    logger.trace("edgeCountCallbackPeriod is {}", edgeCountCallbackPeriod);
     edgeCount_callback_id = vertx.setPeriodic(edgeCountCallbackPeriod, id -> {
       if (edgeCount != edgeCount_last_value_called_back) {
         edgeCount_last_value_called_back = edgeCount;
@@ -291,7 +291,7 @@ public final static String DEVICE_DISPLAY_NAME = "Hall Effect Bricklet";
     Buffer header = Utils.createHeader(uidBytes, length, functionId, options, flags);
     Buffer buffer = Buffer.buffer();
     buffer.appendBuffer(header);
-    buffer.appendBytes(Utils.getUInt8(value));
+    buffer.appendBytes(Utils.getUInt8A(value));
 
     return buffer;
   }

@@ -282,7 +282,7 @@ public final static String DEVICE_DISPLAY_NAME = "Accelerometer Bricklet";
 //fixme start_generator callback without sensor accelerationReached
 
   private void startAccelerationCallback() {
-    logger.trace("illuminanceCallbackPeriod is {}", illuminanceCallbackPeriod);
+    logger.trace("accelerationCallbackPeriod is {}", accelerationCallbackPeriod);
     acceleration_callback_id = vertx.setPeriodic(accelerationCallbackPeriod, id -> {
       if (acceleration != acceleration_last_value_called_back) {
         acceleration_last_value_called_back = acceleration;

@@ -191,8 +191,8 @@ public final static String DEVICE_DISPLAY_NAME = "Dual Button Bricklet";
     Buffer header = Utils.createHeader(uidBytes, length, functionId, options, flags);
     Buffer buffer = Buffer.buffer();
     buffer.appendBuffer(header);
-    buffer.appendBytes(Utils.getUInt8(buttonState));
-    buffer.appendBytes(Utils.getUInt8(buttonState));
+    buffer.appendBytes(Utils.getUInt8A(buttonState));
+    buffer.appendBytes(Utils.getUInt8A(buttonState));
 
     return buffer;
   }

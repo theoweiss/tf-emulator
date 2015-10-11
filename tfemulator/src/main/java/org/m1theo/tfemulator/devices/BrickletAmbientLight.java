@@ -287,7 +287,7 @@ public final static String DEVICE_DISPLAY_NAME = "Ambient Light Bricklet";
 //fixme stop_generator callback without sensor illuminance
 
   private void startAnalogValueCallback() {
-    logger.trace("illuminanceCallbackPeriod is {}", illuminanceCallbackPeriod);
+    logger.trace("analogValueCallbackPeriod is {}", analogValueCallbackPeriod);
     analogValue_callback_id = vertx.setPeriodic(analogValueCallbackPeriod, id -> {
       if (analogValue != analogValue_last_value_called_back) {
         analogValue_last_value_called_back = analogValue;

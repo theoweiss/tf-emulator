@@ -214,7 +214,7 @@ public final static String DEVICE_DISPLAY_NAME = "Temperature Bricklet";
 //fixme stop_generator callback without sensor temperatureReached
 
   private void startTemperatureCallback() {
-    logger.trace("illuminanceCallbackPeriod is {}", illuminanceCallbackPeriod);
+    logger.trace("temperatureCallbackPeriod is {}", temperatureCallbackPeriod);
     temperature_callback_id = vertx.setPeriodic(temperatureCallbackPeriod, id -> {
       if (temperature != temperature_last_value_called_back) {
         temperature_last_value_called_back = temperature;

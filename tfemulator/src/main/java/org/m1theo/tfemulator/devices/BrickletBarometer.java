@@ -323,7 +323,7 @@ public final static String DEVICE_DISPLAY_NAME = "Barometer Bricklet";
 //fixme start_generator callback without sensor airPressureReached
 
   private void startAltitudeCallback() {
-    logger.trace("illuminanceCallbackPeriod is {}", illuminanceCallbackPeriod);
+    logger.trace("altitudeCallbackPeriod is {}", altitudeCallbackPeriod);
     altitude_callback_id = vertx.setPeriodic(altitudeCallbackPeriod, id -> {
       if (altitude != altitude_last_value_called_back) {
         altitude_last_value_called_back = altitude;
@@ -346,7 +346,7 @@ public final static String DEVICE_DISPLAY_NAME = "Barometer Bricklet";
 //fixme stop_generator callback without sensor altitudeReached
 
   private void startAirPressureCallback() {
-    logger.trace("illuminanceCallbackPeriod is {}", illuminanceCallbackPeriod);
+    logger.trace("airPressureCallbackPeriod is {}", airPressureCallbackPeriod);
     airPressure_callback_id = vertx.setPeriodic(airPressureCallbackPeriod, id -> {
       if (airPressure != airPressure_last_value_called_back) {
         airPressure_last_value_called_back = airPressure;

@@ -265,7 +265,7 @@ public final static String DEVICE_DISPLAY_NAME = "Humidity Bricklet";
         //fixme start_generator callback without sensor humidity
 
   private void startAnalogValueCallback() {
-    logger.trace("illuminanceCallbackPeriod is {}", illuminanceCallbackPeriod);
+    logger.trace("analogValueCallbackPeriod is {}", analogValueCallbackPeriod);
     analogValue_callback_id = vertx.setPeriodic(analogValueCallbackPeriod, id -> {
       if (analogValue != analogValue_last_value_called_back) {
         analogValue_last_value_called_back = analogValue;
@@ -289,7 +289,7 @@ public final static String DEVICE_DISPLAY_NAME = "Humidity Bricklet";
 //fixme stop_generator callback without sensor analogValueReached
 
   private void startHumidityCallback() {
-    logger.trace("illuminanceCallbackPeriod is {}", illuminanceCallbackPeriod);
+    logger.trace("humidityCallbackPeriod is {}", humidityCallbackPeriod);
     humidity_callback_id = vertx.setPeriodic(humidityCallbackPeriod, id -> {
       if (humidity != humidity_last_value_called_back) {
         humidity_last_value_called_back = humidity;

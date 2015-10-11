@@ -1094,7 +1094,7 @@ public final static String DEVICE_DISPLAY_NAME = "RED Brick";
     Buffer header = Utils.createHeader(uidBytes, length, functionId, options, flags);
     Buffer buffer = Buffer.buffer();
     buffer.appendBuffer(header);
-    buffer.appendBytes(Utils.getUInt8(stringLength));
+    buffer.appendBytes(Utils.getUInt8A(stringLength));
     buffer.appendBytes(Utils.getUInt32(stringLength));
 
     return buffer;
@@ -1119,7 +1119,7 @@ public final static String DEVICE_DISPLAY_NAME = "RED Brick";
     Buffer header = Utils.createHeader(uidBytes, length, functionId, options, flags);
     Buffer buffer = Buffer.buffer();
     buffer.appendBuffer(header);
-    buffer.appendBytes(Utils.getUInt8(listLength));
+    buffer.appendBytes(Utils.getUInt8A(listLength));
     buffer.appendBytes(Utils.getUInt16(listLength));
 
     return buffer;
@@ -1144,9 +1144,9 @@ public final static String DEVICE_DISPLAY_NAME = "RED Brick";
     Buffer header = Utils.createHeader(uidBytes, length, functionId, options, flags);
     Buffer buffer = Buffer.buffer();
     buffer.appendBuffer(header);
-    buffer.appendBytes(Utils.getUInt8(listItem));
+    buffer.appendBytes(Utils.getUInt8A(listItem));
     buffer.appendBytes(Utils.getUInt16(listItem));
-    buffer.appendBytes(Utils.getUInt8(listItem));
+    buffer.appendBytes(Utils.getUInt8A(listItem));
 
     return buffer;
   }
@@ -1170,8 +1170,8 @@ public final static String DEVICE_DISPLAY_NAME = "RED Brick";
     Buffer header = Utils.createHeader(uidBytes, length, functionId, options, flags);
     Buffer buffer = Buffer.buffer();
     buffer.appendBuffer(header);
-    buffer.appendBytes(Utils.getUInt8(fileInfo));
-    buffer.appendBytes(Utils.getUInt8(fileInfo));
+    buffer.appendBytes(Utils.getUInt8A(fileInfo));
+    buffer.appendBytes(Utils.getUInt8A(fileInfo));
     buffer.appendBytes(Utils.getUInt16(fileInfo));
     buffer.appendBytes(Utils.getUInt32(fileInfo));
     buffer.appendBytes(Utils.getUInt16(fileInfo));
@@ -1204,7 +1204,7 @@ public final static String DEVICE_DISPLAY_NAME = "RED Brick";
     Buffer header = Utils.createHeader(uidBytes, length, functionId, options, flags);
     Buffer buffer = Buffer.buffer();
     buffer.appendBuffer(header);
-    buffer.appendBytes(Utils.getUInt8(directoryName));
+    buffer.appendBytes(Utils.getUInt8A(directoryName));
     buffer.appendBytes(Utils.getUInt16(directoryName));
 
     return buffer;
@@ -1229,9 +1229,9 @@ public final static String DEVICE_DISPLAY_NAME = "RED Brick";
     Buffer header = Utils.createHeader(uidBytes, length, functionId, options, flags);
     Buffer buffer = Buffer.buffer();
     buffer.appendBuffer(header);
-    buffer.appendBytes(Utils.getUInt8(nextDirectoryEntry));
+    buffer.appendBytes(Utils.getUInt8A(nextDirectoryEntry));
     buffer.appendBytes(Utils.getUInt16(nextDirectoryEntry));
-    buffer.appendBytes(Utils.getUInt8(nextDirectoryEntry));
+    buffer.appendBytes(Utils.getUInt8A(nextDirectoryEntry));
 
     return buffer;
   }
@@ -1255,7 +1255,7 @@ public final static String DEVICE_DISPLAY_NAME = "RED Brick";
     Buffer header = Utils.createHeader(uidBytes, length, functionId, options, flags);
     Buffer buffer = Buffer.buffer();
     buffer.appendBuffer(header);
-    buffer.appendBytes(Utils.getUInt8(processes));
+    buffer.appendBytes(Utils.getUInt8A(processes));
     buffer.appendBytes(Utils.getUInt16(processes));
 
     return buffer;
@@ -1280,7 +1280,7 @@ public final static String DEVICE_DISPLAY_NAME = "RED Brick";
     Buffer header = Utils.createHeader(uidBytes, length, functionId, options, flags);
     Buffer buffer = Buffer.buffer();
     buffer.appendBuffer(header);
-    buffer.appendBytes(Utils.getUInt8(processCommand));
+    buffer.appendBytes(Utils.getUInt8A(processCommand));
     buffer.appendBytes(Utils.getUInt16(processCommand));
     buffer.appendBytes(Utils.getUInt16(processCommand));
     buffer.appendBytes(Utils.getUInt16(processCommand));
@@ -1308,7 +1308,7 @@ public final static String DEVICE_DISPLAY_NAME = "RED Brick";
     Buffer header = Utils.createHeader(uidBytes, length, functionId, options, flags);
     Buffer buffer = Buffer.buffer();
     buffer.appendBuffer(header);
-    buffer.appendBytes(Utils.getUInt8(processIdentity));
+    buffer.appendBytes(Utils.getUInt8A(processIdentity));
     buffer.appendBytes(Utils.getUInt32(processIdentity));
     buffer.appendBytes(Utils.getUInt32(processIdentity));
     buffer.appendBytes(Utils.getUInt32(processIdentity));
@@ -1335,7 +1335,7 @@ public final static String DEVICE_DISPLAY_NAME = "RED Brick";
     Buffer header = Utils.createHeader(uidBytes, length, functionId, options, flags);
     Buffer buffer = Buffer.buffer();
     buffer.appendBuffer(header);
-    buffer.appendBytes(Utils.getUInt8(processStdio));
+    buffer.appendBytes(Utils.getUInt8A(processStdio));
     buffer.appendBytes(Utils.getUInt16(processStdio));
     buffer.appendBytes(Utils.getUInt16(processStdio));
     buffer.appendBytes(Utils.getUInt16(processStdio));
@@ -1362,10 +1362,10 @@ public final static String DEVICE_DISPLAY_NAME = "RED Brick";
     Buffer header = Utils.createHeader(uidBytes, length, functionId, options, flags);
     Buffer buffer = Buffer.buffer();
     buffer.appendBuffer(header);
-    buffer.appendBytes(Utils.getUInt8(processState));
-    buffer.appendBytes(Utils.getUInt8(processState));
+    buffer.appendBytes(Utils.getUInt8A(processState));
+    buffer.appendBytes(Utils.getUInt8A(processState));
     buffer.appendBytes(Utils.longBuffer(processState));
-    buffer.appendBytes(Utils.getUInt8(processState));
+    buffer.appendBytes(Utils.getUInt8A(processState));
 
     return buffer;
   }
@@ -1389,7 +1389,7 @@ public final static String DEVICE_DISPLAY_NAME = "RED Brick";
     Buffer header = Utils.createHeader(uidBytes, length, functionId, options, flags);
     Buffer buffer = Buffer.buffer();
     buffer.appendBuffer(header);
-    buffer.appendBytes(Utils.getUInt8(programs));
+    buffer.appendBytes(Utils.getUInt8A(programs));
     buffer.appendBytes(Utils.getUInt16(programs));
 
     return buffer;
@@ -1414,7 +1414,7 @@ public final static String DEVICE_DISPLAY_NAME = "RED Brick";
     Buffer header = Utils.createHeader(uidBytes, length, functionId, options, flags);
     Buffer buffer = Buffer.buffer();
     buffer.appendBuffer(header);
-    buffer.appendBytes(Utils.getUInt8(programIdentifier));
+    buffer.appendBytes(Utils.getUInt8A(programIdentifier));
     buffer.appendBytes(Utils.getUInt16(programIdentifier));
 
     return buffer;
@@ -1439,7 +1439,7 @@ public final static String DEVICE_DISPLAY_NAME = "RED Brick";
     Buffer header = Utils.createHeader(uidBytes, length, functionId, options, flags);
     Buffer buffer = Buffer.buffer();
     buffer.appendBuffer(header);
-    buffer.appendBytes(Utils.getUInt8(programRootDirectory));
+    buffer.appendBytes(Utils.getUInt8A(programRootDirectory));
     buffer.appendBytes(Utils.getUInt16(programRootDirectory));
 
     return buffer;
@@ -1464,8 +1464,8 @@ public final static String DEVICE_DISPLAY_NAME = "RED Brick";
     Buffer header = Utils.createHeader(uidBytes, length, functionId, options, flags);
     Buffer buffer = Buffer.buffer();
     buffer.appendBuffer(header);
-    buffer.appendBytes(Utils.getUInt8(programSchedulerState));
-    buffer.appendBytes(Utils.getUInt8(programSchedulerState));
+    buffer.appendBytes(Utils.getUInt8A(programSchedulerState));
+    buffer.appendBytes(Utils.getUInt8A(programSchedulerState));
     buffer.appendBytes(Utils.longBuffer(programSchedulerState));
     buffer.appendBytes(Utils.getUInt16(programSchedulerState));
 
@@ -1491,7 +1491,7 @@ public final static String DEVICE_DISPLAY_NAME = "RED Brick";
     Buffer header = Utils.createHeader(uidBytes, length, functionId, options, flags);
     Buffer buffer = Buffer.buffer();
     buffer.appendBuffer(header);
-    buffer.appendBytes(Utils.getUInt8(lastSpawnedProgramProcess));
+    buffer.appendBytes(Utils.getUInt8A(lastSpawnedProgramProcess));
     buffer.appendBytes(Utils.getUInt16(lastSpawnedProgramProcess));
     buffer.appendBytes(Utils.longBuffer(lastSpawnedProgramProcess));
 
@@ -1517,7 +1517,7 @@ public final static String DEVICE_DISPLAY_NAME = "RED Brick";
     Buffer header = Utils.createHeader(uidBytes, length, functionId, options, flags);
     Buffer buffer = Buffer.buffer();
     buffer.appendBuffer(header);
-    buffer.appendBytes(Utils.getUInt8(customProgramOptionNames));
+    buffer.appendBytes(Utils.getUInt8A(customProgramOptionNames));
     buffer.appendBytes(Utils.getUInt16(customProgramOptionNames));
 
     return buffer;

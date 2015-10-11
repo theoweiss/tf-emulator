@@ -880,7 +880,7 @@ public final static String DEVICE_DISPLAY_NAME = "Master Brick";
 //fixme start_generator callback without sensor stackCurrentReached
 
   private void startStackCurrentCallback() {
-    logger.trace("illuminanceCallbackPeriod is {}", illuminanceCallbackPeriod);
+    logger.trace("stackCurrentCallbackPeriod is {}", stackCurrentCallbackPeriod);
     stackCurrent_callback_id = vertx.setPeriodic(stackCurrentCallbackPeriod, id -> {
       if (stackCurrent != stackCurrent_last_value_called_back) {
         stackCurrent_last_value_called_back = stackCurrent;
@@ -904,7 +904,7 @@ public final static String DEVICE_DISPLAY_NAME = "Master Brick";
 //fixme stop_generator callback without sensor usbVoltageReached
 
   private void startStackVoltageCallback() {
-    logger.trace("illuminanceCallbackPeriod is {}", illuminanceCallbackPeriod);
+    logger.trace("stackVoltageCallbackPeriod is {}", stackVoltageCallbackPeriod);
     stackVoltage_callback_id = vertx.setPeriodic(stackVoltageCallbackPeriod, id -> {
       if (stackVoltage != stackVoltage_last_value_called_back) {
         stackVoltage_last_value_called_back = stackVoltage;
@@ -1054,7 +1054,7 @@ public final static String DEVICE_DISPLAY_NAME = "Master Brick";
     Buffer header = Utils.createHeader(uidBytes, length, functionId, options, flags);
     Buffer buffer = Buffer.buffer();
     buffer.appendBuffer(header);
-    buffer.appendBytes(Utils.getUInt8(isChibiPresent));
+    buffer.appendBytes(Utils.getUInt8A(isChibiPresent));
 
     return buffer;
   }
@@ -1078,7 +1078,7 @@ public final static String DEVICE_DISPLAY_NAME = "Master Brick";
     Buffer header = Utils.createHeader(uidBytes, length, functionId, options, flags);
     Buffer buffer = Buffer.buffer();
     buffer.appendBuffer(header);
-    buffer.appendBytes(Utils.getUInt8(chibiSignalStrength));
+    buffer.appendBytes(Utils.getUInt8A(chibiSignalStrength));
 
     return buffer;
   }
@@ -1153,16 +1153,16 @@ public final static String DEVICE_DISPLAY_NAME = "Master Brick";
     Buffer header = Utils.createHeader(uidBytes, length, functionId, options, flags);
     Buffer buffer = Buffer.buffer();
     buffer.appendBuffer(header);
-    buffer.appendBytes(Utils.getUInt8(wifiStatus));
-    buffer.appendBytes(Utils.getUInt8(wifiStatus));
-    buffer.appendBytes(Utils.getUInt8(wifiStatus));
+    buffer.appendBytes(Utils.getUInt8A(wifiStatus));
+    buffer.appendBytes(Utils.getUInt8A(wifiStatus));
+    buffer.appendBytes(Utils.getUInt8A(wifiStatus));
     buffer.appendBytes(Utils.getUInt16(wifiStatus));
-    buffer.appendBytes(Utils.getUInt8(wifiStatus));
-    buffer.appendBytes(Utils.getUInt8(wifiStatus));
-    buffer.appendBytes(Utils.getUInt8(wifiStatus));
+    buffer.appendBytes(Utils.getUInt8A(wifiStatus));
+    buffer.appendBytes(Utils.getUInt8A(wifiStatus));
+    buffer.appendBytes(Utils.getUInt8A(wifiStatus));
     buffer.appendBytes(Utils.getUInt32(wifiStatus));
     buffer.appendBytes(Utils.getUInt32(wifiStatus));
-    buffer.appendBytes(Utils.getUInt8(wifiStatus));
+    buffer.appendBytes(Utils.getUInt8A(wifiStatus));
 
     return buffer;
   }
@@ -1236,7 +1236,7 @@ public final static String DEVICE_DISPLAY_NAME = "Master Brick";
     Buffer header = Utils.createHeader(uidBytes, length, functionId, options, flags);
     Buffer buffer = Buffer.buffer();
     buffer.appendBuffer(header);
-    buffer.appendBytes(Utils.getUInt8(isEthernetPresent));
+    buffer.appendBytes(Utils.getUInt8A(isEthernetPresent));
 
     return buffer;
   }
@@ -1260,10 +1260,10 @@ public final static String DEVICE_DISPLAY_NAME = "Master Brick";
     Buffer header = Utils.createHeader(uidBytes, length, functionId, options, flags);
     Buffer buffer = Buffer.buffer();
     buffer.appendBuffer(header);
-    buffer.appendBytes(Utils.getUInt8(ethernetStatus));
-    buffer.appendBytes(Utils.getUInt8(ethernetStatus));
-    buffer.appendBytes(Utils.getUInt8(ethernetStatus));
-    buffer.appendBytes(Utils.getUInt8(ethernetStatus));
+    buffer.appendBytes(Utils.getUInt8A(ethernetStatus));
+    buffer.appendBytes(Utils.getUInt8A(ethernetStatus));
+    buffer.appendBytes(Utils.getUInt8A(ethernetStatus));
+    buffer.appendBytes(Utils.getUInt8A(ethernetStatus));
     buffer.appendBytes(Utils.getUInt32(ethernetStatus));
     buffer.appendBytes(Utils.getUInt32(ethernetStatus));
     buffer.appendBytes(Utils.stringBuffer(ethernetStatus));

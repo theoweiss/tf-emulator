@@ -402,8 +402,8 @@ random_value_function_4test = {
 }
 
 extract_value_function = {
-                          'int8': 'Utils.getUInt8({0})',
-                          'uint8': 'Utils.getUInt8({0})',
+                          'int8': 'Utils.getUInt8A({0})',
+                          'uint8': 'Utils.getUInt8A({0})',
                           'uint16': 'Utils.getUInt16({0})',
                           'int16': 'Utils.getUInt16({0})',
                           'uint32': 'Utils.getUInt32({0})',
@@ -411,8 +411,8 @@ extract_value_function = {
                           'int64': 'Utils.longBuffer({0})',
                           'uint64': 'Utils.longBuffer({0})',
                           'float': 'Utils.floatBuffer({0})',
-                          'bool': 'Utils.getUInt8({0})',
-                          'char': 'Utils.getUInt8({0})',
+                          'bool': 'Utils.getUInt8A({0})',
+                          'char': 'Utils.getUInt8A({0})',
                           'string': 'Utils.stringBuffer({0})'
                           }
 def get_extract_value_function(value_type):

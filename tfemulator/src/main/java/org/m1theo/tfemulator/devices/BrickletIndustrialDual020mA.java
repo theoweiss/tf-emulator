@@ -215,7 +215,7 @@ public final static String DEVICE_DISPLAY_NAME = "Industrial Dual 0-20mA Brickle
 //fixme start_generator callback without sensor currentReached
 
   private void startCurrentCallback() {
-    logger.trace("illuminanceCallbackPeriod is {}", illuminanceCallbackPeriod);
+    logger.trace("currentCallbackPeriod is {}", currentCallbackPeriod);
     current_callback_id = vertx.setPeriodic(currentCallbackPeriod, id -> {
       if (current != current_last_value_called_back) {
         current_last_value_called_back = current;

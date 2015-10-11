@@ -183,7 +183,7 @@ public final static String DEVICE_DISPLAY_NAME = "Tilt Bricklet";
         //fixme start_generator callback without sensor tiltState
 
   private void startTiltStateCallback() {
-    logger.trace("illuminanceCallbackPeriod is {}", illuminanceCallbackPeriod);
+    logger.trace("tiltStateCallbackPeriod is {}", tiltStateCallbackPeriod);
     tiltState_callback_id = vertx.setPeriodic(tiltStateCallbackPeriod, id -> {
       if (tiltState != tiltState_last_value_called_back) {
         tiltState_last_value_called_back = tiltState;
@@ -216,7 +216,7 @@ public final static String DEVICE_DISPLAY_NAME = "Tilt Bricklet";
     Buffer header = Utils.createHeader(uidBytes, length, functionId, options, flags);
     Buffer buffer = Buffer.buffer();
     buffer.appendBuffer(header);
-    buffer.appendBytes(Utils.getUInt8(tiltState));
+    buffer.appendBytes(Utils.getUInt8A(tiltState));
 
     return buffer;
   }

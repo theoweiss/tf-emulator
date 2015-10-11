@@ -393,7 +393,7 @@ public final static String DEVICE_DISPLAY_NAME = "GPS Bricklet";
         //fixme start_generator callback without sensor dateTime
 
   private void startStatusCallback() {
-    logger.trace("illuminanceCallbackPeriod is {}", illuminanceCallbackPeriod);
+    logger.trace("statusCallbackPeriod is {}", statusCallbackPeriod);
     status_callback_id = vertx.setPeriodic(statusCallbackPeriod, id -> {
       if (status != status_last_value_called_back) {
         status_last_value_called_back = status;
@@ -415,7 +415,7 @@ public final static String DEVICE_DISPLAY_NAME = "GPS Bricklet";
 //fixme stop_generator callback without sensor status
 
   private void startMotionCallback() {
-    logger.trace("illuminanceCallbackPeriod is {}", illuminanceCallbackPeriod);
+    logger.trace("motionCallbackPeriod is {}", motionCallbackPeriod);
     motion_callback_id = vertx.setPeriodic(motionCallbackPeriod, id -> {
       if (motion != motion_last_value_called_back) {
         motion_last_value_called_back = motion;
@@ -437,7 +437,7 @@ public final static String DEVICE_DISPLAY_NAME = "GPS Bricklet";
 //fixme stop_generator callback without sensor motion
 
   private void startAltitudeCallback() {
-    logger.trace("illuminanceCallbackPeriod is {}", illuminanceCallbackPeriod);
+    logger.trace("altitudeCallbackPeriod is {}", altitudeCallbackPeriod);
     altitude_callback_id = vertx.setPeriodic(altitudeCallbackPeriod, id -> {
       if (altitude != altitude_last_value_called_back) {
         altitude_last_value_called_back = altitude;
@@ -459,7 +459,7 @@ public final static String DEVICE_DISPLAY_NAME = "GPS Bricklet";
 //fixme stop_generator callback without sensor altitude
 
   private void startCoordinatesCallback() {
-    logger.trace("illuminanceCallbackPeriod is {}", illuminanceCallbackPeriod);
+    logger.trace("coordinatesCallbackPeriod is {}", coordinatesCallbackPeriod);
     coordinates_callback_id = vertx.setPeriodic(coordinatesCallbackPeriod, id -> {
       if (coordinates != coordinates_last_value_called_back) {
         coordinates_last_value_called_back = coordinates;
@@ -481,7 +481,7 @@ public final static String DEVICE_DISPLAY_NAME = "GPS Bricklet";
 //fixme stop_generator callback without sensor coordinates
 
   private void startDateTimeCallback() {
-    logger.trace("illuminanceCallbackPeriod is {}", illuminanceCallbackPeriod);
+    logger.trace("dateTimeCallbackPeriod is {}", dateTimeCallbackPeriod);
     dateTime_callback_id = vertx.setPeriodic(dateTimeCallbackPeriod, id -> {
       if (dateTime != dateTime_last_value_called_back) {
         dateTime_last_value_called_back = dateTime;
@@ -634,9 +634,9 @@ public final static String DEVICE_DISPLAY_NAME = "GPS Bricklet";
     Buffer buffer = Buffer.buffer();
     buffer.appendBuffer(header);
     buffer.appendBytes(Utils.getUInt32(coordinates));
-    buffer.appendBytes(Utils.getUInt8(coordinates));
+    buffer.appendBytes(Utils.getUInt8A(coordinates));
     buffer.appendBytes(Utils.getUInt32(coordinates));
-    buffer.appendBytes(Utils.getUInt8(coordinates));
+    buffer.appendBytes(Utils.getUInt8A(coordinates));
     buffer.appendBytes(Utils.getUInt16(coordinates));
     buffer.appendBytes(Utils.getUInt16(coordinates));
     buffer.appendBytes(Utils.getUInt16(coordinates));
@@ -664,9 +664,9 @@ public final static String DEVICE_DISPLAY_NAME = "GPS Bricklet";
     Buffer header = Utils.createHeader(uidBytes, length, functionId, options, flags);
     Buffer buffer = Buffer.buffer();
     buffer.appendBuffer(header);
-    buffer.appendBytes(Utils.getUInt8(status));
-    buffer.appendBytes(Utils.getUInt8(status));
-    buffer.appendBytes(Utils.getUInt8(status));
+    buffer.appendBytes(Utils.getUInt8A(status));
+    buffer.appendBytes(Utils.getUInt8A(status));
+    buffer.appendBytes(Utils.getUInt8A(status));
 
     return buffer;
   }

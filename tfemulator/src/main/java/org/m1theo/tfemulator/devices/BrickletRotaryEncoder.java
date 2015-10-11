@@ -209,7 +209,7 @@ public final static String DEVICE_DISPLAY_NAME = "Rotary Encoder Bricklet";
 //fixme start_generator callback without sensor released
 
   private void startCountCallback() {
-    logger.trace("illuminanceCallbackPeriod is {}", illuminanceCallbackPeriod);
+    logger.trace("countCallbackPeriod is {}", countCallbackPeriod);
     count_callback_id = vertx.setPeriodic(countCallbackPeriod, id -> {
       if (count != count_last_value_called_back) {
         count_last_value_called_back = count;

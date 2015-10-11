@@ -350,6 +350,14 @@ public class Utils {
     return bytes;
   }
 
+  public static byte[] getUInt8A(short num) {
+    // java short is used for storing uint8 from / for network bufferes
+    // extract one byte from the 2 byte java short
+    byte[] bytes = new byte[1];
+    bytes[0] = (byte) (num & 0xFF);
+    return bytes;
+  }
+
   public static byte getUInt8(short num) {
     // java short is used for storing uint8 from / for network bufferes
     // extract one byte from the 2 byte java short

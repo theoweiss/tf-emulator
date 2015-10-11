@@ -275,7 +275,7 @@ public final static String DEVICE_DISPLAY_NAME = "Temperature IR Bricklet";
 //fixme start_generator callback without sensor objectTemperatureReached
 
   private void startObjectTemperatureCallback() {
-    logger.trace("illuminanceCallbackPeriod is {}", illuminanceCallbackPeriod);
+    logger.trace("objectTemperatureCallbackPeriod is {}", objectTemperatureCallbackPeriod);
     objectTemperature_callback_id = vertx.setPeriodic(objectTemperatureCallbackPeriod, id -> {
       if (objectTemperature != objectTemperature_last_value_called_back) {
         objectTemperature_last_value_called_back = objectTemperature;
@@ -298,7 +298,7 @@ public final static String DEVICE_DISPLAY_NAME = "Temperature IR Bricklet";
 //fixme stop_generator callback without sensor ambientTemperatureReached
 
   private void startAmbientTemperatureCallback() {
-    logger.trace("illuminanceCallbackPeriod is {}", illuminanceCallbackPeriod);
+    logger.trace("ambientTemperatureCallbackPeriod is {}", ambientTemperatureCallbackPeriod);
     ambientTemperature_callback_id = vertx.setPeriodic(ambientTemperatureCallbackPeriod, id -> {
       if (ambientTemperature != ambientTemperature_last_value_called_back) {
         ambientTemperature_last_value_called_back = ambientTemperature;

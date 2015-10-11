@@ -275,7 +275,7 @@ public final static String DEVICE_DISPLAY_NAME = "Ozone Bricklet";
         //fixme start_generator callback without sensor ozoneConcentration
 
   private void startAnalogValueCallback() {
-    logger.trace("illuminanceCallbackPeriod is {}", illuminanceCallbackPeriod);
+    logger.trace("analogValueCallbackPeriod is {}", analogValueCallbackPeriod);
     analogValue_callback_id = vertx.setPeriodic(analogValueCallbackPeriod, id -> {
       if (analogValue != analogValue_last_value_called_back) {
         analogValue_last_value_called_back = analogValue;
@@ -299,7 +299,7 @@ public final static String DEVICE_DISPLAY_NAME = "Ozone Bricklet";
 //fixme stop_generator callback without sensor analogValueReached
 
   private void startOzoneConcentrationCallback() {
-    logger.trace("illuminanceCallbackPeriod is {}", illuminanceCallbackPeriod);
+    logger.trace("ozoneConcentrationCallbackPeriod is {}", ozoneConcentrationCallbackPeriod);
     ozoneConcentration_callback_id = vertx.setPeriodic(ozoneConcentrationCallbackPeriod, id -> {
       if (ozoneConcentration != ozoneConcentration_last_value_called_back) {
         ozoneConcentration_last_value_called_back = ozoneConcentration;

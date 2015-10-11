@@ -358,7 +358,7 @@ public final static String DEVICE_DISPLAY_NAME = "Voltage/Current Bricklet";
 //fixme stop_generator callback without sensor powerReached
 
   private void startPowerCallback() {
-    logger.trace("illuminanceCallbackPeriod is {}", illuminanceCallbackPeriod);
+    logger.trace("powerCallbackPeriod is {}", powerCallbackPeriod);
     power_callback_id = vertx.setPeriodic(powerCallbackPeriod, id -> {
       if (power != power_last_value_called_back) {
         power_last_value_called_back = power;
@@ -380,7 +380,7 @@ public final static String DEVICE_DISPLAY_NAME = "Voltage/Current Bricklet";
 //fixme stop_generator callback without sensor power
 
   private void startCurrentCallback() {
-    logger.trace("illuminanceCallbackPeriod is {}", illuminanceCallbackPeriod);
+    logger.trace("currentCallbackPeriod is {}", currentCallbackPeriod);
     current_callback_id = vertx.setPeriodic(currentCallbackPeriod, id -> {
       if (current != current_last_value_called_back) {
         current_last_value_called_back = current;
@@ -403,7 +403,7 @@ public final static String DEVICE_DISPLAY_NAME = "Voltage/Current Bricklet";
 //fixme stop_generator callback without sensor voltageReached
 
   private void startVoltageCallback() {
-    logger.trace("illuminanceCallbackPeriod is {}", illuminanceCallbackPeriod);
+    logger.trace("voltageCallbackPeriod is {}", voltageCallbackPeriod);
     voltage_callback_id = vertx.setPeriodic(voltageCallbackPeriod, id -> {
       if (voltage != voltage_last_value_called_back) {
         voltage_last_value_called_back = voltage;

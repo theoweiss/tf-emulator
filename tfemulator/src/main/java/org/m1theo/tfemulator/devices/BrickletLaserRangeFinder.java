@@ -304,7 +304,7 @@ public final static String DEVICE_DISPLAY_NAME = "Laser Range Finder Bricklet";
         //fixme start_generator callback without sensor velocity
 
   private void startDistanceCallback() {
-    logger.trace("illuminanceCallbackPeriod is {}", illuminanceCallbackPeriod);
+    logger.trace("distanceCallbackPeriod is {}", distanceCallbackPeriod);
     distance_callback_id = vertx.setPeriodic(distanceCallbackPeriod, id -> {
       if (distance != distance_last_value_called_back) {
         distance_last_value_called_back = distance;
@@ -328,7 +328,7 @@ public final static String DEVICE_DISPLAY_NAME = "Laser Range Finder Bricklet";
 //fixme stop_generator callback without sensor distanceReached
 
   private void startVelocityCallback() {
-    logger.trace("illuminanceCallbackPeriod is {}", illuminanceCallbackPeriod);
+    logger.trace("velocityCallbackPeriod is {}", velocityCallbackPeriod);
     velocity_callback_id = vertx.setPeriodic(velocityCallbackPeriod, id -> {
       if (velocity != velocity_last_value_called_back) {
         velocity_last_value_called_back = velocity;

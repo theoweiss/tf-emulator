@@ -277,7 +277,7 @@ public final static String DEVICE_DISPLAY_NAME = "Joystick Bricklet";
 //fixme start_generator callback without sensor analogValueReached
 
   private void startAnalogValueCallback() {
-    logger.trace("illuminanceCallbackPeriod is {}", illuminanceCallbackPeriod);
+    logger.trace("analogValueCallbackPeriod is {}", analogValueCallbackPeriod);
     analogValue_callback_id = vertx.setPeriodic(analogValueCallbackPeriod, id -> {
       if (analogValue != analogValue_last_value_called_back) {
         analogValue_last_value_called_back = analogValue;
@@ -302,7 +302,7 @@ public final static String DEVICE_DISPLAY_NAME = "Joystick Bricklet";
 //fixme stop_generator callback without sensor pressed
 
   private void startPositionCallback() {
-    logger.trace("illuminanceCallbackPeriod is {}", illuminanceCallbackPeriod);
+    logger.trace("positionCallbackPeriod is {}", positionCallbackPeriod);
     position_callback_id = vertx.setPeriodic(positionCallbackPeriod, id -> {
       if (position != position_last_value_called_back) {
         position_last_value_called_back = position;

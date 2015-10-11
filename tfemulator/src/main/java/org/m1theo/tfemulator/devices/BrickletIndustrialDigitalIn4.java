@@ -312,7 +312,7 @@ public final static String DEVICE_DISPLAY_NAME = "Industrial Digital In 4 Brickl
     Buffer header = Utils.createHeader(uidBytes, length, functionId, options, flags);
     Buffer buffer = Buffer.buffer();
     buffer.appendBuffer(header);
-    buffer.appendBytes(Utils.getUInt8(availableForGroup));
+    buffer.appendBytes(Utils.getUInt8A(availableForGroup));
 
     return buffer;
   }

@@ -236,7 +236,7 @@ public final static String DEVICE_DISPLAY_NAME = "Gas Detector Bricklet";
 //fixme stop_generator callback without sensor valueReached
 
   private void startValueCallback() {
-    logger.trace("illuminanceCallbackPeriod is {}", illuminanceCallbackPeriod);
+    logger.trace("valueCallbackPeriod is {}", valueCallbackPeriod);
     value_callback_id = vertx.setPeriodic(valueCallbackPeriod, id -> {
       if (value != value_last_value_called_back) {
         value_last_value_called_back = value;

@@ -212,7 +212,7 @@ public final static String DEVICE_DISPLAY_NAME = "Dust Detector Bricklet";
 //fixme stop_generator callback without sensor dustDensityReached
 
   private void startDustDensityCallback() {
-    logger.trace("illuminanceCallbackPeriod is {}", illuminanceCallbackPeriod);
+    logger.trace("dustDensityCallbackPeriod is {}", dustDensityCallbackPeriod);
     dustDensity_callback_id = vertx.setPeriodic(dustDensityCallbackPeriod, id -> {
       if (dustDensity != dustDensity_last_value_called_back) {
         dustDensity_last_value_called_back = dustDensity;

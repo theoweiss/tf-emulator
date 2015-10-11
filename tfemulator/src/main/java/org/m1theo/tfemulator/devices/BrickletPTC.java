@@ -296,7 +296,7 @@ public final static String DEVICE_DISPLAY_NAME = "PTC Bricklet";
 //fixme stop_generator callback without sensor resistanceReached
 
   private void startResistanceCallback() {
-    logger.trace("illuminanceCallbackPeriod is {}", illuminanceCallbackPeriod);
+    logger.trace("resistanceCallbackPeriod is {}", resistanceCallbackPeriod);
     resistance_callback_id = vertx.setPeriodic(resistanceCallbackPeriod, id -> {
       if (resistance != resistance_last_value_called_back) {
         resistance_last_value_called_back = resistance;
@@ -318,7 +318,7 @@ public final static String DEVICE_DISPLAY_NAME = "PTC Bricklet";
 //fixme stop_generator callback without sensor resistance
 
   private void startTemperatureCallback() {
-    logger.trace("illuminanceCallbackPeriod is {}", illuminanceCallbackPeriod);
+    logger.trace("temperatureCallbackPeriod is {}", temperatureCallbackPeriod);
     temperature_callback_id = vertx.setPeriodic(temperatureCallbackPeriod, id -> {
       if (temperature != temperature_last_value_called_back) {
         temperature_last_value_called_back = temperature;
@@ -445,7 +445,7 @@ public final static String DEVICE_DISPLAY_NAME = "PTC Bricklet";
     Buffer header = Utils.createHeader(uidBytes, length, functionId, options, flags);
     Buffer buffer = Buffer.buffer();
     buffer.appendBuffer(header);
-    buffer.appendBytes(Utils.getUInt8(isSensorConnected));
+    buffer.appendBytes(Utils.getUInt8A(isSensorConnected));
 
     return buffer;
   }

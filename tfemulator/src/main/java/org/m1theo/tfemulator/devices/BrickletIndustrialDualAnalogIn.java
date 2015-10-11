@@ -268,7 +268,7 @@ public final static String DEVICE_DISPLAY_NAME = "Industrial Dual Analog In Bric
 //fixme stop_generator callback without sensor voltageReached
 
   private void startVoltageCallback() {
-    logger.trace("illuminanceCallbackPeriod is {}", illuminanceCallbackPeriod);
+    logger.trace("voltageCallbackPeriod is {}", voltageCallbackPeriod);
     voltage_callback_id = vertx.setPeriodic(voltageCallbackPeriod, id -> {
       if (voltage != voltage_last_value_called_back) {
         voltage_last_value_called_back = voltage;
