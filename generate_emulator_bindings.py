@@ -90,33 +90,6 @@ public final static String DEVICE_DISPLAY_NAME = "{3}";
         cbs_end = '}\n'
         return cbs_end
         
-    def get_java_add_listener(self):
-        if self.get_callback_count() == 0:
-            return '}'
-
-        listeners = ''
-        listener = """
-  /**
-   * Adds a {0} listener.
-   */
-  public void add{0}Listener({0}Listener listener) {{
-    listener{0}.add(listener);
-  }}
-
-  /**
-   * Removes a {0} listener.
-   */
-  public void remove{0}Listener({0}Listener listener) {{
-    listener{0}.remove(listener);
-  }}
-"""
-
-        l = []
-        for packet in self.get_packets('callback'):
-            name = packet.get_camel_case_name()
-            listeners += listener.format(name)
-        return listeners + '}'
-
     def get_java_function_id_definitions(self):
         function_ids = ''
         function_id = '  public final static byte {2}_{0} = (byte){1};\n'
@@ -248,23 +221,6 @@ public final static String DEVICE_DISPLAY_NAME = "{3}";
             
         return funcstart + ifelse + funcend
 
-#     def get_emulator_actor_fields(self):
-#         field = "  private Buffer {0} = {1}Default();\n"
-#         fields = ""
-# #FIXME:  hier sollten wohl besser die  getter verwendet werden und dann sowas wie
-# #packet.get_emulater_buffer_values implementiert werden
-# # noch einfacher einfach den entsprechenden getter aufrufen
-# # private Buffer state = getState(true);\n
-#         setter = {}
-#         setter.update(self.get_actor_getters())
-#         setter.update(self.get_callback_getters())
-#         setter.update(self.get_isEnableds())
-#         for key in setter.keys():
-#             packet = setter[key][0]
-#             if packet.function_type != 'callback_period_setter':
-#                 fields += field.format(setter[key][1], packet.get_headless_camel_case_name())
-#             
-#         return fields
 
     def get_java_methods(self):
         methods = ''
@@ -300,20 +256,7 @@ public final static String DEVICE_DISPLAY_NAME = "{3}";
         set_field = ''
         
         cls = self.get_camel_case_name()
-#         sensors = self.get_sensors()
-#     # get sensors
-#         for key in sensors.keys():
-#             packet = sensors[key][0]
-#     #for packet in self.get_packets('function'):
-#             name_lower = packet.get_headless_camel_case_name()
-#             name_upper = packet.get_upper_case_name()
-#             buffers, bufferbytes = packet.get_emulator_return_values()
-#             
-#             methods += method.format(name_lower,
-#                                      name_upper,
-#                                      buffers, 
-#                                      bufferbytes,
-#                                      set_field)
+
         actor_getters = {}
         actor_getters.update(self.get_actor_getters())
         actor_getters.update(self.get_callback_getters())
@@ -754,7 +697,6 @@ public class {0}Test {{
                 return packet
     
     def get_sensor_callback_period(self):
-        #FIXME: muss beim methoden generieren erledigt werden
         period_setters = ''
         period_template = """
   private Buffer {headless_camel_case_name}(Packet packet) {{
@@ -797,10 +739,6 @@ public class {0}Test {{
         return period_setters
 
     def get_callback_buffer(self):
-        #drei funktionen
-        # 1/ getIlluminanceBuffer(byte functionId, byte options)
-        # 2/ getIlluminance() diese wird von callback aufgerufen und ruft getIlluminanceBuffer(Buffer options) mit  options gleich 0 auf
-        # 3/ getIlluminance(Packet packet) wird von den gettern aufgerufen und ruft getIlluminanceBuffer(Buffer options) mit den options aus dem Packet auf
         code = ''
         buffer_function = """
   private Buffer get{field_name}Buffer(byte functionId, byte options) {{
@@ -891,18 +829,12 @@ public class {0}Test {{
         source += self.get_java_class()
         source += self.get_java_function_id_definitions()
         source += self.get_java_constants()
-        #source += self.get_emulator_actor_fields()
         source += self.get_actuator_fields()
         source += self.get_sensor_fields()
 
         generators, generator_inits = self.get_sensor_value_generator()
         source += self.get_start_method()
 
-        #TODO: need this?
-        #source += self.get_java_response_expected()
-
-        # TODO: remove listener definitions for now
-        #source += self.get_java_callback_listener_definitions()
         source += generator_inits
         
         source += self.get_start_method_end()
@@ -917,32 +849,18 @@ public class {0}Test {{
         source += getters
         source += self.get_sensor_callback_period()
         source += self.get_callback_buffer()
-        #FIXME: add generator start to verts start function
-        #e.g artIlluminanceGenerator();
         
-        #TODO: I think listeners are not needed
-        #source += self.get_java_listener_lists()
-
-        #TODO: need this?
-        #source += self.get_java_return_objects()
-
-        #TODO: I think listeners are not needed
-        #source += self.get_java_listener_definitions()
-
         source += self.get_java_methods()
 
         # TODO: a real method implementation is missing for now
         source += self.get_dummy_methods()
         
-        # TODO: remove listener definitions for now
-        #source += self.get_java_add_listener()
         source += self.get_java_class_end()
 
         return source
 
 class JavaBindingsPacket(emulator_common.JavaPacket):
 
-    #TODO: jetzt muss hier element.get_random_value_function_4test() fuer aktoren verwendet werden
     def get_test_return_values(self):
         test_values = ""
         test_assert = """context.assertEquals({0}, value{1});
