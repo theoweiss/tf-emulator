@@ -12,7 +12,9 @@ other_sensors = {}
 special_fields = {}
 other_fields = {}
 callbacks = {}
-
+enabled_fields = {}
+debounce_period_fields = {}
+threshold_fields = {}
 
 mod['getTiltState'] = {
             'field': 'tiltState',
@@ -31,14 +33,14 @@ mod['isTiltStateCallbackEnabled'] = {
 mod['enableTiltStateCallback'] = {
             'field': 'TiltStateCallback',
             'subdevice_type': 'actor',
-            'function_type': 'setter',
+            'function_type': 'enabler',
             'skip': False
             }
 
 mod['disableTiltStateCallback'] = {
             'field': 'TiltStateCallback',
             'subdevice_type': 'actor',
-            'function_type': 'setter',
+            'function_type': 'disablers',
             'skip': False
             }
 
@@ -67,7 +69,7 @@ sensor_fields['getTiltState'] = {
             'skip': False
         }
         
-actor_fields['isTiltStateCallbackEnabled'] = {
+enabled_fields['isTiltStateCallbackEnabled'] = {
             'value_type': 'number',
             'field': 'TiltStateCallback',
             'field_type': ['bool'],

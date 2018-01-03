@@ -12,7 +12,9 @@ other_sensors = {}
 special_fields = {}
 other_fields = {}
 callbacks = {}
-
+enabled_fields = {}
+debounce_period_fields = {}
+threshold_fields = {}
 
 mod['getUSBVoltage'] = {
             'field': 'uSBVoltage',
@@ -84,113 +86,8 @@ mod['getStackCurrent'] = {
             'skip': False
             }
 
-mod['getStackVoltageCallbackPeriod'] = {
-            'field': 'stackVoltageCallbackPeriod',
-            'subdevice_type': 'actor',
-            'function_type': 'getter',
-            'skip': False
-            }
-
-mod['getWifiHostname'] = {
-            'field': 'wifiHostname',
-            'subdevice_type': 'actor',
-            'function_type': 'getter',
-            'skip': False
-            }
-
-mod['getStackVoltageCallbackThreshold'] = {
-            'field': 'stackVoltageCallbackThreshold',
-            'subdevice_type': 'actor',
-            'function_type': 'getter',
-            'skip': False
-            }
-
-mod['getStackCurrentCallbackPeriod'] = {
-            'field': 'stackCurrentCallbackPeriod',
-            'subdevice_type': 'actor',
-            'function_type': 'getter',
-            'skip': False
-            }
-
-mod['getChibiAddress'] = {
-            'field': 'chibiAddress',
-            'subdevice_type': 'actor',
-            'function_type': 'getter',
-            'skip': False
-            }
-
-mod['getRS485Address'] = {
-            'field': 'rS485Address',
-            'subdevice_type': 'actor',
-            'function_type': 'getter',
-            'skip': False
-            }
-
 mod['getChibiFrequency'] = {
             'field': 'chibiFrequency',
-            'subdevice_type': 'actor',
-            'function_type': 'getter',
-            'skip': False
-            }
-
-mod['getWifiConfiguration'] = {
-            'field': 'wifiConfiguration',
-            'subdevice_type': 'actor',
-            'function_type': 'getter',
-            'skip': False
-            }
-
-mod['getEthernetWebsocketConfiguration'] = {
-            'field': 'ethernetWebsocketConfiguration',
-            'subdevice_type': 'actor',
-            'function_type': 'getter',
-            'skip': False
-            }
-
-mod['getWifiEncryption'] = {
-            'field': 'wifiEncryption',
-            'subdevice_type': 'actor',
-            'function_type': 'getter',
-            'skip': False
-            }
-
-mod['getWifiRegulatoryDomain'] = {
-            'field': 'wifiRegulatoryDomain',
-            'subdevice_type': 'actor',
-            'function_type': 'getter',
-            'skip': False
-            }
-
-mod['getDebouncePeriod'] = {
-            'field': 'debouncePeriod',
-            'subdevice_type': 'actor',
-            'function_type': 'getter',
-            'skip': False
-            }
-
-mod['getUSBVoltageCallbackPeriod'] = {
-            'field': 'uSBVoltageCallbackPeriod',
-            'subdevice_type': 'actor',
-            'function_type': 'getter',
-            'skip': False
-            }
-
-mod['getEthernetConfiguration'] = {
-            'field': 'ethernetConfiguration',
-            'subdevice_type': 'actor',
-            'function_type': 'getter',
-            'skip': False
-            }
-
-mod['getEthernetAuthenticationSecret'] = {
-            'field': 'ethernetAuthenticationSecret',
-            'subdevice_type': 'actor',
-            'function_type': 'getter',
-            'skip': False
-            }
-
-mod['getUSBVoltageCallbackThreshold'] = {
-            'field': 'uSBVoltageCallbackThreshold',
             'subdevice_type': 'actor',
             'function_type': 'getter',
             'skip': False
@@ -203,8 +100,15 @@ mod['getExtensionType'] = {
             'skip': False
             }
 
-mod['getLongWifiKey'] = {
-            'field': 'longWifiKey',
+mod['getEthernetAuthenticationSecret'] = {
+            'field': 'ethernetAuthenticationSecret',
+            'subdevice_type': 'actor',
+            'function_type': 'getter',
+            'skip': False
+            }
+
+mod['getWifiHostname'] = {
+            'field': 'wifiHostname',
             'subdevice_type': 'actor',
             'function_type': 'getter',
             'skip': False
@@ -238,8 +142,29 @@ mod['getWifiPowerMode'] = {
             'skip': False
             }
 
+mod['getChibiAddress'] = {
+            'field': 'chibiAddress',
+            'subdevice_type': 'actor',
+            'function_type': 'getter',
+            'skip': False
+            }
+
+mod['getRS485Address'] = {
+            'field': 'rS485Address',
+            'subdevice_type': 'actor',
+            'function_type': 'getter',
+            'skip': False
+            }
+
 mod['getWifiAuthenticationSecret'] = {
             'field': 'wifiAuthenticationSecret',
+            'subdevice_type': 'actor',
+            'function_type': 'getter',
+            'skip': False
+            }
+
+mod['getWifiConfiguration'] = {
+            'field': 'wifiConfiguration',
             'subdevice_type': 'actor',
             'function_type': 'getter',
             'skip': False
@@ -252,6 +177,13 @@ mod['getRS485SlaveAddress'] = {
             'skip': False
             }
 
+mod['getWifiEncryption'] = {
+            'field': 'wifiEncryption',
+            'subdevice_type': 'actor',
+            'function_type': 'getter',
+            'skip': False
+            }
+
 mod['getRS485Configuration'] = {
             'field': 'rS485Configuration',
             'subdevice_type': 'actor',
@@ -259,8 +191,22 @@ mod['getRS485Configuration'] = {
             'skip': False
             }
 
-mod['isStatusLEDEnabled'] = {
-            'field': 'StatusLED',
+mod['getWifiRegulatoryDomain'] = {
+            'field': 'wifiRegulatoryDomain',
+            'subdevice_type': 'actor',
+            'function_type': 'getter',
+            'skip': False
+            }
+
+mod['getLongWifiKey'] = {
+            'field': 'longWifiKey',
+            'subdevice_type': 'actor',
+            'function_type': 'getter',
+            'skip': False
+            }
+
+mod['getEthernetConfiguration'] = {
+            'field': 'ethernetConfiguration',
             'subdevice_type': 'actor',
             'function_type': 'getter',
             'skip': False
@@ -273,10 +219,66 @@ mod['getWifiCertificate'] = {
             'skip': False
             }
 
+mod['getEthernetWebsocketConfiguration'] = {
+            'field': 'ethernetWebsocketConfiguration',
+            'subdevice_type': 'actor',
+            'function_type': 'getter',
+            'skip': False
+            }
+
+mod['isStatusLEDEnabled'] = {
+            'field': 'StatusLED',
+            'subdevice_type': 'actor',
+            'function_type': 'getter',
+            'skip': False
+            }
+
+mod['getStackVoltageCallbackThreshold'] = {
+            'field': 'stackVoltageCallbackThreshold',
+            'subdevice_type': 'actor',
+            'function_type': 'callback_threshold_getter',
+            'skip': False
+            }
+
+mod['getUSBVoltageCallbackThreshold'] = {
+            'field': 'uSBVoltageCallbackThreshold',
+            'subdevice_type': 'actor',
+            'function_type': 'callback_threshold_getter',
+            'skip': False
+            }
+
 mod['getStackCurrentCallbackThreshold'] = {
             'field': 'stackCurrentCallbackThreshold',
             'subdevice_type': 'actor',
-            'function_type': 'getter',
+            'function_type': 'callback_threshold_getter',
+            'skip': False
+            }
+
+mod['getDebouncePeriod'] = {
+            'field': 'debouncePeriod',
+            'subdevice_type': 'actor',
+            'function_type': 'callback_debounce_period_getter',
+            'skip': False
+            }
+
+mod['getStackVoltageCallbackPeriod'] = {
+            'field': 'stackVoltageCallbackPeriod',
+            'subdevice_type': 'actor',
+            'function_type': 'callback_period_getter',
+            'skip': False
+            }
+
+mod['getStackCurrentCallbackPeriod'] = {
+            'field': 'stackCurrentCallbackPeriod',
+            'subdevice_type': 'actor',
+            'function_type': 'callback_period_getter',
+            'skip': False
+            }
+
+mod['getUSBVoltageCallbackPeriod'] = {
+            'field': 'uSBVoltageCallbackPeriod',
+            'subdevice_type': 'actor',
+            'function_type': 'callback_period_getter',
             'skip': False
             }
 
@@ -301,185 +303,185 @@ mod['setUSBVoltageCallbackPeriod'] = {
             'skip': False
             }
 
-mod['setEthernetConfiguration'] = {
-            'field': 'ethernetConfiguration',
+mod['setUSBVoltageCallbackThreshold'] = {
+            'field': 'uSBVoltageCallbackThreshold',
             'subdevice_type': 'actor',
-            'function_type': 'setter',
-            'skip': False
-            }
-
-mod['setWifiHostname'] = {
-            'field': 'wifiHostname',
-            'subdevice_type': 'actor',
-            'function_type': 'setter',
-            'skip': False
-            }
-
-mod['setWifiAuthenticationSecret'] = {
-            'field': 'wifiAuthenticationSecret',
-            'subdevice_type': 'actor',
-            'function_type': 'setter',
-            'skip': False
-            }
-
-mod['setChibiAddress'] = {
-            'field': 'chibiAddress',
-            'subdevice_type': 'actor',
-            'function_type': 'setter',
-            'skip': False
-            }
-
-mod['setChibiSlaveAddress'] = {
-            'field': 'chibiSlaveAddress',
-            'subdevice_type': 'actor',
-            'function_type': 'setter',
-            'skip': False
-            }
-
-mod['setRS485Address'] = {
-            'field': 'rS485Address',
-            'subdevice_type': 'actor',
-            'function_type': 'setter',
-            'skip': False
-            }
-
-mod['setStackVoltageCallbackThreshold'] = {
-            'field': 'stackVoltageCallbackThreshold',
-            'subdevice_type': 'actor',
-            'function_type': 'setter',
-            'skip': False
-            }
-
-mod['setRS485Configuration'] = {
-            'field': 'rS485Configuration',
-            'subdevice_type': 'actor',
-            'function_type': 'setter',
-            'skip': False
-            }
-
-mod['setWifiConfiguration'] = {
-            'field': 'wifiConfiguration',
-            'subdevice_type': 'actor',
-            'function_type': 'setter',
-            'skip': False
-            }
-
-mod['setRS485SlaveAddress'] = {
-            'field': 'rS485SlaveAddress',
-            'subdevice_type': 'actor',
-            'function_type': 'setter',
+            'function_type': 'callback_threshold_setter',
             'skip': False
             }
 
 mod['setStackCurrentCallbackThreshold'] = {
             'field': 'stackCurrentCallbackThreshold',
             'subdevice_type': 'actor',
-            'function_type': 'setter',
+            'function_type': 'callback_threshold_setter',
             'skip': False
             }
 
-mod['enableStatusLED'] = {
-            'field': 'StatusLED',
+mod['setStackVoltageCallbackThreshold'] = {
+            'field': 'stackVoltageCallbackThreshold',
             'subdevice_type': 'actor',
-            'function_type': 'setter',
-            'skip': False
-            }
-
-mod['setWifiPowerMode'] = {
-            'field': 'wifiPowerMode',
-            'subdevice_type': 'actor',
-            'function_type': 'setter',
-            'skip': False
-            }
-
-mod['setEthernetWebsocketConfiguration'] = {
-            'field': 'ethernetWebsocketConfiguration',
-            'subdevice_type': 'actor',
-            'function_type': 'setter',
-            'skip': False
-            }
-
-mod['setEthernetAuthenticationSecret'] = {
-            'field': 'ethernetAuthenticationSecret',
-            'subdevice_type': 'actor',
-            'function_type': 'setter',
+            'function_type': 'callback_threshold_setter',
             'skip': False
             }
 
 mod['setDebouncePeriod'] = {
             'field': 'debouncePeriod',
             'subdevice_type': 'actor',
-            'function_type': 'setter',
-            'skip': False
-            }
-
-mod['setChibiMasterAddress'] = {
-            'field': 'chibiMasterAddress',
-            'subdevice_type': 'actor',
-            'function_type': 'setter',
-            'skip': False
-            }
-
-mod['setChibiChannel'] = {
-            'field': 'chibiChannel',
-            'subdevice_type': 'actor',
-            'function_type': 'setter',
-            'skip': False
-            }
-
-mod['setExtensionType'] = {
-            'field': 'extensionType',
-            'subdevice_type': 'actor',
-            'function_type': 'setter',
-            'skip': False
-            }
-
-mod['setWifiCertificate'] = {
-            'field': 'wifiCertificate',
-            'subdevice_type': 'actor',
-            'function_type': 'setter',
-            'skip': False
-            }
-
-mod['setUSBVoltageCallbackThreshold'] = {
-            'field': 'uSBVoltageCallbackThreshold',
-            'subdevice_type': 'actor',
-            'function_type': 'setter',
-            'skip': False
-            }
-
-mod['setWifiRegulatoryDomain'] = {
-            'field': 'wifiRegulatoryDomain',
-            'subdevice_type': 'actor',
-            'function_type': 'setter',
-            'skip': False
-            }
-
-mod['setChibiFrequency'] = {
-            'field': 'chibiFrequency',
-            'subdevice_type': 'actor',
-            'function_type': 'setter',
+            'function_type': 'callback_debounce_period_setter',
             'skip': False
             }
 
 mod['setLongWifiKey'] = {
             'field': 'longWifiKey',
             'subdevice_type': 'actor',
-            'function_type': 'setter',
+            'function_type': 'actuator_setter',
+            'skip': False
+            }
+
+mod['setEthernetConfiguration'] = {
+            'field': 'ethernetConfiguration',
+            'subdevice_type': 'actor',
+            'function_type': 'actuator_setter',
+            'skip': False
+            }
+
+mod['setWifiHostname'] = {
+            'field': 'wifiHostname',
+            'subdevice_type': 'actor',
+            'function_type': 'actuator_setter',
+            'skip': False
+            }
+
+mod['setWifiAuthenticationSecret'] = {
+            'field': 'wifiAuthenticationSecret',
+            'subdevice_type': 'actor',
+            'function_type': 'actuator_setter',
+            'skip': False
+            }
+
+mod['setChibiSlaveAddress'] = {
+            'field': 'chibiSlaveAddress',
+            'subdevice_type': 'actor',
+            'function_type': 'actuator_setter',
+            'skip': False
+            }
+
+mod['setExtensionType'] = {
+            'field': 'extensionType',
+            'subdevice_type': 'actor',
+            'function_type': 'actuator_setter',
+            'skip': False
+            }
+
+mod['setRS485Address'] = {
+            'field': 'rS485Address',
+            'subdevice_type': 'actor',
+            'function_type': 'actuator_setter',
+            'skip': False
+            }
+
+mod['setWifiCertificate'] = {
+            'field': 'wifiCertificate',
+            'subdevice_type': 'actor',
+            'function_type': 'actuator_setter',
+            'skip': False
+            }
+
+mod['setRS485Configuration'] = {
+            'field': 'rS485Configuration',
+            'subdevice_type': 'actor',
+            'function_type': 'actuator_setter',
+            'skip': False
+            }
+
+mod['setWifiConfiguration'] = {
+            'field': 'wifiConfiguration',
+            'subdevice_type': 'actor',
+            'function_type': 'actuator_setter',
+            'skip': False
+            }
+
+mod['setRS485SlaveAddress'] = {
+            'field': 'rS485SlaveAddress',
+            'subdevice_type': 'actor',
+            'function_type': 'actuator_setter',
+            'skip': False
+            }
+
+mod['setWifiRegulatoryDomain'] = {
+            'field': 'wifiRegulatoryDomain',
+            'subdevice_type': 'actor',
+            'function_type': 'actuator_setter',
+            'skip': False
+            }
+
+mod['setChibiFrequency'] = {
+            'field': 'chibiFrequency',
+            'subdevice_type': 'actor',
+            'function_type': 'actuator_setter',
+            'skip': False
+            }
+
+mod['setWifiPowerMode'] = {
+            'field': 'wifiPowerMode',
+            'subdevice_type': 'actor',
+            'function_type': 'actuator_setter',
+            'skip': False
+            }
+
+mod['setChibiAddress'] = {
+            'field': 'chibiAddress',
+            'subdevice_type': 'actor',
+            'function_type': 'actuator_setter',
+            'skip': False
+            }
+
+mod['setEthernetWebsocketConfiguration'] = {
+            'field': 'ethernetWebsocketConfiguration',
+            'subdevice_type': 'actor',
+            'function_type': 'actuator_setter',
+            'skip': False
+            }
+
+mod['setEthernetAuthenticationSecret'] = {
+            'field': 'ethernetAuthenticationSecret',
+            'subdevice_type': 'actor',
+            'function_type': 'actuator_setter',
+            'skip': False
+            }
+
+mod['setChibiMasterAddress'] = {
+            'field': 'chibiMasterAddress',
+            'subdevice_type': 'actor',
+            'function_type': 'actuator_setter',
+            'skip': False
+            }
+
+mod['setChibiChannel'] = {
+            'field': 'chibiChannel',
+            'subdevice_type': 'actor',
+            'function_type': 'actuator_setter',
             'skip': False
             }
 
 mod['setWifiEncryption'] = {
             'field': 'wifiEncryption',
             'subdevice_type': 'actor',
-            'function_type': 'setter',
+            'function_type': 'actuator_setter',
+            'skip': False
+            }
+
+mod['enableStatusLED'] = {
+            'field': 'StatusLED',
+            'subdevice_type': 'actor',
+            'function_type': 'enabler',
             'skip': False
             }
 
 mod['disableStatusLED'] = {
             'field': 'StatusLED',
             'subdevice_type': 'actor',
-            'function_type': 'setter',
+            'function_type': 'disablers',
             'skip': False
             }
 
@@ -702,191 +704,11 @@ sensor_fields['getStackCurrent'] = {
             'skip': False
         }
         
-actor_fields['getStackVoltageCallbackPeriod'] = {
-            'value_type': 'number',
-            'field': 'stackVoltageCallbackPeriod',
-            'field_type': ['uint32'],
-            'field_type_cardinality': [1],
-            'default_value': 100,
-            'max_value': 1000,
-            'min_value': 0,
-            'step_value': 1,
-            'skip': False
-        }
-        
-actor_fields['getWifiHostname'] = {
-            'value_type': 'number',
-            'field': 'wifiHostname',
-            'field_type': ['string'],
-            'field_type_cardinality': [16],
-            'default_value': 100,
-            'max_value': 1000,
-            'min_value': 0,
-            'step_value': 1,
-            'skip': False
-        }
-        
-actor_fields['getStackVoltageCallbackThreshold'] = {
-            'value_type': 'number',
-            'field': 'stackVoltageCallbackThreshold',
-            'field_type': ['char', 'uint16', 'uint16'],
-            'field_type_cardinality': [1, 1, 1],
-            'default_value': 100,
-            'max_value': 1000,
-            'min_value': 0,
-            'step_value': 1,
-            'skip': False
-        }
-        
-actor_fields['getStackCurrentCallbackPeriod'] = {
-            'value_type': 'number',
-            'field': 'stackCurrentCallbackPeriod',
-            'field_type': ['uint32'],
-            'field_type_cardinality': [1],
-            'default_value': 100,
-            'max_value': 1000,
-            'min_value': 0,
-            'step_value': 1,
-            'skip': False
-        }
-        
-actor_fields['getChibiAddress'] = {
-            'value_type': 'number',
-            'field': 'chibiAddress',
-            'field_type': ['uint8'],
-            'field_type_cardinality': [1],
-            'default_value': 100,
-            'max_value': 1000,
-            'min_value': 0,
-            'step_value': 1,
-            'skip': False
-        }
-        
-actor_fields['getRS485Address'] = {
-            'value_type': 'number',
-            'field': 'rS485Address',
-            'field_type': ['uint8'],
-            'field_type_cardinality': [1],
-            'default_value': 100,
-            'max_value': 1000,
-            'min_value': 0,
-            'step_value': 1,
-            'skip': False
-        }
-        
 actor_fields['getChibiFrequency'] = {
             'value_type': 'number',
             'field': 'chibiFrequency',
             'field_type': ['uint8'],
             'field_type_cardinality': [1],
-            'default_value': 100,
-            'max_value': 1000,
-            'min_value': 0,
-            'step_value': 1,
-            'skip': False
-        }
-        
-actor_fields['getWifiConfiguration'] = {
-            'value_type': 'number',
-            'field': 'wifiConfiguration',
-            'field_type': ['string', 'uint8', 'uint8', 'uint8', 'uint8', 'uint16'],
-            'field_type_cardinality': [32, 1, 4, 4, 4, 1],
-            'default_value': 100,
-            'max_value': 1000,
-            'min_value': 0,
-            'step_value': 1,
-            'skip': False
-        }
-        
-actor_fields['getEthernetWebsocketConfiguration'] = {
-            'value_type': 'number',
-            'field': 'ethernetWebsocketConfiguration',
-            'field_type': ['uint8', 'uint16'],
-            'field_type_cardinality': [1, 1],
-            'default_value': 100,
-            'max_value': 1000,
-            'min_value': 0,
-            'step_value': 1,
-            'skip': False
-        }
-        
-actor_fields['getWifiEncryption'] = {
-            'value_type': 'number',
-            'field': 'wifiEncryption',
-            'field_type': ['uint8', 'string', 'uint8', 'uint8', 'uint16', 'uint16', 'uint16'],
-            'field_type_cardinality': [1, 50, 1, 1, 1, 1, 1],
-            'default_value': 100,
-            'max_value': 1000,
-            'min_value': 0,
-            'step_value': 1,
-            'skip': False
-        }
-        
-actor_fields['getWifiRegulatoryDomain'] = {
-            'value_type': 'number',
-            'field': 'wifiRegulatoryDomain',
-            'field_type': ['uint8'],
-            'field_type_cardinality': [1],
-            'default_value': 100,
-            'max_value': 1000,
-            'min_value': 0,
-            'step_value': 1,
-            'skip': False
-        }
-        
-actor_fields['getDebouncePeriod'] = {
-            'value_type': 'number',
-            'field': 'debouncePeriod',
-            'field_type': ['uint32'],
-            'field_type_cardinality': [1],
-            'default_value': 100,
-            'max_value': 1000,
-            'min_value': 0,
-            'step_value': 1,
-            'skip': False
-        }
-        
-actor_fields['getUSBVoltageCallbackPeriod'] = {
-            'value_type': 'number',
-            'field': 'uSBVoltageCallbackPeriod',
-            'field_type': ['uint32'],
-            'field_type_cardinality': [1],
-            'default_value': 100,
-            'max_value': 1000,
-            'min_value': 0,
-            'step_value': 1,
-            'skip': False
-        }
-        
-actor_fields['getEthernetConfiguration'] = {
-            'value_type': 'number',
-            'field': 'ethernetConfiguration',
-            'field_type': ['uint8', 'uint8', 'uint8', 'uint8', 'uint16'],
-            'field_type_cardinality': [1, 4, 4, 4, 1],
-            'default_value': 100,
-            'max_value': 1000,
-            'min_value': 0,
-            'step_value': 1,
-            'skip': False
-        }
-        
-actor_fields['getEthernetAuthenticationSecret'] = {
-            'value_type': 'number',
-            'field': 'ethernetAuthenticationSecret',
-            'field_type': ['string'],
-            'field_type_cardinality': [64],
-            'default_value': 100,
-            'max_value': 1000,
-            'min_value': 0,
-            'step_value': 1,
-            'skip': False
-        }
-        
-actor_fields['getUSBVoltageCallbackThreshold'] = {
-            'value_type': 'number',
-            'field': 'uSBVoltageCallbackThreshold',
-            'field_type': ['char', 'uint16', 'uint16'],
-            'field_type_cardinality': [1, 1, 1],
             'default_value': 100,
             'max_value': 1000,
             'min_value': 0,
@@ -906,11 +728,23 @@ actor_fields['getExtensionType'] = {
             'skip': False
         }
         
-actor_fields['getLongWifiKey'] = {
+actor_fields['getEthernetAuthenticationSecret'] = {
             'value_type': 'number',
-            'field': 'longWifiKey',
+            'field': 'ethernetAuthenticationSecret',
             'field_type': ['string'],
             'field_type_cardinality': [64],
+            'default_value': 100,
+            'max_value': 1000,
+            'min_value': 0,
+            'step_value': 1,
+            'skip': False
+        }
+        
+actor_fields['getWifiHostname'] = {
+            'value_type': 'number',
+            'field': 'wifiHostname',
+            'field_type': ['string'],
+            'field_type_cardinality': [16],
             'default_value': 100,
             'max_value': 1000,
             'min_value': 0,
@@ -966,11 +800,47 @@ actor_fields['getWifiPowerMode'] = {
             'skip': False
         }
         
+actor_fields['getChibiAddress'] = {
+            'value_type': 'number',
+            'field': 'chibiAddress',
+            'field_type': ['uint8'],
+            'field_type_cardinality': [1],
+            'default_value': 100,
+            'max_value': 1000,
+            'min_value': 0,
+            'step_value': 1,
+            'skip': False
+        }
+        
+actor_fields['getRS485Address'] = {
+            'value_type': 'number',
+            'field': 'rS485Address',
+            'field_type': ['uint8'],
+            'field_type_cardinality': [1],
+            'default_value': 100,
+            'max_value': 1000,
+            'min_value': 0,
+            'step_value': 1,
+            'skip': False
+        }
+        
 actor_fields['getWifiAuthenticationSecret'] = {
             'value_type': 'number',
             'field': 'wifiAuthenticationSecret',
             'field_type': ['string'],
             'field_type_cardinality': [64],
+            'default_value': 100,
+            'max_value': 1000,
+            'min_value': 0,
+            'step_value': 1,
+            'skip': False
+        }
+        
+actor_fields['getWifiConfiguration'] = {
+            'value_type': 'number',
+            'field': 'wifiConfiguration',
+            'field_type': ['string', 'uint8', 'uint8', 'uint8', 'uint8', 'uint16'],
+            'field_type_cardinality': [32, 1, 4, 4, 4, 1],
             'default_value': 100,
             'max_value': 1000,
             'min_value': 0,
@@ -990,6 +860,18 @@ actor_fields['getRS485SlaveAddress'] = {
             'skip': False
         }
         
+actor_fields['getWifiEncryption'] = {
+            'value_type': 'number',
+            'field': 'wifiEncryption',
+            'field_type': ['uint8', 'string', 'uint8', 'uint8', 'uint16', 'uint16', 'uint16'],
+            'field_type_cardinality': [1, 50, 1, 1, 1, 1, 1],
+            'default_value': 100,
+            'max_value': 1000,
+            'min_value': 0,
+            'step_value': 1,
+            'skip': False
+        }
+        
 actor_fields['getRS485Configuration'] = {
             'value_type': 'number',
             'field': 'rS485Configuration',
@@ -1002,11 +884,35 @@ actor_fields['getRS485Configuration'] = {
             'skip': False
         }
         
-actor_fields['isStatusLEDEnabled'] = {
+actor_fields['getWifiRegulatoryDomain'] = {
             'value_type': 'number',
-            'field': 'StatusLED',
-            'field_type': ['bool'],
+            'field': 'wifiRegulatoryDomain',
+            'field_type': ['uint8'],
             'field_type_cardinality': [1],
+            'default_value': 100,
+            'max_value': 1000,
+            'min_value': 0,
+            'step_value': 1,
+            'skip': False
+        }
+        
+actor_fields['getLongWifiKey'] = {
+            'value_type': 'number',
+            'field': 'longWifiKey',
+            'field_type': ['string'],
+            'field_type_cardinality': [64],
+            'default_value': 100,
+            'max_value': 1000,
+            'min_value': 0,
+            'step_value': 1,
+            'skip': False
+        }
+        
+actor_fields['getEthernetConfiguration'] = {
+            'value_type': 'number',
+            'field': 'ethernetConfiguration',
+            'field_type': ['uint8', 'uint8', 'uint8', 'uint8', 'uint16'],
+            'field_type_cardinality': [1, 4, 4, 4, 1],
             'default_value': 100,
             'max_value': 1000,
             'min_value': 0,
@@ -1026,11 +932,68 @@ actor_fields['getWifiCertificate'] = {
             'skip': False
         }
         
-actor_fields['getStackCurrentCallbackThreshold'] = {
+actor_fields['getEthernetWebsocketConfiguration'] = {
             'value_type': 'number',
+            'field': 'ethernetWebsocketConfiguration',
+            'field_type': ['uint8', 'uint16'],
+            'field_type_cardinality': [1, 1],
+            'default_value': 100,
+            'max_value': 1000,
+            'min_value': 0,
+            'step_value': 1,
+            'skip': False
+        }
+        
+enabled_fields['isStatusLEDEnabled'] = {
+            'value_type': 'number',
+            'field': 'StatusLED',
+            'field_type': ['bool'],
+            'field_type_cardinality': [1],
+            'default_value': 100,
+            'max_value': 1000,
+            'min_value': 0,
+            'step_value': 1,
+            'skip': False
+        }
+        
+threshold_fields['getStackVoltageCallbackThreshold'] = {
+            'value_type': 'threshold_buffer',
+            'field': 'stackVoltageCallbackThreshold',
+            'field_type': ['char', 'uint16', 'uint16'],
+            'field_type_cardinality': [1, 1, 1],
+            'default_value': 'x00',
+            'max_value': 1000,
+            'min_value': 0,
+            'skip': False
+        }
+        
+threshold_fields['getUSBVoltageCallbackThreshold'] = {
+            'value_type': 'threshold_buffer',
+            'field': 'uSBVoltageCallbackThreshold',
+            'field_type': ['char', 'uint16', 'uint16'],
+            'field_type_cardinality': [1, 1, 1],
+            'default_value': 'x00',
+            'max_value': 1000,
+            'min_value': 0,
+            'skip': False
+        }
+        
+threshold_fields['getStackCurrentCallbackThreshold'] = {
+            'value_type': 'threshold_buffer',
             'field': 'stackCurrentCallbackThreshold',
             'field_type': ['char', 'uint16', 'uint16'],
             'field_type_cardinality': [1, 1, 1],
+            'default_value': 'x00',
+            'max_value': 1000,
+            'min_value': 0,
+            'skip': False
+        }
+        
+debounce_period_fields['getDebouncePeriod'] = {
+            'value_type': 'number',
+            'field': 'debouncePeriod',
+            'field_type': ['uint32'],
+            'field_type_cardinality': [1],
             'default_value': 100,
             'max_value': 1000,
             'min_value': 0,

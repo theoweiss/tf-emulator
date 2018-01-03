@@ -12,7 +12,9 @@ other_sensors = {}
 special_fields = {}
 other_fields = {}
 callbacks = {}
-
+enabled_fields = {}
+debounce_period_fields = {}
+threshold_fields = {}
 
 mod['getIMUTemperature'] = {
             'field': 'iMUTemperature',
@@ -77,8 +79,8 @@ mod['getOrientationPeriod'] = {
             'skip': False
             }
 
-mod['areLedsOn'] = {
-            'field': 'leds',
+mod['getMagneticFieldPeriod'] = {
+            'field': 'magneticFieldPeriod',
             'subdevice_type': 'actor',
             'function_type': 'getter',
             'skip': False
@@ -86,20 +88,6 @@ mod['areLedsOn'] = {
 
 mod['getConvergenceSpeed'] = {
             'field': 'convergenceSpeed',
-            'subdevice_type': 'actor',
-            'function_type': 'getter',
-            'skip': False
-            }
-
-mod['isStatusLEDEnabled'] = {
-            'field': 'StatusLED',
-            'subdevice_type': 'actor',
-            'function_type': 'getter',
-            'skip': False
-            }
-
-mod['getMagneticFieldPeriod'] = {
-            'field': 'magneticFieldPeriod',
             'subdevice_type': 'actor',
             'function_type': 'getter',
             'skip': False
@@ -154,101 +142,115 @@ mod['getQuaternionPeriod'] = {
             'skip': False
             }
 
+mod['areLedsOn'] = {
+            'field': 'leds',
+            'subdevice_type': 'actor',
+            'function_type': 'getter',
+            'skip': False
+            }
+
+mod['isStatusLEDEnabled'] = {
+            'field': 'StatusLED',
+            'subdevice_type': 'actor',
+            'function_type': 'getter',
+            'skip': False
+            }
+
 mod['setCalibration'] = {
             'field': 'calibration',
             'subdevice_type': 'actor',
-            'function_type': 'setter',
+            'function_type': 'actuator_setter',
             'skip': False
             }
 
 mod['setAllDataPeriod'] = {
             'field': 'allDataPeriod',
             'subdevice_type': 'actor',
-            'function_type': 'setter',
+            'function_type': 'actuator_setter',
             'skip': False
             }
 
 mod['setMagnetometerRange'] = {
             'field': 'magnetometerRange',
             'subdevice_type': 'actor',
-            'function_type': 'setter',
-            'skip': False
-            }
-
-mod['setAccelerationPeriod'] = {
-            'field': 'accelerationPeriod',
-            'subdevice_type': 'actor',
-            'function_type': 'setter',
+            'function_type': 'actuator_setter',
             'skip': False
             }
 
 mod['setMagneticFieldPeriod'] = {
             'field': 'magneticFieldPeriod',
             'subdevice_type': 'actor',
-            'function_type': 'setter',
+            'function_type': 'actuator_setter',
             'skip': False
             }
 
-mod['setAngularVelocityPeriod'] = {
-            'field': 'angularVelocityPeriod',
+mod['setAccelerationPeriod'] = {
+            'field': 'accelerationPeriod',
             'subdevice_type': 'actor',
-            'function_type': 'setter',
-            'skip': False
-            }
-
-mod['setOrientationPeriod'] = {
-            'field': 'orientationPeriod',
-            'subdevice_type': 'actor',
-            'function_type': 'setter',
-            'skip': False
-            }
-
-mod['setConvergenceSpeed'] = {
-            'field': 'convergenceSpeed',
-            'subdevice_type': 'actor',
-            'function_type': 'setter',
-            'skip': False
-            }
-
-mod['setQuaternionPeriod'] = {
-            'field': 'quaternionPeriod',
-            'subdevice_type': 'actor',
-            'function_type': 'setter',
-            'skip': False
-            }
-
-mod['ledsOff'] = {
-            'field': 'leds',
-            'subdevice_type': 'actor',
-            'function_type': 'setter',
-            'skip': False
-            }
-
-mod['enableStatusLED'] = {
-            'field': 'StatusLED',
-            'subdevice_type': 'actor',
-            'function_type': 'setter',
+            'function_type': 'actuator_setter',
             'skip': False
             }
 
 mod['setAccelerationRange'] = {
             'field': 'accelerationRange',
             'subdevice_type': 'actor',
-            'function_type': 'setter',
+            'function_type': 'actuator_setter',
             'skip': False
             }
 
-mod['disableStatusLED'] = {
+mod['setAngularVelocityPeriod'] = {
+            'field': 'angularVelocityPeriod',
+            'subdevice_type': 'actor',
+            'function_type': 'actuator_setter',
+            'skip': False
+            }
+
+mod['setOrientationPeriod'] = {
+            'field': 'orientationPeriod',
+            'subdevice_type': 'actor',
+            'function_type': 'actuator_setter',
+            'skip': False
+            }
+
+mod['setConvergenceSpeed'] = {
+            'field': 'convergenceSpeed',
+            'subdevice_type': 'actor',
+            'function_type': 'actuator_setter',
+            'skip': False
+            }
+
+mod['setQuaternionPeriod'] = {
+            'field': 'quaternionPeriod',
+            'subdevice_type': 'actor',
+            'function_type': 'actuator_setter',
+            'skip': False
+            }
+
+mod['enableStatusLED'] = {
             'field': 'StatusLED',
             'subdevice_type': 'actor',
-            'function_type': 'setter',
+            'function_type': 'enabler',
             'skip': False
             }
 
 mod['ledsOn'] = {
             'field': 'leds',
             'subdevice_type': 'actor',
-            'function_type': 'setter',
+            'function_type': 'enabler',
+            'skip': False
+            }
+
+mod['ledsOff'] = {
+            'field': 'leds',
+            'subdevice_type': 'actor',
+            'function_type': 'disablers',
+            'skip': False
+            }
+
+mod['disableStatusLED'] = {
+            'field': 'StatusLED',
+            'subdevice_type': 'actor',
+            'function_type': 'disablers',
             'skip': False
             }
 
@@ -431,10 +433,10 @@ actor_fields['getOrientationPeriod'] = {
             'skip': False
         }
         
-actor_fields['areLedsOn'] = {
+actor_fields['getMagneticFieldPeriod'] = {
             'value_type': 'number',
-            'field': 'leds',
-            'field_type': ['bool'],
+            'field': 'magneticFieldPeriod',
+            'field_type': ['uint32'],
             'field_type_cardinality': [1],
             'default_value': 100,
             'max_value': 1000,
@@ -447,30 +449,6 @@ actor_fields['getConvergenceSpeed'] = {
             'value_type': 'number',
             'field': 'convergenceSpeed',
             'field_type': ['uint16'],
-            'field_type_cardinality': [1],
-            'default_value': 100,
-            'max_value': 1000,
-            'min_value': 0,
-            'step_value': 1,
-            'skip': False
-        }
-        
-actor_fields['isStatusLEDEnabled'] = {
-            'value_type': 'number',
-            'field': 'StatusLED',
-            'field_type': ['bool'],
-            'field_type_cardinality': [1],
-            'default_value': 100,
-            'max_value': 1000,
-            'min_value': 0,
-            'step_value': 1,
-            'skip': False
-        }
-        
-actor_fields['getMagneticFieldPeriod'] = {
-            'value_type': 'number',
-            'field': 'magneticFieldPeriod',
-            'field_type': ['uint32'],
             'field_type_cardinality': [1],
             'default_value': 100,
             'max_value': 1000,
@@ -555,6 +533,30 @@ actor_fields['getQuaternionPeriod'] = {
             'value_type': 'number',
             'field': 'quaternionPeriod',
             'field_type': ['uint32'],
+            'field_type_cardinality': [1],
+            'default_value': 100,
+            'max_value': 1000,
+            'min_value': 0,
+            'step_value': 1,
+            'skip': False
+        }
+        
+enabled_fields['areLedsOn'] = {
+            'value_type': 'number',
+            'field': 'leds',
+            'field_type': ['bool'],
+            'field_type_cardinality': [1],
+            'default_value': 100,
+            'max_value': 1000,
+            'min_value': 0,
+            'step_value': 1,
+            'skip': False
+        }
+        
+enabled_fields['isStatusLEDEnabled'] = {
+            'value_type': 'number',
+            'field': 'StatusLED',
+            'field_type': ['bool'],
             'field_type_cardinality': [1],
             'default_value': 100,
             'max_value': 1000,

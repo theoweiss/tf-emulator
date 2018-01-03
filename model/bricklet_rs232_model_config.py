@@ -12,14 +12,9 @@ other_sensors = {}
 special_fields = {}
 other_fields = {}
 callbacks = {}
-
-
-mod['isReadCallbackEnabled'] = {
-            'field': 'ReadCallback',
-            'subdevice_type': 'actor',
-            'function_type': 'getter',
-            'skip': False
-            }
+enabled_fields = {}
+debounce_period_fields = {}
+threshold_fields = {}
 
 mod['getConfiguration'] = {
             'field': 'configuration',
@@ -28,24 +23,31 @@ mod['getConfiguration'] = {
             'skip': False
             }
 
-mod['disableReadCallback'] = {
+mod['isReadCallbackEnabled'] = {
             'field': 'ReadCallback',
             'subdevice_type': 'actor',
-            'function_type': 'setter',
-            'skip': False
-            }
-
-mod['enableReadCallback'] = {
-            'field': 'ReadCallback',
-            'subdevice_type': 'actor',
-            'function_type': 'setter',
+            'function_type': 'getter',
             'skip': False
             }
 
 mod['setConfiguration'] = {
             'field': 'configuration',
             'subdevice_type': 'actor',
-            'function_type': 'setter',
+            'function_type': 'actuator_setter',
+            'skip': False
+            }
+
+mod['enableReadCallback'] = {
+            'field': 'ReadCallback',
+            'subdevice_type': 'actor',
+            'function_type': 'enabler',
+            'skip': False
+            }
+
+mod['disableReadCallback'] = {
+            'field': 'ReadCallback',
+            'subdevice_type': 'actor',
+            'function_type': 'disablers',
             'skip': False
             }
 
@@ -82,11 +84,11 @@ callbacks['errorCallback'] = {
             'skip': False
             }
         
-actor_fields['isReadCallbackEnabled'] = {
+actor_fields['getConfiguration'] = {
             'value_type': 'number',
-            'field': 'ReadCallback',
-            'field_type': ['bool'],
-            'field_type_cardinality': [1],
+            'field': 'configuration',
+            'field_type': ['uint8', 'uint8', 'uint8', 'uint8', 'uint8', 'uint8'],
+            'field_type_cardinality': [1, 1, 1, 1, 1, 1],
             'default_value': 100,
             'max_value': 1000,
             'min_value': 0,
@@ -94,11 +96,11 @@ actor_fields['isReadCallbackEnabled'] = {
             'skip': False
         }
         
-actor_fields['getConfiguration'] = {
+enabled_fields['isReadCallbackEnabled'] = {
             'value_type': 'number',
-            'field': 'configuration',
-            'field_type': ['uint8', 'uint8', 'uint8', 'uint8', 'uint8', 'uint8'],
-            'field_type_cardinality': [1, 1, 1, 1, 1, 1],
+            'field': 'ReadCallback',
+            'field_type': ['bool'],
+            'field_type_cardinality': [1],
             'default_value': 100,
             'max_value': 1000,
             'min_value': 0,

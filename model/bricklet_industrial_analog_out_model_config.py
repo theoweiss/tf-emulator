@@ -12,7 +12,9 @@ other_sensors = {}
 special_fields = {}
 other_fields = {}
 callbacks = {}
-
+enabled_fields = {}
+debounce_period_fields = {}
+threshold_fields = {}
 
 mod['getCurrent'] = {
             'field': 'current',
@@ -45,35 +47,35 @@ mod['isEnabled'] = {
 mod['setVoltage'] = {
             'field': 'voltage',
             'subdevice_type': 'actor',
-            'function_type': 'setter',
-            'skip': False
-            }
-
-mod['enable'] = {
-            'field': 'enabled',
-            'subdevice_type': 'actor',
-            'function_type': 'setter',
-            'skip': False
-            }
-
-mod['disable'] = {
-            'field': 'enabled',
-            'subdevice_type': 'actor',
-            'function_type': 'setter',
+            'function_type': 'actuator_setter',
             'skip': False
             }
 
 mod['setCurrent'] = {
             'field': 'current',
             'subdevice_type': 'actor',
-            'function_type': 'setter',
+            'function_type': 'actuator_setter',
             'skip': False
             }
 
 mod['setConfiguration'] = {
             'field': 'configuration',
             'subdevice_type': 'actor',
-            'function_type': 'setter',
+            'function_type': 'actuator_setter',
+            'skip': False
+            }
+
+mod['enable'] = {
+            'field': 'enabled',
+            'subdevice_type': 'actor',
+            'function_type': 'enabler',
+            'skip': False
+            }
+
+mod['disable'] = {
+            'field': 'enabled',
+            'subdevice_type': 'actor',
+            'function_type': 'disablers',
             'skip': False
             }
 
@@ -120,7 +122,7 @@ actor_fields['getVoltage'] = {
             'skip': False
         }
         
-actor_fields['isEnabled'] = {
+enabled_fields['isEnabled'] = {
             'value_type': 'number',
             'field': 'enabled',
             'field_type': ['bool'],

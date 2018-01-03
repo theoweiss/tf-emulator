@@ -12,7 +12,9 @@ other_sensors = {}
 special_fields = {}
 other_fields = {}
 callbacks = {}
-
+enabled_fields = {}
+debounce_period_fields = {}
+threshold_fields = {}
 
 mod['getSwitchingState'] = {
             'field': 'switchingState',
@@ -31,7 +33,7 @@ mod['getRepeats'] = {
 mod['setRepeats'] = {
             'field': 'repeats',
             'subdevice_type': 'actor',
-            'function_type': 'setter',
+            'function_type': 'actuator_setter',
             'skip': False
             }
 

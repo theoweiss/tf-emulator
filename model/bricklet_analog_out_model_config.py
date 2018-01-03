@@ -12,7 +12,9 @@ other_sensors = {}
 special_fields = {}
 other_fields = {}
 callbacks = {}
-
+enabled_fields = {}
+debounce_period_fields = {}
+threshold_fields = {}
 
 mod['getMode'] = {
             'field': 'mode',
@@ -31,14 +33,14 @@ mod['getVoltage'] = {
 mod['setVoltage'] = {
             'field': 'voltage',
             'subdevice_type': 'actor',
-            'function_type': 'setter',
+            'function_type': 'actuator_setter',
             'skip': False
             }
 
 mod['setMode'] = {
             'field': 'mode',
             'subdevice_type': 'actor',
-            'function_type': 'setter',
+            'function_type': 'actuator_setter',
             'skip': False
             }
 

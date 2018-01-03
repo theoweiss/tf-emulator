@@ -12,7 +12,9 @@ other_sensors = {}
 special_fields = {}
 other_fields = {}
 callbacks = {}
-
+enabled_fields = {}
+debounce_period_fields = {}
+threshold_fields = {}
 
 mod['getTouchState'] = {
             'field': 'touchState',
@@ -38,14 +40,14 @@ mod['getElectrodeSensitivity'] = {
 mod['setElectrodeSensitivity'] = {
             'field': 'electrodeSensitivity',
             'subdevice_type': 'actor',
-            'function_type': 'setter',
+            'function_type': 'actuator_setter',
             'skip': False
             }
 
 mod['setElectrodeConfig'] = {
             'field': 'electrodeConfig',
             'subdevice_type': 'actor',
-            'function_type': 'setter',
+            'function_type': 'actuator_setter',
             'skip': False
             }
 

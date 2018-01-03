@@ -12,7 +12,9 @@ other_sensors = {}
 special_fields = {}
 other_fields = {}
 callbacks = {}
-
+enabled_fields = {}
+debounce_period_fields = {}
+threshold_fields = {}
 
 mod['getEdgeCount'] = {
             'field': 'edgeCount',
@@ -23,6 +25,13 @@ mod['getEdgeCount'] = {
 
 mod['getEdgeCountConfig'] = {
             'field': 'edgeCountConfig',
+            'subdevice_type': 'actor',
+            'function_type': 'getter',
+            'skip': False
+            }
+
+mod['getInterrupt'] = {
+            'field': 'interrupt',
             'subdevice_type': 'actor',
             'function_type': 'getter',
             'skip': False
@@ -42,8 +51,8 @@ mod['getMonoflop'] = {
             'skip': False
             }
 
-mod['getInterrupt'] = {
-            'field': 'interrupt',
+mod['getValue'] = {
+            'field': 'value',
             'subdevice_type': 'actor',
             'function_type': 'getter',
             'skip': False
@@ -52,56 +61,49 @@ mod['getInterrupt'] = {
 mod['getDebouncePeriod'] = {
             'field': 'debouncePeriod',
             'subdevice_type': 'actor',
-            'function_type': 'getter',
-            'skip': False
-            }
-
-mod['getValue'] = {
-            'field': 'value',
-            'subdevice_type': 'actor',
-            'function_type': 'getter',
-            'skip': False
-            }
-
-mod['setValue'] = {
-            'field': 'value',
-            'subdevice_type': 'actor',
-            'function_type': 'setter',
-            'skip': False
-            }
-
-mod['setEdgeCountConfig'] = {
-            'field': 'edgeCountConfig',
-            'subdevice_type': 'actor',
-            'function_type': 'setter',
-            'skip': False
-            }
-
-mod['setConfiguration'] = {
-            'field': 'configuration',
-            'subdevice_type': 'actor',
-            'function_type': 'setter',
+            'function_type': 'callback_debounce_period_getter',
             'skip': False
             }
 
 mod['setDebouncePeriod'] = {
             'field': 'debouncePeriod',
             'subdevice_type': 'actor',
-            'function_type': 'setter',
+            'function_type': 'callback_debounce_period_setter',
+            'skip': False
+            }
+
+mod['setValue'] = {
+            'field': 'value',
+            'subdevice_type': 'actor',
+            'function_type': 'actuator_setter',
+            'skip': False
+            }
+
+mod['setEdgeCountConfig'] = {
+            'field': 'edgeCountConfig',
+            'subdevice_type': 'actor',
+            'function_type': 'actuator_setter',
             'skip': False
             }
 
 mod['setInterrupt'] = {
             'field': 'interrupt',
             'subdevice_type': 'actor',
-            'function_type': 'setter',
+            'function_type': 'actuator_setter',
+            'skip': False
+            }
+
+mod['setConfiguration'] = {
+            'field': 'configuration',
+            'subdevice_type': 'actor',
+            'function_type': 'actuator_setter',
             'skip': False
             }
 
 mod['setMonoflop'] = {
             'field': 'monoflop',
             'subdevice_type': 'actor',
-            'function_type': 'setter',
+            'function_type': 'actuator_setter',
             'skip': False
             }
 
@@ -155,6 +157,18 @@ actor_fields['getEdgeCountConfig'] = {
             'skip': False
         }
         
+actor_fields['getInterrupt'] = {
+            'value_type': 'number',
+            'field': 'interrupt',
+            'field_type': ['uint8'],
+            'field_type_cardinality': [1],
+            'default_value': 100,
+            'max_value': 1000,
+            'min_value': 0,
+            'step_value': 1,
+            'skip': False
+        }
+        
 actor_fields['getConfiguration'] = {
             'value_type': 'number',
             'field': 'configuration',
@@ -179,34 +193,22 @@ actor_fields['getMonoflop'] = {
             'skip': False
         }
         
-actor_fields['getInterrupt'] = {
-            'value_type': 'number',
-            'field': 'interrupt',
-            'field_type': ['uint8'],
-            'field_type_cardinality': [1],
-            'default_value': 100,
-            'max_value': 1000,
-            'min_value': 0,
-            'step_value': 1,
-            'skip': False
-        }
-        
-actor_fields['getDebouncePeriod'] = {
-            'value_type': 'number',
-            'field': 'debouncePeriod',
-            'field_type': ['uint32'],
-            'field_type_cardinality': [1],
-            'default_value': 100,
-            'max_value': 1000,
-            'min_value': 0,
-            'step_value': 1,
-            'skip': False
-        }
-        
 actor_fields['getValue'] = {
             'value_type': 'number',
             'field': 'value',
             'field_type': ['uint8'],
+            'field_type_cardinality': [1],
+            'default_value': 100,
+            'max_value': 1000,
+            'min_value': 0,
+            'step_value': 1,
+            'skip': False
+        }
+        
+debounce_period_fields['getDebouncePeriod'] = {
+            'value_type': 'number',
+            'field': 'debouncePeriod',
+            'field_type': ['uint32'],
             'field_type_cardinality': [1],
             'default_value': 100,
             'max_value': 1000,

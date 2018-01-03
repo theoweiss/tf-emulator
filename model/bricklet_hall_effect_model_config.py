@@ -12,7 +12,9 @@ other_sensors = {}
 special_fields = {}
 other_fields = {}
 callbacks = {}
-
+enabled_fields = {}
+debounce_period_fields = {}
+threshold_fields = {}
 
 mod['getEdgeCount'] = {
             'field': 'edgeCount',
@@ -35,17 +37,17 @@ mod['getEdgeCountConfig'] = {
             'skip': False
             }
 
-mod['getEdgeCountCallbackPeriod'] = {
-            'field': 'edgeCountCallbackPeriod',
+mod['getEdgeInterrupt'] = {
+            'field': 'edgeInterrupt',
             'subdevice_type': 'actor',
             'function_type': 'getter',
             'skip': False
             }
 
-mod['getEdgeInterrupt'] = {
-            'field': 'edgeInterrupt',
+mod['getEdgeCountCallbackPeriod'] = {
+            'field': 'edgeCountCallbackPeriod',
             'subdevice_type': 'actor',
-            'function_type': 'getter',
+            'function_type': 'callback_period_getter',
             'skip': False
             }
 
@@ -59,14 +61,14 @@ mod['setEdgeCountCallbackPeriod'] = {
 mod['setEdgeInterrupt'] = {
             'field': 'edgeInterrupt',
             'subdevice_type': 'actor',
-            'function_type': 'setter',
+            'function_type': 'actuator_setter',
             'skip': False
             }
 
 mod['setEdgeCountConfig'] = {
             'field': 'edgeCountConfig',
             'subdevice_type': 'actor',
-            'function_type': 'setter',
+            'function_type': 'actuator_setter',
             'skip': False
             }
 
@@ -119,18 +121,6 @@ actor_fields['getEdgeCountConfig'] = {
             'field': 'edgeCountConfig',
             'field_type': ['uint8', 'uint8'],
             'field_type_cardinality': [1, 1],
-            'default_value': 100,
-            'max_value': 1000,
-            'min_value': 0,
-            'step_value': 1,
-            'skip': False
-        }
-        
-actor_fields['getEdgeCountCallbackPeriod'] = {
-            'value_type': 'number',
-            'field': 'edgeCountCallbackPeriod',
-            'field_type': ['uint32'],
-            'field_type_cardinality': [1],
             'default_value': 100,
             'max_value': 1000,
             'min_value': 0,

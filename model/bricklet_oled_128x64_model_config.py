@@ -12,7 +12,9 @@ other_sensors = {}
 special_fields = {}
 other_fields = {}
 callbacks = {}
-
+enabled_fields = {}
+debounce_period_fields = {}
+threshold_fields = {}
 
 mod['getDisplayConfiguration'] = {
             'field': 'displayConfiguration',
@@ -24,7 +26,7 @@ mod['getDisplayConfiguration'] = {
 mod['setDisplayConfiguration'] = {
             'field': 'displayConfiguration',
             'subdevice_type': 'actor',
-            'function_type': 'setter',
+            'function_type': 'actuator_setter',
             'skip': False
             }
 

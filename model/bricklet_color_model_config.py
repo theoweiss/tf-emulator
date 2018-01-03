@@ -12,7 +12,9 @@ other_sensors = {}
 special_fields = {}
 other_fields = {}
 callbacks = {}
-
+enabled_fields = {}
+debounce_period_fields = {}
+threshold_fields = {}
 
 mod['getIlluminance'] = {
             'field': 'illuminance',
@@ -35,43 +37,8 @@ mod['getColor'] = {
             'skip': False
             }
 
-mod['getColorCallbackPeriod'] = {
-            'field': 'colorCallbackPeriod',
-            'subdevice_type': 'actor',
-            'function_type': 'getter',
-            'skip': False
-            }
-
-mod['getColorTemperatureCallbackPeriod'] = {
-            'field': 'colorTemperatureCallbackPeriod',
-            'subdevice_type': 'actor',
-            'function_type': 'getter',
-            'skip': False
-            }
-
 mod['getConfig'] = {
             'field': 'config',
-            'subdevice_type': 'actor',
-            'function_type': 'getter',
-            'skip': False
-            }
-
-mod['getIlluminanceCallbackPeriod'] = {
-            'field': 'illuminanceCallbackPeriod',
-            'subdevice_type': 'actor',
-            'function_type': 'getter',
-            'skip': False
-            }
-
-mod['getDebouncePeriod'] = {
-            'field': 'debouncePeriod',
-            'subdevice_type': 'actor',
-            'function_type': 'getter',
-            'skip': False
-            }
-
-mod['getColorCallbackThreshold'] = {
-            'field': 'colorCallbackThreshold',
             'subdevice_type': 'actor',
             'function_type': 'getter',
             'skip': False
@@ -81,6 +48,41 @@ mod['isLightOn'] = {
             'field': 'light',
             'subdevice_type': 'actor',
             'function_type': 'getter',
+            'skip': False
+            }
+
+mod['getColorCallbackThreshold'] = {
+            'field': 'colorCallbackThreshold',
+            'subdevice_type': 'actor',
+            'function_type': 'callback_threshold_getter',
+            'skip': False
+            }
+
+mod['getDebouncePeriod'] = {
+            'field': 'debouncePeriod',
+            'subdevice_type': 'actor',
+            'function_type': 'callback_debounce_period_getter',
+            'skip': False
+            }
+
+mod['getColorCallbackPeriod'] = {
+            'field': 'colorCallbackPeriod',
+            'subdevice_type': 'actor',
+            'function_type': 'callback_period_getter',
+            'skip': False
+            }
+
+mod['getColorTemperatureCallbackPeriod'] = {
+            'field': 'colorTemperatureCallbackPeriod',
+            'subdevice_type': 'actor',
+            'function_type': 'callback_period_getter',
+            'skip': False
+            }
+
+mod['getIlluminanceCallbackPeriod'] = {
+            'field': 'illuminanceCallbackPeriod',
+            'subdevice_type': 'actor',
+            'function_type': 'callback_period_getter',
             'skip': False
             }
 
@@ -108,35 +110,35 @@ mod['setIlluminanceCallbackPeriod'] = {
 mod['setColorCallbackThreshold'] = {
             'field': 'colorCallbackThreshold',
             'subdevice_type': 'actor',
-            'function_type': 'setter',
-            'skip': False
-            }
-
-mod['lightOn'] = {
-            'field': 'light',
-            'subdevice_type': 'actor',
-            'function_type': 'setter',
-            'skip': False
-            }
-
-mod['setConfig'] = {
-            'field': 'config',
-            'subdevice_type': 'actor',
-            'function_type': 'setter',
-            'skip': False
-            }
-
-mod['lightOff'] = {
-            'field': 'light',
-            'subdevice_type': 'actor',
-            'function_type': 'setter',
+            'function_type': 'callback_threshold_setter',
             'skip': False
             }
 
 mod['setDebouncePeriod'] = {
             'field': 'debouncePeriod',
             'subdevice_type': 'actor',
-            'function_type': 'setter',
+            'function_type': 'callback_debounce_period_setter',
+            'skip': False
+            }
+
+mod['setConfig'] = {
+            'field': 'config',
+            'subdevice_type': 'actor',
+            'function_type': 'actuator_setter',
+            'skip': False
+            }
+
+mod['lightOn'] = {
+            'field': 'light',
+            'subdevice_type': 'actor',
+            'function_type': 'enabler',
+            'skip': False
+            }
+
+mod['lightOff'] = {
+            'field': 'light',
+            'subdevice_type': 'actor',
+            'function_type': 'disablers',
             'skip': False
             }
 
@@ -207,30 +209,6 @@ sensor_fields['getColor'] = {
             'skip': False
         }
         
-actor_fields['getColorCallbackPeriod'] = {
-            'value_type': 'number',
-            'field': 'colorCallbackPeriod',
-            'field_type': ['uint32'],
-            'field_type_cardinality': [1],
-            'default_value': 100,
-            'max_value': 1000,
-            'min_value': 0,
-            'step_value': 1,
-            'skip': False
-        }
-        
-actor_fields['getColorTemperatureCallbackPeriod'] = {
-            'value_type': 'number',
-            'field': 'colorTemperatureCallbackPeriod',
-            'field_type': ['uint32'],
-            'field_type_cardinality': [1],
-            'default_value': 100,
-            'max_value': 1000,
-            'min_value': 0,
-            'step_value': 1,
-            'skip': False
-        }
-        
 actor_fields['getConfig'] = {
             'value_type': 'number',
             'field': 'config',
@@ -243,46 +221,33 @@ actor_fields['getConfig'] = {
             'skip': False
         }
         
-actor_fields['getIlluminanceCallbackPeriod'] = {
-            'value_type': 'number',
-            'field': 'illuminanceCallbackPeriod',
-            'field_type': ['uint32'],
-            'field_type_cardinality': [1],
-            'default_value': 100,
-            'max_value': 1000,
-            'min_value': 0,
-            'step_value': 1,
-            'skip': False
-        }
-        
-actor_fields['getDebouncePeriod'] = {
-            'value_type': 'number',
-            'field': 'debouncePeriod',
-            'field_type': ['uint32'],
-            'field_type_cardinality': [1],
-            'default_value': 100,
-            'max_value': 1000,
-            'min_value': 0,
-            'step_value': 1,
-            'skip': False
-        }
-        
-actor_fields['getColorCallbackThreshold'] = {
-            'value_type': 'number',
-            'field': 'colorCallbackThreshold',
-            'field_type': ['char', 'uint16', 'uint16', 'uint16', 'uint16', 'uint16', 'uint16', 'uint16', 'uint16'],
-            'field_type_cardinality': [1, 1, 1, 1, 1, 1, 1, 1, 1],
-            'default_value': 100,
-            'max_value': 1000,
-            'min_value': 0,
-            'step_value': 1,
-            'skip': False
-        }
-        
-actor_fields['isLightOn'] = {
+enabled_fields['isLightOn'] = {
             'value_type': 'number',
             'field': 'light',
             'field_type': ['uint8'],
+            'field_type_cardinality': [1],
+            'default_value': 100,
+            'max_value': 1000,
+            'min_value': 0,
+            'step_value': 1,
+            'skip': False
+        }
+        
+threshold_fields['getColorCallbackThreshold'] = {
+            'value_type': 'threshold_buffer',
+            'field': 'colorCallbackThreshold',
+            'field_type': ['char', 'uint16', 'uint16', 'uint16', 'uint16', 'uint16', 'uint16', 'uint16', 'uint16'],
+            'field_type_cardinality': [1, 1, 1, 1, 1, 1, 1, 1, 1],
+            'default_value': 'x00',
+            'max_value': 1000,
+            'min_value': 0,
+            'skip': False
+        }
+        
+debounce_period_fields['getDebouncePeriod'] = {
+            'value_type': 'number',
+            'field': 'debouncePeriod',
+            'field_type': ['uint32'],
             'field_type_cardinality': [1],
             'default_value': 100,
             'max_value': 1000,

@@ -12,7 +12,9 @@ other_sensors = {}
 special_fields = {}
 other_fields = {}
 callbacks = {}
-
+enabled_fields = {}
+debounce_period_fields = {}
+threshold_fields = {}
 
 mod['getAnalogValue'] = {
             'field': 'analogValue',
@@ -28,38 +30,38 @@ mod['getPosition'] = {
             'skip': False
             }
 
-mod['getAnalogValueCallbackPeriod'] = {
-            'field': 'analogValueCallbackPeriod',
-            'subdevice_type': 'actor',
-            'function_type': 'getter',
-            'skip': False
-            }
-
-mod['getPositionCallbackPeriod'] = {
-            'field': 'positionCallbackPeriod',
-            'subdevice_type': 'actor',
-            'function_type': 'getter',
-            'skip': False
-            }
-
-mod['getDebouncePeriod'] = {
-            'field': 'debouncePeriod',
-            'subdevice_type': 'actor',
-            'function_type': 'getter',
-            'skip': False
-            }
-
 mod['getAnalogValueCallbackThreshold'] = {
             'field': 'analogValueCallbackThreshold',
             'subdevice_type': 'actor',
-            'function_type': 'getter',
+            'function_type': 'callback_threshold_getter',
             'skip': False
             }
 
 mod['getPositionCallbackThreshold'] = {
             'field': 'positionCallbackThreshold',
             'subdevice_type': 'actor',
-            'function_type': 'getter',
+            'function_type': 'callback_threshold_getter',
+            'skip': False
+            }
+
+mod['getDebouncePeriod'] = {
+            'field': 'debouncePeriod',
+            'subdevice_type': 'actor',
+            'function_type': 'callback_debounce_period_getter',
+            'skip': False
+            }
+
+mod['getAnalogValueCallbackPeriod'] = {
+            'field': 'analogValueCallbackPeriod',
+            'subdevice_type': 'actor',
+            'function_type': 'callback_period_getter',
+            'skip': False
+            }
+
+mod['getPositionCallbackPeriod'] = {
+            'field': 'positionCallbackPeriod',
+            'subdevice_type': 'actor',
+            'function_type': 'callback_period_getter',
             'skip': False
             }
 
@@ -80,21 +82,21 @@ mod['setPositionCallbackPeriod'] = {
 mod['setAnalogValueCallbackThreshold'] = {
             'field': 'analogValueCallbackThreshold',
             'subdevice_type': 'actor',
-            'function_type': 'setter',
+            'function_type': 'callback_threshold_setter',
             'skip': False
             }
 
 mod['setPositionCallbackThreshold'] = {
             'field': 'positionCallbackThreshold',
             'subdevice_type': 'actor',
-            'function_type': 'setter',
+            'function_type': 'callback_threshold_setter',
             'skip': False
             }
 
 mod['setDebouncePeriod'] = {
             'field': 'debouncePeriod',
             'subdevice_type': 'actor',
-            'function_type': 'setter',
+            'function_type': 'callback_debounce_period_setter',
             'skip': False
             }
 
@@ -179,59 +181,33 @@ sensor_fields['getPosition'] = {
             'skip': False
         }
         
-actor_fields['getAnalogValueCallbackPeriod'] = {
-            'value_type': 'number',
-            'field': 'analogValueCallbackPeriod',
-            'field_type': ['uint32'],
-            'field_type_cardinality': [1],
-            'default_value': 100,
+threshold_fields['getAnalogValueCallbackThreshold'] = {
+            'value_type': 'threshold_buffer',
+            'field': 'analogValueCallbackThreshold',
+            'field_type': ['char', 'uint16', 'uint16', 'uint16', 'uint16'],
+            'field_type_cardinality': [1, 1, 1, 1, 1],
+            'default_value': 'x00',
             'max_value': 1000,
             'min_value': 0,
-            'step_value': 1,
             'skip': False
         }
         
-actor_fields['getPositionCallbackPeriod'] = {
-            'value_type': 'number',
-            'field': 'positionCallbackPeriod',
-            'field_type': ['uint32'],
-            'field_type_cardinality': [1],
-            'default_value': 100,
+threshold_fields['getPositionCallbackThreshold'] = {
+            'value_type': 'threshold_buffer',
+            'field': 'positionCallbackThreshold',
+            'field_type': ['char', 'int16', 'int16', 'int16', 'int16'],
+            'field_type_cardinality': [1, 1, 1, 1, 1],
+            'default_value': 'x00',
             'max_value': 1000,
             'min_value': 0,
-            'step_value': 1,
             'skip': False
         }
         
-actor_fields['getDebouncePeriod'] = {
+debounce_period_fields['getDebouncePeriod'] = {
             'value_type': 'number',
             'field': 'debouncePeriod',
             'field_type': ['uint32'],
             'field_type_cardinality': [1],
-            'default_value': 100,
-            'max_value': 1000,
-            'min_value': 0,
-            'step_value': 1,
-            'skip': False
-        }
-        
-actor_fields['getAnalogValueCallbackThreshold'] = {
-            'value_type': 'number',
-            'field': 'analogValueCallbackThreshold',
-            'field_type': ['char', 'uint16', 'uint16', 'uint16', 'uint16'],
-            'field_type_cardinality': [1, 1, 1, 1, 1],
-            'default_value': 100,
-            'max_value': 1000,
-            'min_value': 0,
-            'step_value': 1,
-            'skip': False
-        }
-        
-actor_fields['getPositionCallbackThreshold'] = {
-            'value_type': 'number',
-            'field': 'positionCallbackThreshold',
-            'field_type': ['char', 'int16', 'int16', 'int16', 'int16'],
-            'field_type_cardinality': [1, 1, 1, 1, 1],
             'default_value': 100,
             'max_value': 1000,
             'min_value': 0,

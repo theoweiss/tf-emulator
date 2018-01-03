@@ -12,25 +12,13 @@ other_sensors = {}
 special_fields = {}
 other_fields = {}
 callbacks = {}
-
+enabled_fields = {}
+debounce_period_fields = {}
+threshold_fields = {}
 
 mod['getEdgeCount'] = {
             'field': 'edgeCount',
             'subdevice_type': 'sensor',
-            'function_type': 'getter',
-            'skip': False
-            }
-
-mod['getEdgeCountConfig'] = {
-            'field': 'edgeCountConfig',
-            'subdevice_type': 'actor',
-            'function_type': 'getter',
-            'skip': False
-            }
-
-mod['getPortInterrupt'] = {
-            'field': 'portInterrupt',
-            'subdevice_type': 'actor',
             'function_type': 'getter',
             'skip': False
             }
@@ -49,8 +37,22 @@ mod['getPortConfiguration'] = {
             'skip': False
             }
 
+mod['getEdgeCountConfig'] = {
+            'field': 'edgeCountConfig',
+            'subdevice_type': 'actor',
+            'function_type': 'getter',
+            'skip': False
+            }
+
 mod['getPort'] = {
             'field': 'port',
+            'subdevice_type': 'actor',
+            'function_type': 'getter',
+            'skip': False
+            }
+
+mod['getPortInterrupt'] = {
+            'field': 'portInterrupt',
             'subdevice_type': 'actor',
             'function_type': 'getter',
             'skip': False
@@ -59,49 +61,49 @@ mod['getPort'] = {
 mod['getDebouncePeriod'] = {
             'field': 'debouncePeriod',
             'subdevice_type': 'actor',
-            'function_type': 'getter',
-            'skip': False
-            }
-
-mod['setPortInterrupt'] = {
-            'field': 'portInterrupt',
-            'subdevice_type': 'actor',
-            'function_type': 'setter',
-            'skip': False
-            }
-
-mod['setPortMonoflop'] = {
-            'field': 'portMonoflop',
-            'subdevice_type': 'actor',
-            'function_type': 'setter',
-            'skip': False
-            }
-
-mod['setPortConfiguration'] = {
-            'field': 'portConfiguration',
-            'subdevice_type': 'actor',
-            'function_type': 'setter',
-            'skip': False
-            }
-
-mod['setEdgeCountConfig'] = {
-            'field': 'edgeCountConfig',
-            'subdevice_type': 'actor',
-            'function_type': 'setter',
-            'skip': False
-            }
-
-mod['setPort'] = {
-            'field': 'port',
-            'subdevice_type': 'actor',
-            'function_type': 'setter',
+            'function_type': 'callback_debounce_period_getter',
             'skip': False
             }
 
 mod['setDebouncePeriod'] = {
             'field': 'debouncePeriod',
             'subdevice_type': 'actor',
-            'function_type': 'setter',
+            'function_type': 'callback_debounce_period_setter',
+            'skip': False
+            }
+
+mod['setEdgeCountConfig'] = {
+            'field': 'edgeCountConfig',
+            'subdevice_type': 'actor',
+            'function_type': 'actuator_setter',
+            'skip': False
+            }
+
+mod['setPortInterrupt'] = {
+            'field': 'portInterrupt',
+            'subdevice_type': 'actor',
+            'function_type': 'actuator_setter',
+            'skip': False
+            }
+
+mod['setPortMonoflop'] = {
+            'field': 'portMonoflop',
+            'subdevice_type': 'actor',
+            'function_type': 'actuator_setter',
+            'skip': False
+            }
+
+mod['setPortConfiguration'] = {
+            'field': 'portConfiguration',
+            'subdevice_type': 'actor',
+            'function_type': 'actuator_setter',
+            'skip': False
+            }
+
+mod['setPort'] = {
+            'field': 'port',
+            'subdevice_type': 'actor',
+            'function_type': 'actuator_setter',
             'skip': False
             }
 
@@ -143,30 +145,6 @@ sensor_fields['getEdgeCount'] = {
             'skip': False
         }
         
-actor_fields['getEdgeCountConfig'] = {
-            'value_type': 'number',
-            'field': 'edgeCountConfig',
-            'field_type': ['uint8', 'uint8'],
-            'field_type_cardinality': [1, 1],
-            'default_value': 100,
-            'max_value': 1000,
-            'min_value': 0,
-            'step_value': 1,
-            'skip': False
-        }
-        
-actor_fields['getPortInterrupt'] = {
-            'value_type': 'number',
-            'field': 'portInterrupt',
-            'field_type': ['uint8'],
-            'field_type_cardinality': [1],
-            'default_value': 100,
-            'max_value': 1000,
-            'min_value': 0,
-            'step_value': 1,
-            'skip': False
-        }
-        
 actor_fields['getPortMonoflop'] = {
             'value_type': 'number',
             'field': 'portMonoflop',
@@ -191,6 +169,18 @@ actor_fields['getPortConfiguration'] = {
             'skip': False
         }
         
+actor_fields['getEdgeCountConfig'] = {
+            'value_type': 'number',
+            'field': 'edgeCountConfig',
+            'field_type': ['uint8', 'uint8'],
+            'field_type_cardinality': [1, 1],
+            'default_value': 100,
+            'max_value': 1000,
+            'min_value': 0,
+            'step_value': 1,
+            'skip': False
+        }
+        
 actor_fields['getPort'] = {
             'value_type': 'number',
             'field': 'port',
@@ -203,7 +193,19 @@ actor_fields['getPort'] = {
             'skip': False
         }
         
-actor_fields['getDebouncePeriod'] = {
+actor_fields['getPortInterrupt'] = {
+            'value_type': 'number',
+            'field': 'portInterrupt',
+            'field_type': ['uint8'],
+            'field_type_cardinality': [1],
+            'default_value': 100,
+            'max_value': 1000,
+            'min_value': 0,
+            'step_value': 1,
+            'skip': False
+        }
+        
+debounce_period_fields['getDebouncePeriod'] = {
             'value_type': 'number',
             'field': 'debouncePeriod',
             'field_type': ['uint32'],

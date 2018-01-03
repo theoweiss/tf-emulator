@@ -12,7 +12,9 @@ other_sensors = {}
 special_fields = {}
 other_fields = {}
 callbacks = {}
-
+enabled_fields = {}
+debounce_period_fields = {}
+threshold_fields = {}
 
 mod['getDateTime'] = {
             'field': 'dateTime',
@@ -52,35 +54,35 @@ mod['getCoordinates'] = {
 mod['getDateTimeCallbackPeriod'] = {
             'field': 'dateTimeCallbackPeriod',
             'subdevice_type': 'actor',
-            'function_type': 'getter',
-            'skip': False
-            }
-
-mod['getCoordinatesCallbackPeriod'] = {
-            'field': 'coordinatesCallbackPeriod',
-            'subdevice_type': 'actor',
-            'function_type': 'getter',
-            'skip': False
-            }
-
-mod['getAltitudeCallbackPeriod'] = {
-            'field': 'altitudeCallbackPeriod',
-            'subdevice_type': 'actor',
-            'function_type': 'getter',
-            'skip': False
-            }
-
-mod['getStatusCallbackPeriod'] = {
-            'field': 'statusCallbackPeriod',
-            'subdevice_type': 'actor',
-            'function_type': 'getter',
+            'function_type': 'callback_period_getter',
             'skip': False
             }
 
 mod['getMotionCallbackPeriod'] = {
             'field': 'motionCallbackPeriod',
             'subdevice_type': 'actor',
-            'function_type': 'getter',
+            'function_type': 'callback_period_getter',
+            'skip': False
+            }
+
+mod['getCoordinatesCallbackPeriod'] = {
+            'field': 'coordinatesCallbackPeriod',
+            'subdevice_type': 'actor',
+            'function_type': 'callback_period_getter',
+            'skip': False
+            }
+
+mod['getAltitudeCallbackPeriod'] = {
+            'field': 'altitudeCallbackPeriod',
+            'subdevice_type': 'actor',
+            'function_type': 'callback_period_getter',
+            'skip': False
+            }
+
+mod['getStatusCallbackPeriod'] = {
+            'field': 'statusCallbackPeriod',
+            'subdevice_type': 'actor',
+            'function_type': 'callback_period_getter',
             'skip': False
             }
 
@@ -216,66 +218,6 @@ sensor_fields['getCoordinates'] = {
             'field': 'coordinates',
             'field_type': ['uint32', 'char', 'uint32', 'char', 'uint16', 'uint16', 'uint16', 'uint16'],
             'field_type_cardinality': [1, 1, 1, 1, 1, 1, 1, 1],
-            'default_value': 100,
-            'max_value': 1000,
-            'min_value': 0,
-            'step_value': 1,
-            'skip': False
-        }
-        
-actor_fields['getDateTimeCallbackPeriod'] = {
-            'value_type': 'number',
-            'field': 'dateTimeCallbackPeriod',
-            'field_type': ['uint32'],
-            'field_type_cardinality': [1],
-            'default_value': 100,
-            'max_value': 1000,
-            'min_value': 0,
-            'step_value': 1,
-            'skip': False
-        }
-        
-actor_fields['getCoordinatesCallbackPeriod'] = {
-            'value_type': 'number',
-            'field': 'coordinatesCallbackPeriod',
-            'field_type': ['uint32'],
-            'field_type_cardinality': [1],
-            'default_value': 100,
-            'max_value': 1000,
-            'min_value': 0,
-            'step_value': 1,
-            'skip': False
-        }
-        
-actor_fields['getAltitudeCallbackPeriod'] = {
-            'value_type': 'number',
-            'field': 'altitudeCallbackPeriod',
-            'field_type': ['uint32'],
-            'field_type_cardinality': [1],
-            'default_value': 100,
-            'max_value': 1000,
-            'min_value': 0,
-            'step_value': 1,
-            'skip': False
-        }
-        
-actor_fields['getStatusCallbackPeriod'] = {
-            'value_type': 'number',
-            'field': 'statusCallbackPeriod',
-            'field_type': ['uint32'],
-            'field_type_cardinality': [1],
-            'default_value': 100,
-            'max_value': 1000,
-            'min_value': 0,
-            'step_value': 1,
-            'skip': False
-        }
-        
-actor_fields['getMotionCallbackPeriod'] = {
-            'value_type': 'number',
-            'field': 'motionCallbackPeriod',
-            'field_type': ['uint32'],
-            'field_type_cardinality': [1],
             'default_value': 100,
             'max_value': 1000,
             'min_value': 0,

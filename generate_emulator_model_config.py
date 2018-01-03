@@ -25,8 +25,6 @@ Boston, MA 02111-1307, USA.
 
 import sys
 import os
-import pprint
-from ctypes.test.test_callbacks import Callbacks
 
 sys.path.append(os.path.split(os.getcwd())[0])
 import common
@@ -49,7 +47,9 @@ other_sensors = {}
 special_fields = {}
 other_fields = {}
 callbacks = {}
-
+enabled_fields = {}
+debounce_period_fields = {}
+threshold_fields = {}
 """
         return header
 
@@ -93,16 +93,45 @@ callbacks = {}
             'skip': False
             }}
 """
-        if data_type not in ('char', 'string', 'boolean', 'identity'):
-            return number_field
-        elif data_type in ('char', 'string'):
+        threshold_field = """
+{field_category}['{name}'] = {{
+            'value_type': 'threshold_buffer',
+            'field': '{field}',
+            'field_type': {field_type},
+            'field_type_cardinality': {field_type_cardinality},
+            'default_value': 'x00',
+            'max_value': 1000,
+            'min_value': 0,
+            'skip': False
+        }}
+        """
+
+        debounce_period_field = """
+{field_category}['{name}'] = {{
+            'value_type': 'number',
+            'field': '{field}',
+            'field_type': {field_type},
+            'field_type_cardinality': {field_type_cardinality},
+            'default_value': 100,
+            'max_value': 1000,
+            'min_value': 0,
+            'step_value': 1,
+            'skip': False
+        }}
+        """
+
+        if data_type in ('char', 'string'):
             return char_field
-        elif data_type == 'boolean':
+        elif data_type == 'bool':
             return bool_field
         elif data_type == 'identity':
             return identity_field
+        elif data_type == 'threshold':
+            return threshold_field
+        elif data_type == 'debounce_period':
+            return debounce_period_field
         else:
-            raise "UnknownDataType"
+            return number_field
 
     def get_model(self):
         """
@@ -128,7 +157,7 @@ callbacks = {}
                             'allowedvalues': [<allowed>,...],
                             }
 
-        for boolean:
+        for bool:
         mod[<func_name>] = {
                             'field': '<fieldname>',
                             'field_type': 'uint8|uint16|char|...',
@@ -166,14 +195,12 @@ callbacks['{0}'] = {{
             data_type, cardinality = packet.get_getter_data_type()
             name_lower = packet.get_headless_camel_case_name()
             field_template = self.get_field_template(data_type)
-            print "----" + name_lower
             functions += function.format(**{
                                           'name': name_lower,
                                           'field': sensors[key][1],
                                           'subdevice_type': 'sensor',
                                           'function_type': 'getter'
                                           })
-            print "----" + name_lower
             fields += field_template.format(**{
                                              'field_category': field_category,
                                              'name': name_lower,
@@ -182,11 +209,7 @@ callbacks['{0}'] = {{
                                              'field_type_cardinality': cardinality
                                              })
 
-        actor_getters = {}
-        actor_getters.update(self.get_actor_getters())
-        actor_getters.update(self.get_callback_getters())
-        actor_getters.update(self.get_isEnableds())
-        actor_getters.update(self.get_callback_period_getters())
+        actor_getters = self.get_actor_getters()
         for key in actor_getters.keys():
             field_category = 'actor_fields'
             packet = actor_getters[key][0]
@@ -207,30 +230,144 @@ callbacks['{0}'] = {{
                                              'field_type_cardinality': cardinality
                                              })
 
-        callback_setters = self.get_callback_period_setters()
-        for key in callback_setters.keys():
-            packet = callback_setters[key][0]
+        isEnableds = self.get_isEnableds()
+        for key in isEnableds.keys():
+            field_category = 'enabled_fields'
+            packet = isEnableds[key][0]
+            data_type, cardinality = packet.get_getter_data_type()
+            name_lower = packet.get_headless_camel_case_name()
+            field_template = self.get_field_template(data_type)
+            functions += function.format(**{
+                                          'name': name_lower,
+                                          'field': isEnableds[key][1],
+                                          'subdevice_type': 'actor',
+                                          'function_type': 'getter'
+                                          })
+            fields += field_template.format(**{
+                                             'field_category': field_category,
+                                             'name': name_lower,
+                                             'field': isEnableds[key][1],
+                                             'field_type': data_type,
+                                             'field_type_cardinality': cardinality
+                                             })
+
+        callback_threshold_getters = self.get_callback_threshold_getters()
+        for key in callback_threshold_getters.keys():
+            field_category = 'threshold_fields'
+            packet = callback_threshold_getters[key][0]
+            data_type, cardinality = packet.get_getter_data_type()
+            name_lower = packet.get_headless_camel_case_name()
+            field_template = self.get_field_template('threshold')
+            functions += function.format(**{
+                                     'name': name_lower,
+                                     'field': callback_threshold_getters[key][1],
+                                     'function_type': 'callback_threshold_getter',
+                                     'subdevice_type': 'actor'
+                                     })
+            fields += field_template.format(**{
+                                             'field_category': field_category,
+                                             'name': name_lower,
+                                             'field': callback_threshold_getters[key][1],
+                                             'field_type': data_type,
+                                             'field_type_cardinality': cardinality
+                                             })
+
+        callback_debounce_period_getters = self.get_callback_debounce_period_getters()
+        for key in callback_debounce_period_getters.keys():
+            field_category = 'debounce_period_fields'
+            packet = callback_debounce_period_getters[key][0]
+            data_type, cardinality = packet.get_getter_data_type()
+            name_lower = packet.get_headless_camel_case_name()
+            field_template = self.get_field_template('debounce_period')
+            functions += function.format(**{
+                                     'name': name_lower,
+                                     'field': callback_debounce_period_getters[key][1],
+                                     'function_type': 'callback_debounce_period_getter',
+                                     'subdevice_type': 'actor'
+                                     })
+            fields += field_template.format(**{
+                                             'field_category': field_category,
+                                             'name': name_lower,
+                                             'field': callback_debounce_period_getters[key][1],
+                                             'field_type': data_type,
+                                             'field_type_cardinality': cardinality
+                                             })
+
+        callback_period_getters = self.get_callback_period_getters()
+        for key in callback_period_getters.keys():
+            packet = callback_period_getters[key][0]
             name_lower = packet.get_headless_camel_case_name()
             functions += function.format(**{
                                      'name': name_lower,
-                                     'field': callback_setters[key][1],
+                                     'field': callback_period_getters[key][1],
+                                     'function_type': 'callback_period_getter',
+                                     'subdevice_type': 'actor'
+                                     })
+        
+        callback_period_setters = self.get_callback_period_setters()
+        for key in callback_period_setters.keys():
+            packet = callback_period_setters[key][0]
+            name_lower = packet.get_headless_camel_case_name()
+            functions += function.format(**{
+                                     'name': name_lower,
+                                     'field': callback_period_setters[key][1],
                                      'function_type': 'callback_period_setter',
                                      'subdevice_type': 'actor'
                                      })
         
-        
-        setter = {}
-        setter.update(self.get_actors())
-        setter.update(self.get_callback_setters())
-        setter.update(self.get_enablers())
-        setter.update(self.get_disablers())
-        for key in setter.keys():
-            packet = setter[key][0]
+        callback_threshold_setters = self.get_callback_threshold_setters()
+        for key in callback_threshold_setters.keys():
+            packet = callback_threshold_setters[key][0]
             name_lower = packet.get_headless_camel_case_name()
             functions += function.format(**{
                                      'name': name_lower,
-                                     'field': setter[key][1],
-                                     'function_type': 'setter',
+                                     'field': callback_threshold_setters[key][1],
+                                     'function_type': 'callback_threshold_setter',
+                                     'subdevice_type': 'actor'
+                                     })
+        
+        callback_debounce_period_setters = self.get_callback_debounce_period_setters()
+        for key in callback_debounce_period_setters.keys():
+            packet = callback_debounce_period_setters[key][0]
+            name_lower = packet.get_headless_camel_case_name()
+            functions += function.format(**{
+                                     'name': name_lower,
+                                     'field': callback_debounce_period_setters[key][1],
+                                     'function_type': 'callback_debounce_period_setter',
+                                     'subdevice_type': 'actor'
+                                     })
+        
+        
+        actuator_setters = self.get_actors()
+        for key in actuator_setters.keys():
+            packet = actuator_setters[key][0]
+            name_lower = packet.get_headless_camel_case_name()
+            functions += function.format(**{
+                                     'name': name_lower,
+                                     'field': actuator_setters[key][1],
+                                     'function_type': 'actuator_setter',
+                                     'subdevice_type': 'actor'
+                                     })
+
+        enablers = self.get_enablers()
+        for key in enablers.keys():
+            packet = enablers[key][0]
+            name_lower = packet.get_headless_camel_case_name()
+            functions += function.format(**{
+                                     'name': name_lower,
+                                     'field': enablers[key][1],
+                                     'function_type': 'enabler',
+                                     'subdevice_type': 'actor'
+                                     })
+
+        disablers = self.get_disablers()
+        for key in disablers.keys():
+            packet = disablers[key][0]
+            name_lower = packet.get_headless_camel_case_name()
+            functions += function.format(**{
+                                     'name': name_lower,
+                                     'field': disablers[key][1],
+                                     'function_type': 'disablers',
                                      'subdevice_type': 'actor'
                                      })
 

@@ -25,6 +25,7 @@ Boston, MA 02111-1307, USA.
 
 import sys
 import os
+from bundlebuilder import Defaults
 
 sys.path.append(os.path.split(os.getcwd())[0])
 import common
@@ -221,6 +222,149 @@ public final static String DEVICE_DISPLAY_NAME = "{3}";
             
         return funcstart + ifelse + funcend
 
+    def get_java_methods2(self):
+        methods = ''
+        method = """
+  /**
+   * 
+   */
+  private Buffer {0}(Packet packet) {{
+    logger.debug("function {0}");
+    if (packet.getResponseExpected()) {{
+      byte length = (byte) 8 + {3};
+      byte functionId = FUNCTION_{1};
+      byte flags = (byte) 0;
+      Buffer header = Utils.createHeader(uidBytes, length, functionId, packet.getOptions(), flags);
+      Buffer buffer = Buffer.buffer();
+      buffer.appendBuffer(header);
+{2}
+      return buffer;
+    }}
+{4}
+    return null;
+  }}
+"""
+        method2 = """
+  /**
+   * 
+   */
+  private Buffer {function_name}(Packet packet) {{
+    logger.debug("function {function_name}");
+    if (packet.getResponseExpected()) {{
+      byte length = (byte) 8 + {bufferbytes};
+      byte functionId = FUNCTION_{name_upper};
+      byte flags = (byte) 0;
+      Buffer header = Utils.createHeader(uidBytes, length, functionId, packet.getOptions(), flags);
+      Buffer buffer = Buffer.buffer();
+      buffer.appendBuffer(header);
+{value_field}
+      return buffer;
+    }}
+{4}
+    return null;
+  }}
+"""
+        default_method = """
+  private Buffer {0}Default() {{
+      Buffer buffer = Buffer.buffer();
+{1}
+      return buffer;
+  }}
+"""
+        value_buffer = '      buffer.appendBuffer(this.{0});'
+        set_field = ''
+        
+
+#======================== new begin ===================
+        function_types = ['callback_threshold_getter', 'callback_debounce_period_getter', 
+                          'callback_period_getter', 'callback_threshold_setter',
+                          'callback_debounce_period_setter']
+        for packet in self.get_packets('function'):
+            if packet.function_type in function_types:
+                headless_camel_case_name=packet.get_headless_camel_case_name()
+                name_lower = packet.get_headless_camel_case_name()
+                name_upper = packet.get_upper_case_name()
+                buffers, bufferbytes = packet.get_emulator_return_values2()
+                if packet.subdevice_type == 'setter': TODO: das muss erst noch in die modul_config im Moment steht da 'actor'
+                    set_field = '    this.{0} = packet.getPayload();'.format(packet.field[0].upper() + packet.field[1:])
+                
+                methods += method2.format(function_name=headless_camel_case_name,
+                                         name_upper=name_upper,
+                                         value_field=value_buffer.format(packet.field), 
+                                         bufferbytes=bufferbytes,
+                                         set_field=set_field)
+
+#======================== new end =====================
+
+
+        actor_getters = {}
+        actor_getters.update(self.get_actor_getters())
+        actor_getters.update(self.get_callback_debounce_period_getters())
+        actor_getters.update(self.get_callback_threshold_getters())
+        actor_getters.update(self.get_isEnableds())
+        for key in actor_getters.keys():
+            packet = actor_getters[key][0]
+            field = actor_getters[key][1]
+            value_field = value_buffer.format(field)
+            name_lower = packet.get_headless_camel_case_name()
+            name_upper = packet.get_upper_case_name()
+            buffers, bufferbytes = packet.get_emulator_return_values()
+
+            methods += method.format(name_lower,
+                                     name_upper,
+                                     value_field, 
+                                     bufferbytes,
+                                     set_field)
+            methods += default_method.format(name_lower, buffers)
+
+        callback_period_getters = self.get_callback_period_getters()
+        for key in callback_period_getters:
+            packet = callback_period_getters[key][0]
+            field = callback_period_getters[key][1]
+            name_lower = packet.get_headless_camel_case_name()
+            name_upper = packet.get_upper_case_name()
+            buffers, bufferbytes = packet.get_emulator_return_values2()
+
+            methods += method.format(name_lower,
+                                     name_upper,
+                                     buffers, 
+                                     bufferbytes,
+                                     set_field)
+            
+        setter = {}
+        setter.update(self.get_actors())
+        setter.update(self.get_callback_debounce_period_setters())
+        setter.update(self.get_callback_threshold_setters())
+        setter.update(self.get_enablers())
+        setter.update(self.get_disablers())
+        for key in setter.keys():
+            packet = setter[key][0]
+            set_field = '    this.{0} = packet.getPayload();'.format(setter[key][1])
+            value_field = '//TODO response expected bei settern'
+            name_lower = packet.get_headless_camel_case_name()
+            name_upper = packet.get_upper_case_name()
+            bufferbytes = packet.get_emulator_return_values()[1]
+
+            methods += method.format(name_lower,
+                                     name_upper,
+                                     value_field, 
+                                     bufferbytes,
+                                     set_field)
+        getIdentity = self.get_getIdentity()
+        for key in getIdentity.keys():
+            packet = getIdentity[key]
+            set_field = ''
+            value_field = '       buffer.appendBuffer(Utils.getIdentityPayload(uidString, uidBytes, DEVICE_IDENTIFIER));'
+            name_lower = packet.get_headless_camel_case_name()
+            name_upper = packet.get_upper_case_name()
+            bufferbytes = packet.get_emulator_return_values()[1]
+            methods += method.format(name_lower,
+                                     name_upper,
+                                     value_field, 
+                                     bufferbytes,
+                                     set_field)
+        return methods
+
 
     def get_java_methods(self):
         methods = ''
@@ -259,7 +403,8 @@ public final static String DEVICE_DISPLAY_NAME = "{3}";
 
         actor_getters = {}
         actor_getters.update(self.get_actor_getters())
-        actor_getters.update(self.get_callback_getters())
+        actor_getters.update(self.get_callback_debounce_period_getters())
+        actor_getters.update(self.get_callback_threshold_getters())
         actor_getters.update(self.get_isEnableds())
         for key in actor_getters.keys():
             packet = actor_getters[key][0]
@@ -292,7 +437,8 @@ public final static String DEVICE_DISPLAY_NAME = "{3}";
             
         setter = {}
         setter.update(self.get_actors())
-        setter.update(self.get_callback_setters())
+        setter.update(self.get_callback_debounce_period_setters())
+        setter.update(self.get_callback_threshold_setters())
         setter.update(self.get_enablers())
         setter.update(self.get_disablers())
         for key in setter.keys():
@@ -360,158 +506,6 @@ public final static String DEVICE_DISPLAY_NAME = "{3}";
 
         return methods
 
-    def get_test_import(self):
-        imports = """package org.m1theo.tfemulator.tests;
-
-import java.io.IOException;
-
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.m1theo.tfemulator.Utils;
-
-import com.tinkerforge.AlreadyConnectedException;
-import com.tinkerforge.{0};
-import com.tinkerforge.IPConnection;
-
-import io.vertx.core.DeploymentOptions;
-import io.vertx.core.Vertx;
-import io.vertx.core.json.JsonArray;
-import io.vertx.core.json.JsonObject;
-import io.vertx.ext.unit.Async;
-import io.vertx.ext.unit.TestContext;
-import io.vertx.ext.unit.junit.VertxUnitRunner;
-"""
-    
-        return imports.format(self.get_java_class_name())
-
-    def get_test_class(self, uid):
-        classbody = """
-@RunWith(VertxUnitRunner.class)
-public class {0}Test {{
-
-  Vertx vertx;
-  IPConnection ipcon;
-  {0} device;
-
-  @Before
-  public void before(TestContext context) {{
-    String uid = "{1}";
-    String host = "localhost";
-    int port = 1234;
-    JsonObject emuconfig = new JsonObject().put("devices", new JsonArray().add(
-        new JsonObject().put("type", "{0}").put("uid", uid).put("enabled", true)));
-    System.out.println(emuconfig.encodePrettily());
-    DeploymentOptions deploymentOptions = new DeploymentOptions().setConfig(emuconfig);
-
-    vertx = Vertx.vertx();
-    Async async = context.async();
-    vertx.deployVerticle("org.m1theo.tfemulator.Brickd", deploymentOptions, res -> {{
-      async.complete();
-    }});
-    ipcon = new IPConnection(); // Create IP connection
-    try {{
-      try {{
-        Thread.sleep(100);
-      }} catch (InterruptedException e) {{
-        // TODO Auto-generated catch block
-        e.printStackTrace();
-      }}
-      ipcon.connect(host, port);
-    }} catch (AlreadyConnectedException | IOException e) {{
-      context.fail(e);
-    }}
-    device = new {0}(uid, ipcon);
-  }}
-
-  @After
-  public void after(TestContext context) {{
-    // ipcon.disconnect();
-    vertx.close(context.asyncAssertSuccess());
-  }}
-"""
-        return classbody.format(self.get_java_class_name(), uid)
-
-
-    def get_test_booleans(self):
-        methods = ''
-        method = """
-  @Test
-  public void test{0}(TestContext context) {{
-    try {{
-      device.setResponseExpectedAll(true);
-      device.{1}(); //enable
-      //assert enabled
-      {4} value = device.{3}();
-{5}
-      device.{2}(); //disable
-      // assert disabled
-      value = device.{3}();
-{6}
-    }} catch (Exception e) {{
-      context.fail(e);
-    }}
-  }}
-"""        
-        assert_enabled='context.assertTrue(value);\n'
-        assert_disabled='context.assertFalse(value);\n'
-        
-        booleans = self.get_booleans()
-        for key in booleans.keys():
-            packet = booleans[key][0]
-            name_enable = booleans[key][1]
-            name_disable = booleans[key][2]
-            name_isenabled = booleans[key][3]
-            type = packet.get_java_return_type()
-            if type == "short":
-                assert_enabled='      context.assertEquals(value, 1);\n'
-                assert_disabled='      context.assertEquals(value, 0);\n'
-            methods += method.format(key, name_enable, name_disable, name_isenabled, type, 
-                                     assert_enabled, assert_disabled)
-            
-        return methods
-
-    def get_test_sensors(self):
-        methods = ''
-        method = """
-  @Test
-  public void test{4}{0}(TestContext context) {{
-    try {{
-      {1} value = device.{0}({3});
-      {2}
-    }} catch (Exception e) {{
-      context.fail(e);
-    }}
-  }}
-"""        
-        sensors = self.get_sensors()
-        for key in sensors.keys():
-            packet = sensors[key][0]
-            method_args = []
-            #0: methodname,  1: type of return value, 2: asserts
-            return_type, test_asserts, args = packet.get_test_return_values()
-            if return_type == None:
-                return_type = self.get_java_class_name() + '.' + packet.get_java_object_name()
-            if not args:
-                methods += method.format(key, return_type, test_asserts, '', '')
-            else:
-                for arg in args:
-                    if len(args) == 1:
-                        if arg == 'boolean':
-                            methods += method.format(key, return_type, test_asserts, 'true', '1')
-                            methods += method.format(key, return_type, test_asserts, 'false', '2')
-                        elif arg == 'short':
-                            methods += method.format(key, return_type, test_asserts, '(short) 1', '')
-                        else:
-                            #TODO:
-                            print "omitting method: don't know how to handle arg type " + arg
-                    else:
-                        #TODO concatenamte args
-                        print "omitting method: don't know how to handle multiargs"
-
-        return methods
-
     def get_actuator_fields(self):
         fields = ''
         field_template = """
@@ -531,6 +525,60 @@ public class {0}Test {{
         
         return fields
     
+    # TODO: hier geht es weiter
+    #hier muss jetzt ein get_debounce_period_fields und ein get threshold_fields und ein get_enableds_field her.
+    # Die Defaults sind vermutlich fuer debounce period eine Utils-Methode.
+    # Dann muss die Methoden-Implementierung fuer die debounc/threshold/enableds getter und setter entsprechend
+    # angepasst werden.
+    
+    def get_threshold_fields(self):
+        fields = ''
+        field_template = """
+  private Buffer {field_name} = Utils.getThresholdDefault();"""
+
+        for f in self.threshold_fields.keys():
+            field = self.threshold_fields[f]
+            if field['skip']:
+                continue
+            field_name = field['field']
+            fields += field_template.format(field_name=field_name)
+            
+        return fields
+    
+    def get_debounce_period_fields(self):
+        fields = ''
+        field_template = """
+  private Buffer {field_name} = Buffer.buffer(Utils.getUInt16(100));"""
+
+        for f in self.debounce_period_fields.keys():
+            field = self.debounce_period_fields[f]
+            if field['skip']:
+                continue
+            fields += field_template.format(
+                                field_name=field['field'],
+                                field_default=field['default_value']
+                                )
+            
+        return fields
+        
+    def get_enableds_fields(self):
+        fields = ''
+        field_template = """
+        """
+        for f in self.enabled_fields.keys():
+            field = self.enabled_fields[f]
+            if field['skip']:
+                continue
+            fields += field_template.format(
+                                field_name=field['field'],
+                                field_default=field['default_value'],
+                                max_value=field['max_value'],
+                                min_value=field['min_value'],
+                                step_value=field['step_value'],
+                                field_type=emulator_common.get_java_byte_buffer_storage_type(field['field_type'][0])) # ignore cardinality for now
+            
+        return fields
+        
     def get_sensor_fields(self):
         """
   private short illuminance;
@@ -678,7 +726,7 @@ public class {0}Test {{
                     getters += get_for_callback.format(field_name_upper=field_name[0].upper() + field_name[1:],
                                                        functionId=self.get_callback_packet_for_fieldname(field_name).get_upper_case_name())
                 else:
-                    print "sensorfield not found " + f
+                    print "WARNING: sensorfield not found " + f
             else:
                 stop_generators += dummy_stop_generator.format(field_name=f)
                 start_generators += dummy_start_generator.format(field_name=f)
@@ -809,19 +857,6 @@ public class {0}Test {{
 
         return "  * {0}\n" + readmes
 
-    def get_test_source(self, uid):
-        source  = emulator_license.get_license()
-        source += self.get_generated_hint_docstring()
-        source += self.get_test_import()
-        source += self.get_test_class(uid)
-        source += self.get_test_sensors()
-        source += self.get_test_booleans()
-        self.get_method_categories()
-        #source += self.get_java_return_objects()
-        source += self.get_java_class_end()
-        
-        return source
-
     def get_emulator_source(self):
         source  = emulator_license.get_license()
         source += self.get_generated_hint_docstring()
@@ -830,6 +865,8 @@ public class {0}Test {{
         source += self.get_java_function_id_definitions()
         source += self.get_java_constants()
         source += self.get_actuator_fields()
+        source += self.get_threshold_fields()
+        source += self.get_debounce_period_fields()
         source += self.get_sensor_fields()
 
         generators, generator_inits = self.get_sensor_value_generator()
@@ -850,7 +887,7 @@ public class {0}Test {{
         source += self.get_sensor_callback_period()
         source += self.get_callback_buffer()
         
-        source += self.get_java_methods()
+        source += self.get_java_methods2()
 
         # TODO: a real method implementation is missing for now
         source += self.get_dummy_methods()
@@ -860,40 +897,6 @@ public class {0}Test {{
         return source
 
 class JavaBindingsPacket(emulator_common.JavaPacket):
-
-    def get_test_return_values(self):
-        test_values = ""
-        test_assert = """context.assertEquals({0}, value{1});
-      """
-        test_assert_arr = """      for (int i = 0; i < value{1}.length; i++) {{
-        context.assertEquals({0}, value{1}[i]);
-      }}
-"""
-        return_type = None
-        args = []
-        if len(self.get_elements('out')) == 1:
-            value_field = ''
-            for element in self.get_elements('out'):
-                return_type = element.get_java_type()
-                if element.get_cardinality() > 1:
-                    return_type += '[]'
-                    test_values += test_assert_arr.format(element.get_random_value_function(), value_field)
-                else:
-                    test_values += test_assert.format(element.get_random_value_function(), value_field)
-        elif len(self.get_elements('out')) > 1:
-            value_field = '.{0}'
-            for element in self.get_elements('out'):
-                if element.get_cardinality() > 1 and element.get_type() != 'string':
-                    test_values += test_assert_arr.format(element.get_random_value_function(),
-                                                          value_field.format(element.get_headless_camel_case_name()))
-                else:
-                    test_values += test_assert.format(element.get_random_value_function(), 
-                                                  value_field.format(element.get_headless_camel_case_name()))
-        if len(self.get_elements('in')) != 0:
-            for element in self.get_elements('in'):
-                args.append(element.get_java_type())
-
-        return return_type, test_values, args
 
     def get_emulator_return_values2(self):
         bufferbytes = 0
@@ -986,15 +989,12 @@ class JavaBindingsPacket(emulator_common.JavaPacket):
 
 class JavaBindingsGenerator(common.BindingsGenerator):
     released_files_name_prefix = 'generator'
-    testsubdir = os.path.join('tfemulator', 'src', 'test', 'java', 'org', 'm1theo', 'tfemulator', 'tests')
     devicesubdir = os.path.join('tfemulator', 'src', 'main', 'java', 'org', 'm1theo', 'tfemulator', 'devices')
-    uidgenerator = emulator_common.UidGenerator()
     readme = ''
     model_config_dir = 'model'
 
     def prepare(self):
         common.recreate_directory(os.path.join(self.get_bindings_root_directory(), self.devicesubdir))
-        common.recreate_directory(os.path.join(self.get_bindings_root_directory(), self.testsubdir))
 
     def get_bindings_name(self):
         return 'emulator'
@@ -1016,13 +1016,6 @@ class JavaBindingsGenerator(common.BindingsGenerator):
         java = open(os.path.join(self.get_bindings_root_directory(), self.devicesubdir + suffix, filename), 'wb')
         java.write(device.get_emulator_source())
         java.close()
-        
-        ## generate tests
-        uid = self.uidgenerator.get_uid_from_name(device.get_headless_camel_case_name())
-        testfilename = '{0}Test.java'.format(device.get_java_class_name())
-        javatest = open(os.path.join(self.get_bindings_root_directory(), self.testsubdir + suffix, testfilename), 'wb')
-        javatest.write(device.get_test_source(uid))
-        javatest.close()
         
         self.readme += device.get_readme().format(device.get_java_class_name())
         

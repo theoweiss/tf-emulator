@@ -12,7 +12,9 @@ other_sensors = {}
 special_fields = {}
 other_fields = {}
 callbacks = {}
-
+enabled_fields = {}
+debounce_period_fields = {}
+threshold_fields = {}
 
 mod['getAnalogValue'] = {
             'field': 'analogValue',
@@ -28,8 +30,8 @@ mod['getVoltage'] = {
             'skip': False
             }
 
-mod['getAnalogValueCallbackPeriod'] = {
-            'field': 'analogValueCallbackPeriod',
+mod['getAveraging'] = {
+            'field': 'averaging',
             'subdevice_type': 'actor',
             'function_type': 'getter',
             'skip': False
@@ -45,35 +47,35 @@ mod['getRange'] = {
 mod['getVoltageCallbackThreshold'] = {
             'field': 'voltageCallbackThreshold',
             'subdevice_type': 'actor',
-            'function_type': 'getter',
-            'skip': False
-            }
-
-mod['getAveraging'] = {
-            'field': 'averaging',
-            'subdevice_type': 'actor',
-            'function_type': 'getter',
-            'skip': False
-            }
-
-mod['getVoltageCallbackPeriod'] = {
-            'field': 'voltageCallbackPeriod',
-            'subdevice_type': 'actor',
-            'function_type': 'getter',
-            'skip': False
-            }
-
-mod['getDebouncePeriod'] = {
-            'field': 'debouncePeriod',
-            'subdevice_type': 'actor',
-            'function_type': 'getter',
+            'function_type': 'callback_threshold_getter',
             'skip': False
             }
 
 mod['getAnalogValueCallbackThreshold'] = {
             'field': 'analogValueCallbackThreshold',
             'subdevice_type': 'actor',
-            'function_type': 'getter',
+            'function_type': 'callback_threshold_getter',
+            'skip': False
+            }
+
+mod['getDebouncePeriod'] = {
+            'field': 'debouncePeriod',
+            'subdevice_type': 'actor',
+            'function_type': 'callback_debounce_period_getter',
+            'skip': False
+            }
+
+mod['getAnalogValueCallbackPeriod'] = {
+            'field': 'analogValueCallbackPeriod',
+            'subdevice_type': 'actor',
+            'function_type': 'callback_period_getter',
+            'skip': False
+            }
+
+mod['getVoltageCallbackPeriod'] = {
+            'field': 'voltageCallbackPeriod',
+            'subdevice_type': 'actor',
+            'function_type': 'callback_period_getter',
             'skip': False
             }
 
@@ -94,35 +96,35 @@ mod['setAnalogValueCallbackPeriod'] = {
 mod['setAnalogValueCallbackThreshold'] = {
             'field': 'analogValueCallbackThreshold',
             'subdevice_type': 'actor',
-            'function_type': 'setter',
+            'function_type': 'callback_threshold_setter',
             'skip': False
             }
 
 mod['setVoltageCallbackThreshold'] = {
             'field': 'voltageCallbackThreshold',
             'subdevice_type': 'actor',
-            'function_type': 'setter',
-            'skip': False
-            }
-
-mod['setAveraging'] = {
-            'field': 'averaging',
-            'subdevice_type': 'actor',
-            'function_type': 'setter',
+            'function_type': 'callback_threshold_setter',
             'skip': False
             }
 
 mod['setDebouncePeriod'] = {
             'field': 'debouncePeriod',
             'subdevice_type': 'actor',
-            'function_type': 'setter',
+            'function_type': 'callback_debounce_period_setter',
+            'skip': False
+            }
+
+mod['setAveraging'] = {
+            'field': 'averaging',
+            'subdevice_type': 'actor',
+            'function_type': 'actuator_setter',
             'skip': False
             }
 
 mod['setRange'] = {
             'field': 'range',
             'subdevice_type': 'actor',
-            'function_type': 'setter',
+            'function_type': 'actuator_setter',
             'skip': False
             }
 
@@ -181,10 +183,10 @@ sensor_fields['getVoltage'] = {
             'skip': False
         }
         
-actor_fields['getAnalogValueCallbackPeriod'] = {
+actor_fields['getAveraging'] = {
             'value_type': 'number',
-            'field': 'analogValueCallbackPeriod',
-            'field_type': ['uint32'],
+            'field': 'averaging',
+            'field_type': ['uint8'],
             'field_type_cardinality': [1],
             'default_value': 100,
             'max_value': 1000,
@@ -205,59 +207,33 @@ actor_fields['getRange'] = {
             'skip': False
         }
         
-actor_fields['getVoltageCallbackThreshold'] = {
-            'value_type': 'number',
+threshold_fields['getVoltageCallbackThreshold'] = {
+            'value_type': 'threshold_buffer',
             'field': 'voltageCallbackThreshold',
             'field_type': ['char', 'uint16', 'uint16'],
             'field_type_cardinality': [1, 1, 1],
-            'default_value': 100,
+            'default_value': 'x00',
             'max_value': 1000,
             'min_value': 0,
-            'step_value': 1,
             'skip': False
         }
         
-actor_fields['getAveraging'] = {
-            'value_type': 'number',
-            'field': 'averaging',
-            'field_type': ['uint8'],
-            'field_type_cardinality': [1],
-            'default_value': 100,
+threshold_fields['getAnalogValueCallbackThreshold'] = {
+            'value_type': 'threshold_buffer',
+            'field': 'analogValueCallbackThreshold',
+            'field_type': ['char', 'uint16', 'uint16'],
+            'field_type_cardinality': [1, 1, 1],
+            'default_value': 'x00',
             'max_value': 1000,
             'min_value': 0,
-            'step_value': 1,
             'skip': False
         }
         
-actor_fields['getVoltageCallbackPeriod'] = {
-            'value_type': 'number',
-            'field': 'voltageCallbackPeriod',
-            'field_type': ['uint32'],
-            'field_type_cardinality': [1],
-            'default_value': 100,
-            'max_value': 1000,
-            'min_value': 0,
-            'step_value': 1,
-            'skip': False
-        }
-        
-actor_fields['getDebouncePeriod'] = {
+debounce_period_fields['getDebouncePeriod'] = {
             'value_type': 'number',
             'field': 'debouncePeriod',
             'field_type': ['uint32'],
             'field_type_cardinality': [1],
-            'default_value': 100,
-            'max_value': 1000,
-            'min_value': 0,
-            'step_value': 1,
-            'skip': False
-        }
-        
-actor_fields['getAnalogValueCallbackThreshold'] = {
-            'value_type': 'number',
-            'field': 'analogValueCallbackThreshold',
-            'field_type': ['char', 'uint16', 'uint16'],
-            'field_type_cardinality': [1, 1, 1],
             'default_value': 100,
             'max_value': 1000,
             'min_value': 0,

@@ -12,7 +12,9 @@ other_sensors = {}
 special_fields = {}
 other_fields = {}
 callbacks = {}
-
+enabled_fields = {}
+debounce_period_fields = {}
+threshold_fields = {}
 
 mod['getStringLength'] = {
             'field': 'stringLength',
@@ -140,6 +142,20 @@ mod['getStringChunk'] = {
             'skip': False
             }
 
+mod['getFileEvents'] = {
+            'field': 'fileEvents',
+            'subdevice_type': 'actor',
+            'function_type': 'getter',
+            'skip': False
+            }
+
+mod['getProgramCommand'] = {
+            'field': 'programCommand',
+            'subdevice_type': 'actor',
+            'function_type': 'getter',
+            'skip': False
+            }
+
 mod['getProgramStdioRedirection'] = {
             'field': 'programStdioRedirection',
             'subdevice_type': 'actor',
@@ -161,22 +177,8 @@ mod['getFilePosition'] = {
             'skip': False
             }
 
-mod['getFileEvents'] = {
-            'field': 'fileEvents',
-            'subdevice_type': 'actor',
-            'function_type': 'getter',
-            'skip': False
-            }
-
 mod['getCustomProgramOptionValue'] = {
             'field': 'customProgramOptionValue',
-            'subdevice_type': 'actor',
-            'function_type': 'getter',
-            'skip': False
-            }
-
-mod['getProgramCommand'] = {
-            'field': 'programCommand',
             'subdevice_type': 'actor',
             'function_type': 'getter',
             'skip': False
@@ -185,49 +187,49 @@ mod['getProgramCommand'] = {
 mod['setStringChunk'] = {
             'field': 'stringChunk',
             'subdevice_type': 'actor',
-            'function_type': 'setter',
-            'skip': False
-            }
-
-mod['setProgramStdioRedirection'] = {
-            'field': 'programStdioRedirection',
-            'subdevice_type': 'actor',
-            'function_type': 'setter',
+            'function_type': 'actuator_setter',
             'skip': False
             }
 
 mod['setProgramCommand'] = {
             'field': 'programCommand',
             'subdevice_type': 'actor',
-            'function_type': 'setter',
-            'skip': False
-            }
-
-mod['setProgramSchedule'] = {
-            'field': 'programSchedule',
-            'subdevice_type': 'actor',
-            'function_type': 'setter',
-            'skip': False
-            }
-
-mod['setFilePosition'] = {
-            'field': 'filePosition',
-            'subdevice_type': 'actor',
-            'function_type': 'setter',
-            'skip': False
-            }
-
-mod['setFileEvents'] = {
-            'field': 'fileEvents',
-            'subdevice_type': 'actor',
-            'function_type': 'setter',
+            'function_type': 'actuator_setter',
             'skip': False
             }
 
 mod['setCustomProgramOptionValue'] = {
             'field': 'customProgramOptionValue',
             'subdevice_type': 'actor',
-            'function_type': 'setter',
+            'function_type': 'actuator_setter',
+            'skip': False
+            }
+
+mod['setFilePosition'] = {
+            'field': 'filePosition',
+            'subdevice_type': 'actor',
+            'function_type': 'actuator_setter',
+            'skip': False
+            }
+
+mod['setProgramStdioRedirection'] = {
+            'field': 'programStdioRedirection',
+            'subdevice_type': 'actor',
+            'function_type': 'actuator_setter',
+            'skip': False
+            }
+
+mod['setProgramSchedule'] = {
+            'field': 'programSchedule',
+            'subdevice_type': 'actor',
+            'function_type': 'actuator_setter',
+            'skip': False
+            }
+
+mod['setFileEvents'] = {
+            'field': 'fileEvents',
+            'subdevice_type': 'actor',
+            'function_type': 'actuator_setter',
             'skip': False
             }
 
@@ -693,6 +695,30 @@ actor_fields['getStringChunk'] = {
             'skip': False
         }
         
+actor_fields['getFileEvents'] = {
+            'value_type': 'number',
+            'field': 'fileEvents',
+            'field_type': ['uint8', 'uint16'],
+            'field_type_cardinality': [1, 1],
+            'default_value': 100,
+            'max_value': 1000,
+            'min_value': 0,
+            'step_value': 1,
+            'skip': False
+        }
+        
+actor_fields['getProgramCommand'] = {
+            'value_type': 'number',
+            'field': 'programCommand',
+            'field_type': ['uint8', 'uint16', 'uint16', 'uint16', 'uint16'],
+            'field_type_cardinality': [1, 1, 1, 1, 1],
+            'default_value': 100,
+            'max_value': 1000,
+            'min_value': 0,
+            'step_value': 1,
+            'skip': False
+        }
+        
 actor_fields['getProgramStdioRedirection'] = {
             'value_type': 'number',
             'field': 'programStdioRedirection',
@@ -729,35 +755,11 @@ actor_fields['getFilePosition'] = {
             'skip': False
         }
         
-actor_fields['getFileEvents'] = {
-            'value_type': 'number',
-            'field': 'fileEvents',
-            'field_type': ['uint8', 'uint16'],
-            'field_type_cardinality': [1, 1],
-            'default_value': 100,
-            'max_value': 1000,
-            'min_value': 0,
-            'step_value': 1,
-            'skip': False
-        }
-        
 actor_fields['getCustomProgramOptionValue'] = {
             'value_type': 'number',
             'field': 'customProgramOptionValue',
             'field_type': ['uint8', 'uint16'],
             'field_type_cardinality': [1, 1],
-            'default_value': 100,
-            'max_value': 1000,
-            'min_value': 0,
-            'step_value': 1,
-            'skip': False
-        }
-        
-actor_fields['getProgramCommand'] = {
-            'value_type': 'number',
-            'field': 'programCommand',
-            'field_type': ['uint8', 'uint16', 'uint16', 'uint16', 'uint16'],
-            'field_type_cardinality': [1, 1, 1, 1, 1],
             'default_value': 100,
             'max_value': 1000,
             'min_value': 0,

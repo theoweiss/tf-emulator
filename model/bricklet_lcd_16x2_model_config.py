@@ -12,17 +12,12 @@ other_sensors = {}
 special_fields = {}
 other_fields = {}
 callbacks = {}
-
+enabled_fields = {}
+debounce_period_fields = {}
+threshold_fields = {}
 
 mod['getCustomCharacter'] = {
             'field': 'customCharacter',
-            'subdevice_type': 'actor',
-            'function_type': 'getter',
-            'skip': False
-            }
-
-mod['isBacklightOn'] = {
-            'field': 'backlight',
             'subdevice_type': 'actor',
             'function_type': 'getter',
             'skip': False
@@ -35,31 +30,38 @@ mod['getConfig'] = {
             'skip': False
             }
 
-mod['backlightOn'] = {
+mod['isBacklightOn'] = {
             'field': 'backlight',
             'subdevice_type': 'actor',
-            'function_type': 'setter',
-            'skip': False
-            }
-
-mod['backlightOff'] = {
-            'field': 'backlight',
-            'subdevice_type': 'actor',
-            'function_type': 'setter',
+            'function_type': 'getter',
             'skip': False
             }
 
 mod['setConfig'] = {
             'field': 'config',
             'subdevice_type': 'actor',
-            'function_type': 'setter',
+            'function_type': 'actuator_setter',
             'skip': False
             }
 
 mod['setCustomCharacter'] = {
             'field': 'customCharacter',
             'subdevice_type': 'actor',
-            'function_type': 'setter',
+            'function_type': 'actuator_setter',
+            'skip': False
+            }
+
+mod['backlightOn'] = {
+            'field': 'backlight',
+            'subdevice_type': 'actor',
+            'function_type': 'enabler',
+            'skip': False
+            }
+
+mod['backlightOff'] = {
+            'field': 'backlight',
+            'subdevice_type': 'actor',
+            'function_type': 'disablers',
             'skip': False
             }
 
@@ -115,11 +117,11 @@ actor_fields['getCustomCharacter'] = {
             'skip': False
         }
         
-actor_fields['isBacklightOn'] = {
+actor_fields['getConfig'] = {
             'value_type': 'number',
-            'field': 'backlight',
-            'field_type': ['bool'],
-            'field_type_cardinality': [1],
+            'field': 'config',
+            'field_type': ['bool', 'bool'],
+            'field_type_cardinality': [1, 1],
             'default_value': 100,
             'max_value': 1000,
             'min_value': 0,
@@ -127,11 +129,11 @@ actor_fields['isBacklightOn'] = {
             'skip': False
         }
         
-actor_fields['getConfig'] = {
+enabled_fields['isBacklightOn'] = {
             'value_type': 'number',
-            'field': 'config',
-            'field_type': ['bool', 'bool'],
-            'field_type_cardinality': [1, 1],
+            'field': 'backlight',
+            'field_type': ['bool'],
+            'field_type_cardinality': [1],
             'default_value': 100,
             'max_value': 1000,
             'min_value': 0,

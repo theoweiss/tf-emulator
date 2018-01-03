@@ -12,7 +12,9 @@ other_sensors = {}
 special_fields = {}
 other_fields = {}
 callbacks = {}
-
+enabled_fields = {}
+debounce_period_fields = {}
+threshold_fields = {}
 
 mod['getCurrentPosition'] = {
             'field': 'currentPosition',
@@ -84,20 +86,6 @@ mod['getVelocity'] = {
             'skip': False
             }
 
-mod['isVelocityReachedCallbackEnabled'] = {
-            'field': 'VelocityReachedCallback',
-            'subdevice_type': 'actor',
-            'function_type': 'getter',
-            'skip': False
-            }
-
-mod['isEnabled'] = {
-            'field': 'enabled',
-            'subdevice_type': 'actor',
-            'function_type': 'getter',
-            'skip': False
-            }
-
 mod['getMinimumVoltage'] = {
             'field': 'minimumVoltage',
             'subdevice_type': 'actor',
@@ -112,29 +100,15 @@ mod['getOutputVoltage'] = {
             'skip': False
             }
 
-mod['getPeriod'] = {
-            'field': 'period',
-            'subdevice_type': 'actor',
-            'function_type': 'getter',
-            'skip': False
-            }
-
-mod['isPositionReachedCallbackEnabled'] = {
-            'field': 'PositionReachedCallback',
-            'subdevice_type': 'actor',
-            'function_type': 'getter',
-            'skip': False
-            }
-
-mod['isStatusLEDEnabled'] = {
-            'field': 'StatusLED',
-            'subdevice_type': 'actor',
-            'function_type': 'getter',
-            'skip': False
-            }
-
 mod['getPosition'] = {
             'field': 'position',
+            'subdevice_type': 'actor',
+            'function_type': 'getter',
+            'skip': False
+            }
+
+mod['getPeriod'] = {
+            'field': 'period',
             'subdevice_type': 'actor',
             'function_type': 'getter',
             'skip': False
@@ -147,115 +121,143 @@ mod['getAcceleration'] = {
             'skip': False
             }
 
+mod['isEnabled'] = {
+            'field': 'enabled',
+            'subdevice_type': 'actor',
+            'function_type': 'getter',
+            'skip': False
+            }
+
+mod['isVelocityReachedCallbackEnabled'] = {
+            'field': 'VelocityReachedCallback',
+            'subdevice_type': 'actor',
+            'function_type': 'getter',
+            'skip': False
+            }
+
+mod['isStatusLEDEnabled'] = {
+            'field': 'StatusLED',
+            'subdevice_type': 'actor',
+            'function_type': 'getter',
+            'skip': False
+            }
+
+mod['isPositionReachedCallbackEnabled'] = {
+            'field': 'PositionReachedCallback',
+            'subdevice_type': 'actor',
+            'function_type': 'getter',
+            'skip': False
+            }
+
 mod['setPeriod'] = {
             'field': 'period',
             'subdevice_type': 'actor',
-            'function_type': 'setter',
+            'function_type': 'actuator_setter',
             'skip': False
             }
 
 mod['setAcceleration'] = {
             'field': 'acceleration',
             'subdevice_type': 'actor',
-            'function_type': 'setter',
-            'skip': False
-            }
-
-mod['disable'] = {
-            'field': 'enabled',
-            'subdevice_type': 'actor',
-            'function_type': 'setter',
-            'skip': False
-            }
-
-mod['disablePositionReachedCallback'] = {
-            'field': 'PositionReachedCallback',
-            'subdevice_type': 'actor',
-            'function_type': 'setter',
+            'function_type': 'actuator_setter',
             'skip': False
             }
 
 mod['setDegree'] = {
             'field': 'degree',
             'subdevice_type': 'actor',
-            'function_type': 'setter',
-            'skip': False
-            }
-
-mod['enableVelocityReachedCallback'] = {
-            'field': 'VelocityReachedCallback',
-            'subdevice_type': 'actor',
-            'function_type': 'setter',
-            'skip': False
-            }
-
-mod['enablePositionReachedCallback'] = {
-            'field': 'PositionReachedCallback',
-            'subdevice_type': 'actor',
-            'function_type': 'setter',
+            'function_type': 'actuator_setter',
             'skip': False
             }
 
 mod['setOutputVoltage'] = {
             'field': 'outputVoltage',
             'subdevice_type': 'actor',
-            'function_type': 'setter',
-            'skip': False
-            }
-
-mod['enable'] = {
-            'field': 'enabled',
-            'subdevice_type': 'actor',
-            'function_type': 'setter',
+            'function_type': 'actuator_setter',
             'skip': False
             }
 
 mod['setPulseWidth'] = {
             'field': 'pulseWidth',
             'subdevice_type': 'actor',
-            'function_type': 'setter',
-            'skip': False
-            }
-
-mod['enableStatusLED'] = {
-            'field': 'StatusLED',
-            'subdevice_type': 'actor',
-            'function_type': 'setter',
+            'function_type': 'actuator_setter',
             'skip': False
             }
 
 mod['setVelocity'] = {
             'field': 'velocity',
             'subdevice_type': 'actor',
-            'function_type': 'setter',
+            'function_type': 'actuator_setter',
             'skip': False
             }
 
 mod['setMinimumVoltage'] = {
             'field': 'minimumVoltage',
             'subdevice_type': 'actor',
-            'function_type': 'setter',
+            'function_type': 'actuator_setter',
             'skip': False
             }
 
 mod['setPosition'] = {
             'field': 'position',
             'subdevice_type': 'actor',
-            'function_type': 'setter',
+            'function_type': 'actuator_setter',
+            'skip': False
+            }
+
+mod['enableVelocityReachedCallback'] = {
+            'field': 'VelocityReachedCallback',
+            'subdevice_type': 'actor',
+            'function_type': 'enabler',
+            'skip': False
+            }
+
+mod['enable'] = {
+            'field': 'enabled',
+            'subdevice_type': 'actor',
+            'function_type': 'enabler',
+            'skip': False
+            }
+
+mod['enableStatusLED'] = {
+            'field': 'StatusLED',
+            'subdevice_type': 'actor',
+            'function_type': 'enabler',
+            'skip': False
+            }
+
+mod['enablePositionReachedCallback'] = {
+            'field': 'PositionReachedCallback',
+            'subdevice_type': 'actor',
+            'function_type': 'enabler',
+            'skip': False
+            }
+
+mod['disable'] = {
+            'field': 'enabled',
+            'subdevice_type': 'actor',
+            'function_type': 'disablers',
             'skip': False
             }
 
 mod['disableVelocityReachedCallback'] = {
             'field': 'VelocityReachedCallback',
             'subdevice_type': 'actor',
-            'function_type': 'setter',
+            'function_type': 'disablers',
+            'skip': False
+            }
+
+mod['disablePositionReachedCallback'] = {
+            'field': 'PositionReachedCallback',
+            'subdevice_type': 'actor',
+            'function_type': 'disablers',
             'skip': False
             }
 
 mod['disableStatusLED'] = {
             'field': 'StatusLED',
             'subdevice_type': 'actor',
-            'function_type': 'setter',
+            'function_type': 'disablers',
             'skip': False
             }
 
@@ -411,30 +413,6 @@ actor_fields['getVelocity'] = {
             'skip': False
         }
         
-actor_fields['isVelocityReachedCallbackEnabled'] = {
-            'value_type': 'number',
-            'field': 'VelocityReachedCallback',
-            'field_type': ['uint8'],
-            'field_type_cardinality': [1],
-            'default_value': 100,
-            'max_value': 1000,
-            'min_value': 0,
-            'step_value': 1,
-            'skip': False
-        }
-        
-actor_fields['isEnabled'] = {
-            'value_type': 'number',
-            'field': 'enabled',
-            'field_type': ['bool'],
-            'field_type_cardinality': [1],
-            'default_value': 100,
-            'max_value': 1000,
-            'min_value': 0,
-            'step_value': 1,
-            'skip': False
-        }
-        
 actor_fields['getMinimumVoltage'] = {
             'value_type': 'number',
             'field': 'minimumVoltage',
@@ -459,42 +437,6 @@ actor_fields['getOutputVoltage'] = {
             'skip': False
         }
         
-actor_fields['getPeriod'] = {
-            'value_type': 'number',
-            'field': 'period',
-            'field_type': ['uint16'],
-            'field_type_cardinality': [1],
-            'default_value': 100,
-            'max_value': 1000,
-            'min_value': 0,
-            'step_value': 1,
-            'skip': False
-        }
-        
-actor_fields['isPositionReachedCallbackEnabled'] = {
-            'value_type': 'number',
-            'field': 'PositionReachedCallback',
-            'field_type': ['uint8'],
-            'field_type_cardinality': [1],
-            'default_value': 100,
-            'max_value': 1000,
-            'min_value': 0,
-            'step_value': 1,
-            'skip': False
-        }
-        
-actor_fields['isStatusLEDEnabled'] = {
-            'value_type': 'number',
-            'field': 'StatusLED',
-            'field_type': ['bool'],
-            'field_type_cardinality': [1],
-            'default_value': 100,
-            'max_value': 1000,
-            'min_value': 0,
-            'step_value': 1,
-            'skip': False
-        }
-        
 actor_fields['getPosition'] = {
             'value_type': 'number',
             'field': 'position',
@@ -507,10 +449,70 @@ actor_fields['getPosition'] = {
             'skip': False
         }
         
+actor_fields['getPeriod'] = {
+            'value_type': 'number',
+            'field': 'period',
+            'field_type': ['uint16'],
+            'field_type_cardinality': [1],
+            'default_value': 100,
+            'max_value': 1000,
+            'min_value': 0,
+            'step_value': 1,
+            'skip': False
+        }
+        
 actor_fields['getAcceleration'] = {
             'value_type': 'number',
             'field': 'acceleration',
             'field_type': ['uint16'],
+            'field_type_cardinality': [1],
+            'default_value': 100,
+            'max_value': 1000,
+            'min_value': 0,
+            'step_value': 1,
+            'skip': False
+        }
+        
+enabled_fields['isEnabled'] = {
+            'value_type': 'number',
+            'field': 'enabled',
+            'field_type': ['bool'],
+            'field_type_cardinality': [1],
+            'default_value': 100,
+            'max_value': 1000,
+            'min_value': 0,
+            'step_value': 1,
+            'skip': False
+        }
+        
+enabled_fields['isVelocityReachedCallbackEnabled'] = {
+            'value_type': 'number',
+            'field': 'VelocityReachedCallback',
+            'field_type': ['uint8'],
+            'field_type_cardinality': [1],
+            'default_value': 100,
+            'max_value': 1000,
+            'min_value': 0,
+            'step_value': 1,
+            'skip': False
+        }
+        
+enabled_fields['isStatusLEDEnabled'] = {
+            'value_type': 'number',
+            'field': 'StatusLED',
+            'field_type': ['bool'],
+            'field_type_cardinality': [1],
+            'default_value': 100,
+            'max_value': 1000,
+            'min_value': 0,
+            'step_value': 1,
+            'skip': False
+        }
+        
+enabled_fields['isPositionReachedCallbackEnabled'] = {
+            'value_type': 'number',
+            'field': 'PositionReachedCallback',
+            'field_type': ['uint8'],
             'field_type_cardinality': [1],
             'default_value': 100,
             'max_value': 1000,

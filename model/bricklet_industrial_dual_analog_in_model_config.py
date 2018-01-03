@@ -12,7 +12,9 @@ other_sensors = {}
 special_fields = {}
 other_fields = {}
 callbacks = {}
-
+enabled_fields = {}
+debounce_period_fields = {}
+threshold_fields = {}
 
 mod['getADCValues'] = {
             'field': 'aDCValues',
@@ -35,31 +37,31 @@ mod['getSampleRate'] = {
             'skip': False
             }
 
+mod['getCalibration'] = {
+            'field': 'calibration',
+            'subdevice_type': 'actor',
+            'function_type': 'getter',
+            'skip': False
+            }
+
 mod['getVoltageCallbackThreshold'] = {
             'field': 'voltageCallbackThreshold',
             'subdevice_type': 'actor',
-            'function_type': 'getter',
+            'function_type': 'callback_threshold_getter',
             'skip': False
             }
 
 mod['getDebouncePeriod'] = {
             'field': 'debouncePeriod',
             'subdevice_type': 'actor',
-            'function_type': 'getter',
+            'function_type': 'callback_debounce_period_getter',
             'skip': False
             }
 
 mod['getVoltageCallbackPeriod'] = {
             'field': 'voltageCallbackPeriod',
             'subdevice_type': 'actor',
-            'function_type': 'getter',
-            'skip': False
-            }
-
-mod['getCalibration'] = {
-            'field': 'calibration',
-            'subdevice_type': 'actor',
-            'function_type': 'getter',
+            'function_type': 'callback_period_getter',
             'skip': False
             }
 
@@ -70,31 +72,31 @@ mod['setVoltageCallbackPeriod'] = {
             'skip': False
             }
 
-mod['setCalibration'] = {
-            'field': 'calibration',
+mod['setVoltageCallbackThreshold'] = {
+            'field': 'voltageCallbackThreshold',
             'subdevice_type': 'actor',
-            'function_type': 'setter',
+            'function_type': 'callback_threshold_setter',
             'skip': False
             }
 
 mod['setDebouncePeriod'] = {
             'field': 'debouncePeriod',
             'subdevice_type': 'actor',
-            'function_type': 'setter',
+            'function_type': 'callback_debounce_period_setter',
+            'skip': False
+            }
+
+mod['setCalibration'] = {
+            'field': 'calibration',
+            'subdevice_type': 'actor',
+            'function_type': 'actuator_setter',
             'skip': False
             }
 
 mod['setSampleRate'] = {
             'field': 'sampleRate',
             'subdevice_type': 'actor',
-            'function_type': 'setter',
-            'skip': False
-            }
-
-mod['setVoltageCallbackThreshold'] = {
-            'field': 'voltageCallbackThreshold',
-            'subdevice_type': 'actor',
-            'function_type': 'setter',
+            'function_type': 'actuator_setter',
             'skip': False
             }
 
@@ -153,47 +155,34 @@ actor_fields['getSampleRate'] = {
             'skip': False
         }
         
-actor_fields['getVoltageCallbackThreshold'] = {
-            'value_type': 'number',
-            'field': 'voltageCallbackThreshold',
-            'field_type': ['char', 'int32', 'int32'],
-            'field_type_cardinality': [1, 1, 1],
-            'default_value': 100,
-            'max_value': 1000,
-            'min_value': 0,
-            'step_value': 1,
-            'skip': False
-        }
-        
-actor_fields['getDebouncePeriod'] = {
-            'value_type': 'number',
-            'field': 'debouncePeriod',
-            'field_type': ['uint32'],
-            'field_type_cardinality': [1],
-            'default_value': 100,
-            'max_value': 1000,
-            'min_value': 0,
-            'step_value': 1,
-            'skip': False
-        }
-        
-actor_fields['getVoltageCallbackPeriod'] = {
-            'value_type': 'number',
-            'field': 'voltageCallbackPeriod',
-            'field_type': ['uint32'],
-            'field_type_cardinality': [1],
-            'default_value': 100,
-            'max_value': 1000,
-            'min_value': 0,
-            'step_value': 1,
-            'skip': False
-        }
-        
 actor_fields['getCalibration'] = {
             'value_type': 'number',
             'field': 'calibration',
             'field_type': ['int32', 'int32'],
             'field_type_cardinality': [2, 2],
+            'default_value': 100,
+            'max_value': 1000,
+            'min_value': 0,
+            'step_value': 1,
+            'skip': False
+        }
+        
+threshold_fields['getVoltageCallbackThreshold'] = {
+            'value_type': 'threshold_buffer',
+            'field': 'voltageCallbackThreshold',
+            'field_type': ['char', 'int32', 'int32'],
+            'field_type_cardinality': [1, 1, 1],
+            'default_value': 'x00',
+            'max_value': 1000,
+            'min_value': 0,
+            'skip': False
+        }
+        
+debounce_period_fields['getDebouncePeriod'] = {
+            'value_type': 'number',
+            'field': 'debouncePeriod',
+            'field_type': ['uint32'],
+            'field_type_cardinality': [1],
             'default_value': 100,
             'max_value': 1000,
             'min_value': 0,

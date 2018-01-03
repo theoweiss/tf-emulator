@@ -12,18 +12,13 @@ other_sensors = {}
 special_fields = {}
 other_fields = {}
 callbacks = {}
-
+enabled_fields = {}
+debounce_period_fields = {}
+threshold_fields = {}
 
 mod['getIlluminance'] = {
             'field': 'illuminance',
             'subdevice_type': 'sensor',
-            'function_type': 'getter',
-            'skip': False
-            }
-
-mod['getIlluminanceCallbackPeriod'] = {
-            'field': 'illuminanceCallbackPeriod',
-            'subdevice_type': 'actor',
             'function_type': 'getter',
             'skip': False
             }
@@ -35,17 +30,24 @@ mod['getConfiguration'] = {
             'skip': False
             }
 
-mod['getDebouncePeriod'] = {
-            'field': 'debouncePeriod',
-            'subdevice_type': 'actor',
-            'function_type': 'getter',
-            'skip': False
-            }
-
 mod['getIlluminanceCallbackThreshold'] = {
             'field': 'illuminanceCallbackThreshold',
             'subdevice_type': 'actor',
-            'function_type': 'getter',
+            'function_type': 'callback_threshold_getter',
+            'skip': False
+            }
+
+mod['getDebouncePeriod'] = {
+            'field': 'debouncePeriod',
+            'subdevice_type': 'actor',
+            'function_type': 'callback_debounce_period_getter',
+            'skip': False
+            }
+
+mod['getIlluminanceCallbackPeriod'] = {
+            'field': 'illuminanceCallbackPeriod',
+            'subdevice_type': 'actor',
+            'function_type': 'callback_period_getter',
             'skip': False
             }
 
@@ -59,21 +61,21 @@ mod['setIlluminanceCallbackPeriod'] = {
 mod['setIlluminanceCallbackThreshold'] = {
             'field': 'illuminanceCallbackThreshold',
             'subdevice_type': 'actor',
-            'function_type': 'setter',
-            'skip': False
-            }
-
-mod['setConfiguration'] = {
-            'field': 'configuration',
-            'subdevice_type': 'actor',
-            'function_type': 'setter',
+            'function_type': 'callback_threshold_setter',
             'skip': False
             }
 
 mod['setDebouncePeriod'] = {
             'field': 'debouncePeriod',
             'subdevice_type': 'actor',
-            'function_type': 'setter',
+            'function_type': 'callback_debounce_period_setter',
+            'skip': False
+            }
+
+mod['setConfiguration'] = {
+            'field': 'configuration',
+            'subdevice_type': 'actor',
+            'function_type': 'actuator_setter',
             'skip': False
             }
 
@@ -108,18 +110,6 @@ sensor_fields['getIlluminance'] = {
             'skip': False
         }
         
-actor_fields['getIlluminanceCallbackPeriod'] = {
-            'value_type': 'number',
-            'field': 'illuminanceCallbackPeriod',
-            'field_type': ['uint32'],
-            'field_type_cardinality': [1],
-            'default_value': 100,
-            'max_value': 1000,
-            'min_value': 0,
-            'step_value': 1,
-            'skip': False
-        }
-        
 actor_fields['getConfiguration'] = {
             'value_type': 'number',
             'field': 'configuration',
@@ -132,23 +122,22 @@ actor_fields['getConfiguration'] = {
             'skip': False
         }
         
-actor_fields['getDebouncePeriod'] = {
+threshold_fields['getIlluminanceCallbackThreshold'] = {
+            'value_type': 'threshold_buffer',
+            'field': 'illuminanceCallbackThreshold',
+            'field_type': ['char', 'uint32', 'uint32'],
+            'field_type_cardinality': [1, 1, 1],
+            'default_value': 'x00',
+            'max_value': 1000,
+            'min_value': 0,
+            'skip': False
+        }
+        
+debounce_period_fields['getDebouncePeriod'] = {
             'value_type': 'number',
             'field': 'debouncePeriod',
             'field_type': ['uint32'],
             'field_type_cardinality': [1],
-            'default_value': 100,
-            'max_value': 1000,
-            'min_value': 0,
-            'step_value': 1,
-            'skip': False
-        }
-        
-actor_fields['getIlluminanceCallbackThreshold'] = {
-            'value_type': 'number',
-            'field': 'illuminanceCallbackThreshold',
-            'field_type': ['char', 'uint32', 'uint32'],
-            'field_type_cardinality': [1, 1, 1],
             'default_value': 100,
             'max_value': 1000,
             'min_value': 0,

@@ -65,10 +65,8 @@ public final static String DEVICE_DISPLAY_NAME = "Sound Intensity Bricklet";
   public final static char THRESHOLD_OPTION_GREATER = '>';
   String uidString;
 
-  private Buffer debouncePeriod = getDebouncePeriodDefault();
-        
-  private Buffer intensityCallbackThreshold = getIntensityCallbackThresholdDefault();
-        
+  private Buffer intensityCallbackThreshold = Utils.getThresholdDefault();
+  private Buffer debouncePeriod = Buffer.buffer(Utils.getUInt16(100));
   private short intensity = 100;
   private short intensity_max = 1000;
   private short intensity_min = 0;
@@ -270,137 +268,6 @@ public final static String DEVICE_DISPLAY_NAME = "Sound Intensity Bricklet";
     if (packet.getResponseExpected()) {
       return getIntensityBuffer(packet);
     }
-    return null;
-  }
-
-  /**
-   * 
-   */
-  private Buffer getDebouncePeriod(Packet packet) {
-    logger.debug("function getDebouncePeriod");
-    if (packet.getResponseExpected()) {
-      byte length = (byte) 8 + 4;
-      byte functionId = FUNCTION_GET_DEBOUNCE_PERIOD;
-      byte flags = (byte) 0;
-      Buffer header = Utils.createHeader(uidBytes, length, functionId, packet.getOptions(), flags);
-      Buffer buffer = Buffer.buffer();
-      buffer.appendBuffer(header);
-      buffer.appendBuffer(this.debouncePeriod);
-      return buffer;
-    }
-
-    return null;
-  }
-
-  private Buffer getDebouncePeriodDefault() {
-      Buffer buffer = Buffer.buffer();
-      buffer.appendBytes(Utils.get4ByteURandomValue(1));
-
-      return buffer;
-  }
-
-  /**
-   * 
-   */
-  private Buffer getIntensityCallbackThreshold(Packet packet) {
-    logger.debug("function getIntensityCallbackThreshold");
-    if (packet.getResponseExpected()) {
-      byte length = (byte) 8 + 5;
-      byte functionId = FUNCTION_GET_INTENSITY_CALLBACK_THRESHOLD;
-      byte flags = (byte) 0;
-      Buffer header = Utils.createHeader(uidBytes, length, functionId, packet.getOptions(), flags);
-      Buffer buffer = Buffer.buffer();
-      buffer.appendBuffer(header);
-      buffer.appendBuffer(this.intensityCallbackThreshold);
-      return buffer;
-    }
-
-    return null;
-  }
-
-  private Buffer getIntensityCallbackThresholdDefault() {
-      Buffer buffer = Buffer.buffer();
-      buffer.appendBytes(Utils.getCharRandomValue(1));
-      buffer.appendBytes(Utils.get2ByteURandomValue(1));
-      buffer.appendBytes(Utils.get2ByteURandomValue(1));
-
-      return buffer;
-  }
-
-  /**
-   * 
-   */
-  private Buffer getIntensityCallbackPeriod(Packet packet) {
-    logger.debug("function getIntensityCallbackPeriod");
-    if (packet.getResponseExpected()) {
-      byte length = (byte) 8 + 4;
-      byte functionId = FUNCTION_GET_INTENSITY_CALLBACK_PERIOD;
-      byte flags = (byte) 0;
-      Buffer header = Utils.createHeader(uidBytes, length, functionId, packet.getOptions(), flags);
-      Buffer buffer = Buffer.buffer();
-      buffer.appendBuffer(header);
-    buffer.appendBytes(Utils.getUInt32(intensityCallbackPeriod));
-
-      return buffer;
-    }
-
-    return null;
-  }
-
-  /**
-   * 
-   */
-  private Buffer setIntensityCallbackThreshold(Packet packet) {
-    logger.debug("function setIntensityCallbackThreshold");
-    if (packet.getResponseExpected()) {
-      byte length = (byte) 8 + 0;
-      byte functionId = FUNCTION_SET_INTENSITY_CALLBACK_THRESHOLD;
-      byte flags = (byte) 0;
-      Buffer header = Utils.createHeader(uidBytes, length, functionId, packet.getOptions(), flags);
-      Buffer buffer = Buffer.buffer();
-      buffer.appendBuffer(header);
-//TODO response expected bei settern
-      return buffer;
-    }
-    this.intensityCallbackThreshold = packet.getPayload();
-    return null;
-  }
-
-  /**
-   * 
-   */
-  private Buffer setDebouncePeriod(Packet packet) {
-    logger.debug("function setDebouncePeriod");
-    if (packet.getResponseExpected()) {
-      byte length = (byte) 8 + 0;
-      byte functionId = FUNCTION_SET_DEBOUNCE_PERIOD;
-      byte flags = (byte) 0;
-      Buffer header = Utils.createHeader(uidBytes, length, functionId, packet.getOptions(), flags);
-      Buffer buffer = Buffer.buffer();
-      buffer.appendBuffer(header);
-//TODO response expected bei settern
-      return buffer;
-    }
-    this.debouncePeriod = packet.getPayload();
-    return null;
-  }
-
-  /**
-   * 
-   */
-  private Buffer getIdentity(Packet packet) {
-    logger.debug("function getIdentity");
-    if (packet.getResponseExpected()) {
-      byte length = (byte) 8 + 25;
-      byte functionId = FUNCTION_GET_IDENTITY;
-      byte flags = (byte) 0;
-      Buffer header = Utils.createHeader(uidBytes, length, functionId, packet.getOptions(), flags);
-      Buffer buffer = Buffer.buffer();
-      buffer.appendBuffer(header);
-       buffer.appendBuffer(Utils.getIdentityPayload(uidString, uidBytes, DEVICE_IDENTIFIER));
-      return buffer;
-    }
-
     return null;
   }
 }

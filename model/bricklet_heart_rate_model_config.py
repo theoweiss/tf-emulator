@@ -12,7 +12,9 @@ other_sensors = {}
 special_fields = {}
 other_fields = {}
 callbacks = {}
-
+enabled_fields = {}
+debounce_period_fields = {}
+threshold_fields = {}
 
 mod['getHeartRate'] = {
             'field': 'heartRate',
@@ -28,24 +30,24 @@ mod['isBeatStateChangedCallbackEnabled'] = {
             'skip': False
             }
 
-mod['getDebouncePeriod'] = {
-            'field': 'debouncePeriod',
-            'subdevice_type': 'actor',
-            'function_type': 'getter',
-            'skip': False
-            }
-
 mod['getHeartRateCallbackThreshold'] = {
             'field': 'heartRateCallbackThreshold',
             'subdevice_type': 'actor',
-            'function_type': 'getter',
+            'function_type': 'callback_threshold_getter',
+            'skip': False
+            }
+
+mod['getDebouncePeriod'] = {
+            'field': 'debouncePeriod',
+            'subdevice_type': 'actor',
+            'function_type': 'callback_debounce_period_getter',
             'skip': False
             }
 
 mod['getHeartRateCallbackPeriod'] = {
             'field': 'heartRateCallbackPeriod',
             'subdevice_type': 'actor',
-            'function_type': 'getter',
+            'function_type': 'callback_period_getter',
             'skip': False
             }
 
@@ -56,31 +58,31 @@ mod['setHeartRateCallbackPeriod'] = {
             'skip': False
             }
 
-mod['disableBeatStateChangedCallback'] = {
-            'field': 'BeatStateChangedCallback',
-            'subdevice_type': 'actor',
-            'function_type': 'setter',
-            'skip': False
-            }
-
 mod['setHeartRateCallbackThreshold'] = {
             'field': 'heartRateCallbackThreshold',
             'subdevice_type': 'actor',
-            'function_type': 'setter',
-            'skip': False
-            }
-
-mod['enableBeatStateChangedCallback'] = {
-            'field': 'BeatStateChangedCallback',
-            'subdevice_type': 'actor',
-            'function_type': 'setter',
+            'function_type': 'callback_threshold_setter',
             'skip': False
             }
 
 mod['setDebouncePeriod'] = {
             'field': 'debouncePeriod',
             'subdevice_type': 'actor',
-            'function_type': 'setter',
+            'function_type': 'callback_debounce_period_setter',
+            'skip': False
+            }
+
+mod['enableBeatStateChangedCallback'] = {
+            'field': 'BeatStateChangedCallback',
+            'subdevice_type': 'actor',
+            'function_type': 'enabler',
+            'skip': False
+            }
+
+mod['disableBeatStateChangedCallback'] = {
+            'field': 'BeatStateChangedCallback',
+            'subdevice_type': 'actor',
+            'function_type': 'disablers',
             'skip': False
             }
 
@@ -121,7 +123,7 @@ sensor_fields['getHeartRate'] = {
             'skip': False
         }
         
-actor_fields['isBeatStateChangedCallbackEnabled'] = {
+enabled_fields['isBeatStateChangedCallbackEnabled'] = {
             'value_type': 'number',
             'field': 'BeatStateChangedCallback',
             'field_type': ['bool'],
@@ -133,33 +135,20 @@ actor_fields['isBeatStateChangedCallbackEnabled'] = {
             'skip': False
         }
         
-actor_fields['getDebouncePeriod'] = {
-            'value_type': 'number',
-            'field': 'debouncePeriod',
-            'field_type': ['uint32'],
-            'field_type_cardinality': [1],
-            'default_value': 100,
-            'max_value': 1000,
-            'min_value': 0,
-            'step_value': 1,
-            'skip': False
-        }
-        
-actor_fields['getHeartRateCallbackThreshold'] = {
-            'value_type': 'number',
+threshold_fields['getHeartRateCallbackThreshold'] = {
+            'value_type': 'threshold_buffer',
             'field': 'heartRateCallbackThreshold',
             'field_type': ['char', 'uint16', 'uint16'],
             'field_type_cardinality': [1, 1, 1],
-            'default_value': 100,
+            'default_value': 'x00',
             'max_value': 1000,
             'min_value': 0,
-            'step_value': 1,
             'skip': False
         }
         
-actor_fields['getHeartRateCallbackPeriod'] = {
+debounce_period_fields['getDebouncePeriod'] = {
             'value_type': 'number',
-            'field': 'heartRateCallbackPeriod',
+            'field': 'debouncePeriod',
             'field_type': ['uint32'],
             'field_type_cardinality': [1],
             'default_value': 100,

@@ -12,7 +12,9 @@ other_sensors = {}
 special_fields = {}
 other_fields = {}
 callbacks = {}
-
+enabled_fields = {}
+debounce_period_fields = {}
+threshold_fields = {}
 
 mod['getTemperature'] = {
             'field': 'temperature',
@@ -35,15 +37,8 @@ mod['getConfiguration'] = {
             'skip': False
             }
 
-mod['getDebouncePeriod'] = {
-            'field': 'debouncePeriod',
-            'subdevice_type': 'actor',
-            'function_type': 'getter',
-            'skip': False
-            }
-
-mod['getAccelerationCallbackPeriod'] = {
-            'field': 'accelerationCallbackPeriod',
+mod['isLEDOn'] = {
+            'field': 'led',
             'subdevice_type': 'actor',
             'function_type': 'getter',
             'skip': False
@@ -52,14 +47,21 @@ mod['getAccelerationCallbackPeriod'] = {
 mod['getAccelerationCallbackThreshold'] = {
             'field': 'accelerationCallbackThreshold',
             'subdevice_type': 'actor',
-            'function_type': 'getter',
+            'function_type': 'callback_threshold_getter',
             'skip': False
             }
 
-mod['isLEDOn'] = {
-            'field': 'led',
+mod['getDebouncePeriod'] = {
+            'field': 'debouncePeriod',
             'subdevice_type': 'actor',
-            'function_type': 'getter',
+            'function_type': 'callback_debounce_period_getter',
+            'skip': False
+            }
+
+mod['getAccelerationCallbackPeriod'] = {
+            'field': 'accelerationCallbackPeriod',
+            'subdevice_type': 'actor',
+            'function_type': 'callback_period_getter',
             'skip': False
             }
 
@@ -70,38 +72,38 @@ mod['setAccelerationCallbackPeriod'] = {
             'skip': False
             }
 
-mod['ledOff'] = {
-            'field': 'led',
-            'subdevice_type': 'actor',
-            'function_type': 'setter',
-            'skip': False
-            }
-
-mod['ledOn'] = {
-            'field': 'led',
-            'subdevice_type': 'actor',
-            'function_type': 'setter',
-            'skip': False
-            }
-
 mod['setAccelerationCallbackThreshold'] = {
             'field': 'accelerationCallbackThreshold',
             'subdevice_type': 'actor',
-            'function_type': 'setter',
-            'skip': False
-            }
-
-mod['setConfiguration'] = {
-            'field': 'configuration',
-            'subdevice_type': 'actor',
-            'function_type': 'setter',
+            'function_type': 'callback_threshold_setter',
             'skip': False
             }
 
 mod['setDebouncePeriod'] = {
             'field': 'debouncePeriod',
             'subdevice_type': 'actor',
-            'function_type': 'setter',
+            'function_type': 'callback_debounce_period_setter',
+            'skip': False
+            }
+
+mod['setConfiguration'] = {
+            'field': 'configuration',
+            'subdevice_type': 'actor',
+            'function_type': 'actuator_setter',
+            'skip': False
+            }
+
+mod['ledOn'] = {
+            'field': 'led',
+            'subdevice_type': 'actor',
+            'function_type': 'enabler',
+            'skip': False
+            }
+
+mod['ledOff'] = {
+            'field': 'led',
+            'subdevice_type': 'actor',
+            'function_type': 'disablers',
             'skip': False
             }
 
@@ -160,46 +162,33 @@ actor_fields['getConfiguration'] = {
             'skip': False
         }
         
-actor_fields['getDebouncePeriod'] = {
-            'value_type': 'number',
-            'field': 'debouncePeriod',
-            'field_type': ['uint32'],
-            'field_type_cardinality': [1],
-            'default_value': 100,
-            'max_value': 1000,
-            'min_value': 0,
-            'step_value': 1,
-            'skip': False
-        }
-        
-actor_fields['getAccelerationCallbackPeriod'] = {
-            'value_type': 'number',
-            'field': 'accelerationCallbackPeriod',
-            'field_type': ['uint32'],
-            'field_type_cardinality': [1],
-            'default_value': 100,
-            'max_value': 1000,
-            'min_value': 0,
-            'step_value': 1,
-            'skip': False
-        }
-        
-actor_fields['getAccelerationCallbackThreshold'] = {
-            'value_type': 'number',
-            'field': 'accelerationCallbackThreshold',
-            'field_type': ['char', 'int16', 'int16', 'int16', 'int16', 'int16', 'int16'],
-            'field_type_cardinality': [1, 1, 1, 1, 1, 1, 1],
-            'default_value': 100,
-            'max_value': 1000,
-            'min_value': 0,
-            'step_value': 1,
-            'skip': False
-        }
-        
-actor_fields['isLEDOn'] = {
+enabled_fields['isLEDOn'] = {
             'value_type': 'number',
             'field': 'led',
             'field_type': ['uint8'],
+            'field_type_cardinality': [1],
+            'default_value': 100,
+            'max_value': 1000,
+            'min_value': 0,
+            'step_value': 1,
+            'skip': False
+        }
+        
+threshold_fields['getAccelerationCallbackThreshold'] = {
+            'value_type': 'threshold_buffer',
+            'field': 'accelerationCallbackThreshold',
+            'field_type': ['char', 'int16', 'int16', 'int16', 'int16', 'int16', 'int16'],
+            'field_type_cardinality': [1, 1, 1, 1, 1, 1, 1],
+            'default_value': 'x00',
+            'max_value': 1000,
+            'min_value': 0,
+            'skip': False
+        }
+        
+debounce_period_fields['getDebouncePeriod'] = {
+            'value_type': 'number',
+            'field': 'debouncePeriod',
+            'field_type': ['uint32'],
             'field_type_cardinality': [1],
             'default_value': 100,
             'max_value': 1000,

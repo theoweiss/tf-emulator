@@ -44,7 +44,10 @@ class JavaDevice(common.Device):
         self.special_fields = {}
         self.other_fields = {}
         self.callbacks = {}
-
+        self.threshold_fields = {}
+        self.debounce_period_fields = {}
+        self.enabled_fields = {}
+        
     def get_java_class_name(self):
         return self.get_camel_case_category() + self.get_camel_case_name()
 
@@ -60,6 +63,9 @@ class JavaDevice(common.Device):
         self.other_actor_fields = copy.deepcopy(__import__(self.get_underscore_device_name() + '_model_config').other_actor_fields)
         self.other_sensors = copy.deepcopy(__import__(self.get_underscore_device_name() + '_model_config').other_sensors)
         self.special_fields = copy.deepcopy(__import__(self.get_underscore_device_name() + '_model_config').special_fields)
+        self.threshold_fields = copy.deepcopy(__import__(self.get_underscore_device_name() + '_model_config').threshold_fields)
+        self.debounce_period_fields = copy.deepcopy(__import__(self.get_underscore_device_name() + '_model_config').debounce_period_fields)
+        self.enabled_fields = copy.deepcopy(__import__(self.get_underscore_device_name() + '_model_config').enabled_fields)
         callbacks = copy.deepcopy(__import__(self.get_underscore_device_name() + '_model_config').callbacks)
         self.callbacks = callbacks
         model_data = copy.deepcopy(__import__(self.get_underscore_device_name() + '_model_config').mod)
@@ -91,10 +97,10 @@ class JavaDevice(common.Device):
     def get_actor_getters(self):
         return  self.get_method_categories()[2]
 
-    def get_callback_setters(self):
+    def get_callback_threshold_setters(self):
         return self.get_method_categories()[3]
 
-    def get_callback_getters(self):
+    def get_callback_threshold_getters(self):
         return self.get_method_categories()[4]
 
     def get_enablers(self):
@@ -130,6 +136,12 @@ class JavaDevice(common.Device):
     def get_callback_period_getters(self):
         return self.get_method_categories()[15]
 
+    def get_callback_debounce_period_setters(self):
+        return self.get_method_categories()[16]
+
+    def get_callback_debounce_period_getters(self):
+        return self.get_method_categories()[17]
+
     def get_method_categories(self):
         def down_case_first(name):
             return name[0].lower() + name[1:]
@@ -143,8 +155,10 @@ class JavaDevice(common.Device):
         actor_getters = {}
         callback_period_setters = {}
         callback_period_getters = {}
-        callback_setters = {}
-        callback_getters = {}
+        callback_threshold_setters = {}
+        callback_threshold_getters = {}
+        callback_debounce_period_setters = {}
+        callback_debounce_period_getters = {}
         enablers = {}
         disablers = {}
         isEnableds = {}
@@ -260,9 +274,12 @@ class JavaDevice(common.Device):
                     getter_packet = getter.get(name)[1]
                     callback_period_setters[setter.get(name)[0]] = (setter_packet, down_case_first(name))
                     callback_period_getters[getter.get(name)[0]] = (getter_packet, down_case_first(name))
-                elif "CallbackThreshold" in name or "DebouncePeriod" in name:
-                    callback_setters[setter.get(name)[0]] = (setter.get(name)[1], down_case_first(name))
-                    callback_getters[getter.get(name)[0]] = (getter.get(name)[1], down_case_first(name))
+                elif "CallbackThreshold" in name:
+                    callback_threshold_setters[setter.get(name)[0]] = (setter.get(name)[1], down_case_first(name))
+                    callback_threshold_getters[getter.get(name)[0]] = (getter.get(name)[1], down_case_first(name))
+                elif "DebouncePeriod" in name:
+                    callback_debounce_period_setters[setter.get(name)[0]] = (setter.get(name)[1], down_case_first(name))
+                    callback_debounce_period_getters[getter.get(name)[0]] = (getter.get(name)[1], down_case_first(name))
                 else:
                     # print "actor: " + name
                     # function names as keys, property name as value
@@ -270,9 +287,9 @@ class JavaDevice(common.Device):
                     #       "getProperty": "Property"} 
                     actors[setter.get(name)[0]] = (setter.get(name)[1], down_case_first(name))
                     actor_getters[getter.get(name)[0]] = (getter.get(name)[1], down_case_first(name))
-        return (sensors, actors, actor_getters, callback_setters, callback_getters, enablers, disablers, 
+        return (sensors, actors, actor_getters, callback_threshold_setters, callback_threshold_getters, enablers, disablers, 
                 isEnableds, getIdentity, other_actors, other_sensors, special_setters, others, booleans,
-                callback_period_setters, callback_period_getters)
+                callback_period_setters, callback_period_getters, callback_debounce_period_setters, callback_debounce_period_getters)
 
 
 class JavaPacket(common.Packet):

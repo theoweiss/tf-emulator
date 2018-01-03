@@ -12,7 +12,9 @@ other_sensors = {}
 special_fields = {}
 other_fields = {}
 callbacks = {}
-
+enabled_fields = {}
+debounce_period_fields = {}
+threshold_fields = {}
 
 mod['getObjectTemperature'] = {
             'field': 'objectTemperature',
@@ -28,29 +30,8 @@ mod['getAmbientTemperature'] = {
             'skip': False
             }
 
-mod['getAmbientTemperatureCallbackPeriod'] = {
-            'field': 'ambientTemperatureCallbackPeriod',
-            'subdevice_type': 'actor',
-            'function_type': 'getter',
-            'skip': False
-            }
-
-mod['getObjectTemperatureCallbackThreshold'] = {
-            'field': 'objectTemperatureCallbackThreshold',
-            'subdevice_type': 'actor',
-            'function_type': 'getter',
-            'skip': False
-            }
-
 mod['getEmissivity'] = {
             'field': 'emissivity',
-            'subdevice_type': 'actor',
-            'function_type': 'getter',
-            'skip': False
-            }
-
-mod['getObjectTemperatureCallbackPeriod'] = {
-            'field': 'objectTemperatureCallbackPeriod',
             'subdevice_type': 'actor',
             'function_type': 'getter',
             'skip': False
@@ -59,14 +40,35 @@ mod['getObjectTemperatureCallbackPeriod'] = {
 mod['getAmbientTemperatureCallbackThreshold'] = {
             'field': 'ambientTemperatureCallbackThreshold',
             'subdevice_type': 'actor',
-            'function_type': 'getter',
+            'function_type': 'callback_threshold_getter',
+            'skip': False
+            }
+
+mod['getObjectTemperatureCallbackThreshold'] = {
+            'field': 'objectTemperatureCallbackThreshold',
+            'subdevice_type': 'actor',
+            'function_type': 'callback_threshold_getter',
             'skip': False
             }
 
 mod['getDebouncePeriod'] = {
             'field': 'debouncePeriod',
             'subdevice_type': 'actor',
-            'function_type': 'getter',
+            'function_type': 'callback_debounce_period_getter',
+            'skip': False
+            }
+
+mod['getObjectTemperatureCallbackPeriod'] = {
+            'field': 'objectTemperatureCallbackPeriod',
+            'subdevice_type': 'actor',
+            'function_type': 'callback_period_getter',
+            'skip': False
+            }
+
+mod['getAmbientTemperatureCallbackPeriod'] = {
+            'field': 'ambientTemperatureCallbackPeriod',
+            'subdevice_type': 'actor',
+            'function_type': 'callback_period_getter',
             'skip': False
             }
 
@@ -87,28 +89,28 @@ mod['setAmbientTemperatureCallbackPeriod'] = {
 mod['setObjectTemperatureCallbackThreshold'] = {
             'field': 'objectTemperatureCallbackThreshold',
             'subdevice_type': 'actor',
-            'function_type': 'setter',
-            'skip': False
-            }
-
-mod['setEmissivity'] = {
-            'field': 'emissivity',
-            'subdevice_type': 'actor',
-            'function_type': 'setter',
+            'function_type': 'callback_threshold_setter',
             'skip': False
             }
 
 mod['setAmbientTemperatureCallbackThreshold'] = {
             'field': 'ambientTemperatureCallbackThreshold',
             'subdevice_type': 'actor',
-            'function_type': 'setter',
+            'function_type': 'callback_threshold_setter',
             'skip': False
             }
 
 mod['setDebouncePeriod'] = {
             'field': 'debouncePeriod',
             'subdevice_type': 'actor',
-            'function_type': 'setter',
+            'function_type': 'callback_debounce_period_setter',
+            'skip': False
+            }
+
+mod['setEmissivity'] = {
+            'field': 'emissivity',
+            'subdevice_type': 'actor',
+            'function_type': 'actuator_setter',
             'skip': False
             }
 
@@ -167,30 +169,6 @@ sensor_fields['getAmbientTemperature'] = {
             'skip': False
         }
         
-actor_fields['getAmbientTemperatureCallbackPeriod'] = {
-            'value_type': 'number',
-            'field': 'ambientTemperatureCallbackPeriod',
-            'field_type': ['uint32'],
-            'field_type_cardinality': [1],
-            'default_value': 100,
-            'max_value': 1000,
-            'min_value': 0,
-            'step_value': 1,
-            'skip': False
-        }
-        
-actor_fields['getObjectTemperatureCallbackThreshold'] = {
-            'value_type': 'number',
-            'field': 'objectTemperatureCallbackThreshold',
-            'field_type': ['char', 'int16', 'int16'],
-            'field_type_cardinality': [1, 1, 1],
-            'default_value': 100,
-            'max_value': 1000,
-            'min_value': 0,
-            'step_value': 1,
-            'skip': False
-        }
-        
 actor_fields['getEmissivity'] = {
             'value_type': 'number',
             'field': 'emissivity',
@@ -203,31 +181,29 @@ actor_fields['getEmissivity'] = {
             'skip': False
         }
         
-actor_fields['getObjectTemperatureCallbackPeriod'] = {
-            'value_type': 'number',
-            'field': 'objectTemperatureCallbackPeriod',
-            'field_type': ['uint32'],
-            'field_type_cardinality': [1],
-            'default_value': 100,
-            'max_value': 1000,
-            'min_value': 0,
-            'step_value': 1,
-            'skip': False
-        }
-        
-actor_fields['getAmbientTemperatureCallbackThreshold'] = {
-            'value_type': 'number',
+threshold_fields['getAmbientTemperatureCallbackThreshold'] = {
+            'value_type': 'threshold_buffer',
             'field': 'ambientTemperatureCallbackThreshold',
             'field_type': ['char', 'int16', 'int16'],
             'field_type_cardinality': [1, 1, 1],
-            'default_value': 100,
+            'default_value': 'x00',
             'max_value': 1000,
             'min_value': 0,
-            'step_value': 1,
             'skip': False
         }
         
-actor_fields['getDebouncePeriod'] = {
+threshold_fields['getObjectTemperatureCallbackThreshold'] = {
+            'value_type': 'threshold_buffer',
+            'field': 'objectTemperatureCallbackThreshold',
+            'field_type': ['char', 'int16', 'int16'],
+            'field_type_cardinality': [1, 1, 1],
+            'default_value': 'x00',
+            'max_value': 1000,
+            'min_value': 0,
+            'skip': False
+        }
+        
+debounce_period_fields['getDebouncePeriod'] = {
             'value_type': 'number',
             'field': 'debouncePeriod',
             'field_type': ['uint32'],

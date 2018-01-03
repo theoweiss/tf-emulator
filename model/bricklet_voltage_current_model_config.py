@@ -12,7 +12,9 @@ other_sensors = {}
 special_fields = {}
 other_fields = {}
 callbacks = {}
-
+enabled_fields = {}
+debounce_period_fields = {}
+threshold_fields = {}
 
 mod['getCurrent'] = {
             'field': 'current',
@@ -35,22 +37,8 @@ mod['getPower'] = {
             'skip': False
             }
 
-mod['getCurrentCallbackPeriod'] = {
-            'field': 'currentCallbackPeriod',
-            'subdevice_type': 'actor',
-            'function_type': 'getter',
-            'skip': False
-            }
-
 mod['getConfiguration'] = {
             'field': 'configuration',
-            'subdevice_type': 'actor',
-            'function_type': 'getter',
-            'skip': False
-            }
-
-mod['getVoltageCallbackThreshold'] = {
-            'field': 'voltageCallbackThreshold',
             'subdevice_type': 'actor',
             'function_type': 'getter',
             'skip': False
@@ -63,38 +51,52 @@ mod['getCalibration'] = {
             'skip': False
             }
 
-mod['getVoltageCallbackPeriod'] = {
-            'field': 'voltageCallbackPeriod',
+mod['getPowerCallbackThreshold'] = {
+            'field': 'powerCallbackThreshold',
             'subdevice_type': 'actor',
-            'function_type': 'getter',
+            'function_type': 'callback_threshold_getter',
             'skip': False
             }
 
-mod['getDebouncePeriod'] = {
-            'field': 'debouncePeriod',
+mod['getVoltageCallbackThreshold'] = {
+            'field': 'voltageCallbackThreshold',
             'subdevice_type': 'actor',
-            'function_type': 'getter',
+            'function_type': 'callback_threshold_getter',
             'skip': False
             }
 
 mod['getCurrentCallbackThreshold'] = {
             'field': 'currentCallbackThreshold',
             'subdevice_type': 'actor',
-            'function_type': 'getter',
+            'function_type': 'callback_threshold_getter',
             'skip': False
             }
 
-mod['getPowerCallbackThreshold'] = {
-            'field': 'powerCallbackThreshold',
+mod['getDebouncePeriod'] = {
+            'field': 'debouncePeriod',
             'subdevice_type': 'actor',
-            'function_type': 'getter',
+            'function_type': 'callback_debounce_period_getter',
+            'skip': False
+            }
+
+mod['getCurrentCallbackPeriod'] = {
+            'field': 'currentCallbackPeriod',
+            'subdevice_type': 'actor',
+            'function_type': 'callback_period_getter',
             'skip': False
             }
 
 mod['getPowerCallbackPeriod'] = {
             'field': 'powerCallbackPeriod',
             'subdevice_type': 'actor',
-            'function_type': 'getter',
+            'function_type': 'callback_period_getter',
+            'skip': False
+            }
+
+mod['getVoltageCallbackPeriod'] = {
+            'field': 'voltageCallbackPeriod',
+            'subdevice_type': 'actor',
+            'function_type': 'callback_period_getter',
             'skip': False
             }
 
@@ -122,42 +124,42 @@ mod['setPowerCallbackPeriod'] = {
 mod['setCurrentCallbackThreshold'] = {
             'field': 'currentCallbackThreshold',
             'subdevice_type': 'actor',
-            'function_type': 'setter',
-            'skip': False
-            }
-
-mod['setCalibration'] = {
-            'field': 'calibration',
-            'subdevice_type': 'actor',
-            'function_type': 'setter',
-            'skip': False
-            }
-
-mod['setConfiguration'] = {
-            'field': 'configuration',
-            'subdevice_type': 'actor',
-            'function_type': 'setter',
-            'skip': False
-            }
-
-mod['setDebouncePeriod'] = {
-            'field': 'debouncePeriod',
-            'subdevice_type': 'actor',
-            'function_type': 'setter',
+            'function_type': 'callback_threshold_setter',
             'skip': False
             }
 
 mod['setPowerCallbackThreshold'] = {
             'field': 'powerCallbackThreshold',
             'subdevice_type': 'actor',
-            'function_type': 'setter',
+            'function_type': 'callback_threshold_setter',
             'skip': False
             }
 
 mod['setVoltageCallbackThreshold'] = {
             'field': 'voltageCallbackThreshold',
             'subdevice_type': 'actor',
-            'function_type': 'setter',
+            'function_type': 'callback_threshold_setter',
+            'skip': False
+            }
+
+mod['setDebouncePeriod'] = {
+            'field': 'debouncePeriod',
+            'subdevice_type': 'actor',
+            'function_type': 'callback_debounce_period_setter',
+            'skip': False
+            }
+
+mod['setCalibration'] = {
+            'field': 'calibration',
+            'subdevice_type': 'actor',
+            'function_type': 'actuator_setter',
+            'skip': False
+            }
+
+mod['setConfiguration'] = {
+            'field': 'configuration',
+            'subdevice_type': 'actor',
+            'function_type': 'actuator_setter',
             'skip': False
             }
 
@@ -240,34 +242,10 @@ sensor_fields['getPower'] = {
             'skip': False
         }
         
-actor_fields['getCurrentCallbackPeriod'] = {
-            'value_type': 'number',
-            'field': 'currentCallbackPeriod',
-            'field_type': ['uint32'],
-            'field_type_cardinality': [1],
-            'default_value': 100,
-            'max_value': 1000,
-            'min_value': 0,
-            'step_value': 1,
-            'skip': False
-        }
-        
 actor_fields['getConfiguration'] = {
             'value_type': 'number',
             'field': 'configuration',
             'field_type': ['uint8', 'uint8', 'uint8'],
-            'field_type_cardinality': [1, 1, 1],
-            'default_value': 100,
-            'max_value': 1000,
-            'min_value': 0,
-            'step_value': 1,
-            'skip': False
-        }
-        
-actor_fields['getVoltageCallbackThreshold'] = {
-            'value_type': 'number',
-            'field': 'voltageCallbackThreshold',
-            'field_type': ['char', 'int32', 'int32'],
             'field_type_cardinality': [1, 1, 1],
             'default_value': 100,
             'max_value': 1000,
@@ -288,57 +266,42 @@ actor_fields['getCalibration'] = {
             'skip': False
         }
         
-actor_fields['getVoltageCallbackPeriod'] = {
-            'value_type': 'number',
-            'field': 'voltageCallbackPeriod',
-            'field_type': ['uint32'],
-            'field_type_cardinality': [1],
-            'default_value': 100,
-            'max_value': 1000,
-            'min_value': 0,
-            'step_value': 1,
-            'skip': False
-        }
-        
-actor_fields['getDebouncePeriod'] = {
-            'value_type': 'number',
-            'field': 'debouncePeriod',
-            'field_type': ['uint32'],
-            'field_type_cardinality': [1],
-            'default_value': 100,
-            'max_value': 1000,
-            'min_value': 0,
-            'step_value': 1,
-            'skip': False
-        }
-        
-actor_fields['getCurrentCallbackThreshold'] = {
-            'value_type': 'number',
-            'field': 'currentCallbackThreshold',
-            'field_type': ['char', 'int32', 'int32'],
-            'field_type_cardinality': [1, 1, 1],
-            'default_value': 100,
-            'max_value': 1000,
-            'min_value': 0,
-            'step_value': 1,
-            'skip': False
-        }
-        
-actor_fields['getPowerCallbackThreshold'] = {
-            'value_type': 'number',
+threshold_fields['getPowerCallbackThreshold'] = {
+            'value_type': 'threshold_buffer',
             'field': 'powerCallbackThreshold',
             'field_type': ['char', 'int32', 'int32'],
             'field_type_cardinality': [1, 1, 1],
-            'default_value': 100,
+            'default_value': 'x00',
             'max_value': 1000,
             'min_value': 0,
-            'step_value': 1,
             'skip': False
         }
         
-actor_fields['getPowerCallbackPeriod'] = {
+threshold_fields['getVoltageCallbackThreshold'] = {
+            'value_type': 'threshold_buffer',
+            'field': 'voltageCallbackThreshold',
+            'field_type': ['char', 'int32', 'int32'],
+            'field_type_cardinality': [1, 1, 1],
+            'default_value': 'x00',
+            'max_value': 1000,
+            'min_value': 0,
+            'skip': False
+        }
+        
+threshold_fields['getCurrentCallbackThreshold'] = {
+            'value_type': 'threshold_buffer',
+            'field': 'currentCallbackThreshold',
+            'field_type': ['char', 'int32', 'int32'],
+            'field_type_cardinality': [1, 1, 1],
+            'default_value': 'x00',
+            'max_value': 1000,
+            'min_value': 0,
+            'skip': False
+        }
+        
+debounce_period_fields['getDebouncePeriod'] = {
             'value_type': 'number',
-            'field': 'powerCallbackPeriod',
+            'field': 'debouncePeriod',
             'field_type': ['uint32'],
             'field_type_cardinality': [1],
             'default_value': 100,

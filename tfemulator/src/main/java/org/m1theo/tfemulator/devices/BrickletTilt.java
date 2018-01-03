@@ -59,8 +59,6 @@ public final static String DEVICE_DISPLAY_NAME = "Tilt Bricklet";
   public final static short TILT_STATE_CLOSED_VIBRATING = (short)2;
   String uidString;
 
-  private Buffer TiltStateCallback = getTiltStateCallbackDefault();
-        
   private byte tiltState = 100;
   private byte tiltState_max = 1000;
   private byte tiltState_min = 0;
@@ -231,89 +229,6 @@ public final static String DEVICE_DISPLAY_NAME = "Tilt Bricklet";
     if (packet.getResponseExpected()) {
       return getTiltStateBuffer(packet);
     }
-    return null;
-  }
-
-  /**
-   * 
-   */
-  private Buffer isTiltStateCallbackEnabled(Packet packet) {
-    logger.debug("function isTiltStateCallbackEnabled");
-    if (packet.getResponseExpected()) {
-      byte length = (byte) 8 + 1;
-      byte functionId = FUNCTION_IS_TILT_STATE_CALLBACK_ENABLED;
-      byte flags = (byte) 0;
-      Buffer header = Utils.createHeader(uidBytes, length, functionId, packet.getOptions(), flags);
-      Buffer buffer = Buffer.buffer();
-      buffer.appendBuffer(header);
-      buffer.appendBuffer(this.TiltStateCallback);
-      return buffer;
-    }
-
-    return null;
-  }
-
-  private Buffer isTiltStateCallbackEnabledDefault() {
-      Buffer buffer = Buffer.buffer();
-      buffer.appendBytes(Utils.getBoolRandomValue(1));
-
-      return buffer;
-  }
-
-  /**
-   * 
-   */
-  private Buffer enableTiltStateCallback(Packet packet) {
-    logger.debug("function enableTiltStateCallback");
-    if (packet.getResponseExpected()) {
-      byte length = (byte) 8 + 0;
-      byte functionId = FUNCTION_ENABLE_TILT_STATE_CALLBACK;
-      byte flags = (byte) 0;
-      Buffer header = Utils.createHeader(uidBytes, length, functionId, packet.getOptions(), flags);
-      Buffer buffer = Buffer.buffer();
-      buffer.appendBuffer(header);
-//TODO response expected bei settern
-      return buffer;
-    }
-    this.TiltStateCallback = packet.getPayload();
-    return null;
-  }
-
-  /**
-   * 
-   */
-  private Buffer disableTiltStateCallback(Packet packet) {
-    logger.debug("function disableTiltStateCallback");
-    if (packet.getResponseExpected()) {
-      byte length = (byte) 8 + 0;
-      byte functionId = FUNCTION_DISABLE_TILT_STATE_CALLBACK;
-      byte flags = (byte) 0;
-      Buffer header = Utils.createHeader(uidBytes, length, functionId, packet.getOptions(), flags);
-      Buffer buffer = Buffer.buffer();
-      buffer.appendBuffer(header);
-//TODO response expected bei settern
-      return buffer;
-    }
-    this.TiltStateCallback = packet.getPayload();
-    return null;
-  }
-
-  /**
-   * 
-   */
-  private Buffer getIdentity(Packet packet) {
-    logger.debug("function getIdentity");
-    if (packet.getResponseExpected()) {
-      byte length = (byte) 8 + 25;
-      byte functionId = FUNCTION_GET_IDENTITY;
-      byte flags = (byte) 0;
-      Buffer header = Utils.createHeader(uidBytes, length, functionId, packet.getOptions(), flags);
-      Buffer buffer = Buffer.buffer();
-      buffer.appendBuffer(header);
-       buffer.appendBuffer(Utils.getIdentityPayload(uidString, uidBytes, DEVICE_IDENTIFIER));
-      return buffer;
-    }
-
     return null;
   }
 }

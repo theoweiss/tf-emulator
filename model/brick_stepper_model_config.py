@@ -12,7 +12,9 @@ other_sensors = {}
 special_fields = {}
 other_fields = {}
 callbacks = {}
-
+enabled_fields = {}
+debounce_period_fields = {}
+threshold_fields = {}
 
 mod['getRemainingSteps'] = {
             'field': 'remainingSteps',
@@ -63,8 +65,8 @@ mod['getStackInputVoltage'] = {
             'skip': False
             }
 
-mod['getMinimumVoltage'] = {
-            'field': 'minimumVoltage',
+mod['getTimeBase'] = {
+            'field': 'timeBase',
             'subdevice_type': 'actor',
             'function_type': 'getter',
             'skip': False
@@ -98,15 +100,8 @@ mod['getMotorCurrent'] = {
             'skip': False
             }
 
-mod['isEnabled'] = {
-            'field': 'enabled',
-            'subdevice_type': 'actor',
-            'function_type': 'getter',
-            'skip': False
-            }
-
-mod['getTimeBase'] = {
-            'field': 'timeBase',
+mod['getMinimumVoltage'] = {
+            'field': 'minimumVoltage',
             'subdevice_type': 'actor',
             'function_type': 'getter',
             'skip': False
@@ -119,29 +114,8 @@ mod['getSpeedRamping'] = {
             'skip': False
             }
 
-mod['getSteps'] = {
-            'field': 'steps',
-            'subdevice_type': 'actor',
-            'function_type': 'getter',
-            'skip': False
-            }
-
 mod['getAllDataPeriod'] = {
             'field': 'allDataPeriod',
-            'subdevice_type': 'actor',
-            'function_type': 'getter',
-            'skip': False
-            }
-
-mod['getStepMode'] = {
-            'field': 'stepMode',
-            'subdevice_type': 'actor',
-            'function_type': 'getter',
-            'skip': False
-            }
-
-mod['isStatusLEDEnabled'] = {
-            'field': 'StatusLED',
             'subdevice_type': 'actor',
             'function_type': 'getter',
             'skip': False
@@ -154,108 +128,136 @@ mod['getTargetPosition'] = {
             'skip': False
             }
 
+mod['getStepMode'] = {
+            'field': 'stepMode',
+            'subdevice_type': 'actor',
+            'function_type': 'getter',
+            'skip': False
+            }
+
+mod['getSteps'] = {
+            'field': 'steps',
+            'subdevice_type': 'actor',
+            'function_type': 'getter',
+            'skip': False
+            }
+
+mod['isEnabled'] = {
+            'field': 'enabled',
+            'subdevice_type': 'actor',
+            'function_type': 'getter',
+            'skip': False
+            }
+
+mod['isStatusLEDEnabled'] = {
+            'field': 'StatusLED',
+            'subdevice_type': 'actor',
+            'function_type': 'getter',
+            'skip': False
+            }
+
 mod['setSpeedRamping'] = {
             'field': 'speedRamping',
             'subdevice_type': 'actor',
-            'function_type': 'setter',
+            'function_type': 'actuator_setter',
             'skip': False
             }
 
 mod['setMaxVelocity'] = {
             'field': 'maxVelocity',
             'subdevice_type': 'actor',
-            'function_type': 'setter',
-            'skip': False
-            }
-
-mod['enable'] = {
-            'field': 'enabled',
-            'subdevice_type': 'actor',
-            'function_type': 'setter',
+            'function_type': 'actuator_setter',
             'skip': False
             }
 
 mod['setAllDataPeriod'] = {
             'field': 'allDataPeriod',
             'subdevice_type': 'actor',
-            'function_type': 'setter',
+            'function_type': 'actuator_setter',
             'skip': False
             }
 
 mod['setTimeBase'] = {
             'field': 'timeBase',
             'subdevice_type': 'actor',
-            'function_type': 'setter',
+            'function_type': 'actuator_setter',
             'skip': False
             }
 
 mod['setStepMode'] = {
             'field': 'stepMode',
             'subdevice_type': 'actor',
-            'function_type': 'setter',
+            'function_type': 'actuator_setter',
             'skip': False
             }
 
 mod['setDecay'] = {
             'field': 'decay',
             'subdevice_type': 'actor',
-            'function_type': 'setter',
+            'function_type': 'actuator_setter',
             'skip': False
             }
 
 mod['setTargetPosition'] = {
             'field': 'targetPosition',
             'subdevice_type': 'actor',
-            'function_type': 'setter',
+            'function_type': 'actuator_setter',
             'skip': False
             }
 
 mod['setCurrentPosition'] = {
             'field': 'currentPosition',
             'subdevice_type': 'actor',
-            'function_type': 'setter',
+            'function_type': 'actuator_setter',
             'skip': False
             }
 
 mod['setMotorCurrent'] = {
             'field': 'motorCurrent',
             'subdevice_type': 'actor',
-            'function_type': 'setter',
+            'function_type': 'actuator_setter',
             'skip': False
             }
 
 mod['setMinimumVoltage'] = {
             'field': 'minimumVoltage',
             'subdevice_type': 'actor',
-            'function_type': 'setter',
-            'skip': False
-            }
-
-mod['disable'] = {
-            'field': 'enabled',
-            'subdevice_type': 'actor',
-            'function_type': 'setter',
-            'skip': False
-            }
-
-mod['enableStatusLED'] = {
-            'field': 'StatusLED',
-            'subdevice_type': 'actor',
-            'function_type': 'setter',
+            'function_type': 'actuator_setter',
             'skip': False
             }
 
 mod['setSteps'] = {
             'field': 'steps',
             'subdevice_type': 'actor',
-            'function_type': 'setter',
+            'function_type': 'actuator_setter',
+            'skip': False
+            }
+
+mod['enable'] = {
+            'field': 'enabled',
+            'subdevice_type': 'actor',
+            'function_type': 'enabler',
+            'skip': False
+            }
+
+mod['enableStatusLED'] = {
+            'field': 'StatusLED',
+            'subdevice_type': 'actor',
+            'function_type': 'enabler',
+            'skip': False
+            }
+
+mod['disable'] = {
+            'field': 'enabled',
+            'subdevice_type': 'actor',
+            'function_type': 'disablers',
             'skip': False
             }
 
 mod['disableStatusLED'] = {
             'field': 'StatusLED',
             'subdevice_type': 'actor',
-            'function_type': 'setter',
+            'function_type': 'disablers',
             'skip': False
             }
 
@@ -423,10 +425,10 @@ sensor_fields['getStackInputVoltage'] = {
             'skip': False
         }
         
-actor_fields['getMinimumVoltage'] = {
+actor_fields['getTimeBase'] = {
             'value_type': 'number',
-            'field': 'minimumVoltage',
-            'field_type': ['uint16'],
+            'field': 'timeBase',
+            'field_type': ['uint32'],
             'field_type_cardinality': [1],
             'default_value': 100,
             'max_value': 1000,
@@ -483,22 +485,10 @@ actor_fields['getMotorCurrent'] = {
             'skip': False
         }
         
-actor_fields['isEnabled'] = {
+actor_fields['getMinimumVoltage'] = {
             'value_type': 'number',
-            'field': 'enabled',
-            'field_type': ['bool'],
-            'field_type_cardinality': [1],
-            'default_value': 100,
-            'max_value': 1000,
-            'min_value': 0,
-            'step_value': 1,
-            'skip': False
-        }
-        
-actor_fields['getTimeBase'] = {
-            'value_type': 'number',
-            'field': 'timeBase',
-            'field_type': ['uint32'],
+            'field': 'minimumVoltage',
+            'field_type': ['uint16'],
             'field_type_cardinality': [1],
             'default_value': 100,
             'max_value': 1000,
@@ -519,10 +509,10 @@ actor_fields['getSpeedRamping'] = {
             'skip': False
         }
         
-actor_fields['getSteps'] = {
+actor_fields['getAllDataPeriod'] = {
             'value_type': 'number',
-            'field': 'steps',
-            'field_type': ['int32'],
+            'field': 'allDataPeriod',
+            'field_type': ['uint32'],
             'field_type_cardinality': [1],
             'default_value': 100,
             'max_value': 1000,
@@ -531,10 +521,10 @@ actor_fields['getSteps'] = {
             'skip': False
         }
         
-actor_fields['getAllDataPeriod'] = {
+actor_fields['getTargetPosition'] = {
             'value_type': 'number',
-            'field': 'allDataPeriod',
-            'field_type': ['uint32'],
+            'field': 'targetPosition',
+            'field_type': ['int32'],
             'field_type_cardinality': [1],
             'default_value': 100,
             'max_value': 1000,
@@ -555,9 +545,21 @@ actor_fields['getStepMode'] = {
             'skip': False
         }
         
-actor_fields['isStatusLEDEnabled'] = {
+actor_fields['getSteps'] = {
             'value_type': 'number',
-            'field': 'StatusLED',
+            'field': 'steps',
+            'field_type': ['int32'],
+            'field_type_cardinality': [1],
+            'default_value': 100,
+            'max_value': 1000,
+            'min_value': 0,
+            'step_value': 1,
+            'skip': False
+        }
+        
+enabled_fields['isEnabled'] = {
+            'value_type': 'number',
+            'field': 'enabled',
             'field_type': ['bool'],
             'field_type_cardinality': [1],
             'default_value': 100,
@@ -567,10 +569,10 @@ actor_fields['isStatusLEDEnabled'] = {
             'skip': False
         }
         
-actor_fields['getTargetPosition'] = {
+enabled_fields['isStatusLEDEnabled'] = {
             'value_type': 'number',
-            'field': 'targetPosition',
-            'field_type': ['int32'],
+            'field': 'StatusLED',
+            'field_type': ['bool'],
             'field_type_cardinality': [1],
             'default_value': 100,
             'max_value': 1000,

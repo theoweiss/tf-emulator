@@ -12,7 +12,9 @@ other_sensors = {}
 special_fields = {}
 other_fields = {}
 callbacks = {}
-
+enabled_fields = {}
+debounce_period_fields = {}
+threshold_fields = {}
 
 mod['getSupplyVoltage'] = {
             'field': 'supplyVoltage',
@@ -28,15 +30,15 @@ mod['getChipType'] = {
             'skip': False
             }
 
-mod['getRGBValues'] = {
-            'field': 'rGBValues',
+mod['getFrameDuration'] = {
+            'field': 'frameDuration',
             'subdevice_type': 'actor',
             'function_type': 'getter',
             'skip': False
             }
 
-mod['getFrameDuration'] = {
-            'field': 'frameDuration',
+mod['getRGBValues'] = {
+            'field': 'rGBValues',
             'subdevice_type': 'actor',
             'function_type': 'getter',
             'skip': False
@@ -52,28 +54,28 @@ mod['getClockFrequency'] = {
 mod['setClockFrequency'] = {
             'field': 'clockFrequency',
             'subdevice_type': 'actor',
-            'function_type': 'setter',
-            'skip': False
-            }
-
-mod['setRGBValues'] = {
-            'field': 'rGBValues',
-            'subdevice_type': 'actor',
-            'function_type': 'setter',
-            'skip': False
-            }
-
-mod['setChipType'] = {
-            'field': 'chipType',
-            'subdevice_type': 'actor',
-            'function_type': 'setter',
+            'function_type': 'actuator_setter',
             'skip': False
             }
 
 mod['setFrameDuration'] = {
             'field': 'frameDuration',
             'subdevice_type': 'actor',
-            'function_type': 'setter',
+            'function_type': 'actuator_setter',
+            'skip': False
+            }
+
+mod['setChipType'] = {
+            'field': 'chipType',
+            'subdevice_type': 'actor',
+            'function_type': 'actuator_setter',
+            'skip': False
+            }
+
+mod['setRGBValues'] = {
+            'field': 'rGBValues',
+            'subdevice_type': 'actor',
+            'function_type': 'actuator_setter',
             'skip': False
             }
 
@@ -114,11 +116,11 @@ actor_fields['getChipType'] = {
             'skip': False
         }
         
-actor_fields['getRGBValues'] = {
+actor_fields['getFrameDuration'] = {
             'value_type': 'number',
-            'field': 'rGBValues',
-            'field_type': ['uint8', 'uint8', 'uint8'],
-            'field_type_cardinality': [16, 16, 16],
+            'field': 'frameDuration',
+            'field_type': ['uint16'],
+            'field_type_cardinality': [1],
             'default_value': 100,
             'max_value': 1000,
             'min_value': 0,
@@ -126,11 +128,11 @@ actor_fields['getRGBValues'] = {
             'skip': False
         }
         
-actor_fields['getFrameDuration'] = {
+actor_fields['getRGBValues'] = {
             'value_type': 'number',
-            'field': 'frameDuration',
-            'field_type': ['uint16'],
-            'field_type_cardinality': [1],
+            'field': 'rGBValues',
+            'field_type': ['uint8', 'uint8', 'uint8'],
+            'field_type_cardinality': [16, 16, 16],
             'default_value': 100,
             'max_value': 1000,
             'min_value': 0,

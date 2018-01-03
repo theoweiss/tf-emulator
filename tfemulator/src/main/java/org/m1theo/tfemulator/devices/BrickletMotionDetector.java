@@ -222,23 +222,4 @@ public final static String DEVICE_DISPLAY_NAME = "Motion Detector Bricklet";
     }
     return null;
   }
-
-  /**
-   * 
-   */
-  private Buffer getIdentity(Packet packet) {
-    logger.debug("function getIdentity");
-    if (packet.getResponseExpected()) {
-      byte length = (byte) 8 + 25;
-      byte functionId = FUNCTION_GET_IDENTITY;
-      byte flags = (byte) 0;
-      Buffer header = Utils.createHeader(uidBytes, length, functionId, packet.getOptions(), flags);
-      Buffer buffer = Buffer.buffer();
-      buffer.appendBuffer(header);
-       buffer.appendBuffer(Utils.getIdentityPayload(uidString, uidBytes, DEVICE_IDENTIFIER));
-      return buffer;
-    }
-
-    return null;
-  }
 }

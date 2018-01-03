@@ -12,25 +12,13 @@ other_sensors = {}
 special_fields = {}
 other_fields = {}
 callbacks = {}
-
+enabled_fields = {}
+debounce_period_fields = {}
+threshold_fields = {}
 
 mod['getDistanceValue'] = {
             'field': 'distanceValue',
             'subdevice_type': 'sensor',
-            'function_type': 'getter',
-            'skip': False
-            }
-
-mod['getDistanceCallbackPeriod'] = {
-            'field': 'distanceCallbackPeriod',
-            'subdevice_type': 'actor',
-            'function_type': 'getter',
-            'skip': False
-            }
-
-mod['getDebouncePeriod'] = {
-            'field': 'debouncePeriod',
-            'subdevice_type': 'actor',
             'function_type': 'getter',
             'skip': False
             }
@@ -45,7 +33,21 @@ mod['getMovingAverage'] = {
 mod['getDistanceCallbackThreshold'] = {
             'field': 'distanceCallbackThreshold',
             'subdevice_type': 'actor',
-            'function_type': 'getter',
+            'function_type': 'callback_threshold_getter',
+            'skip': False
+            }
+
+mod['getDebouncePeriod'] = {
+            'field': 'debouncePeriod',
+            'subdevice_type': 'actor',
+            'function_type': 'callback_debounce_period_getter',
+            'skip': False
+            }
+
+mod['getDistanceCallbackPeriod'] = {
+            'field': 'distanceCallbackPeriod',
+            'subdevice_type': 'actor',
+            'function_type': 'callback_period_getter',
             'skip': False
             }
 
@@ -59,21 +61,21 @@ mod['setDistanceCallbackPeriod'] = {
 mod['setDistanceCallbackThreshold'] = {
             'field': 'distanceCallbackThreshold',
             'subdevice_type': 'actor',
-            'function_type': 'setter',
+            'function_type': 'callback_threshold_setter',
             'skip': False
             }
 
 mod['setDebouncePeriod'] = {
             'field': 'debouncePeriod',
             'subdevice_type': 'actor',
-            'function_type': 'setter',
+            'function_type': 'callback_debounce_period_setter',
             'skip': False
             }
 
 mod['setMovingAverage'] = {
             'field': 'movingAverage',
             'subdevice_type': 'actor',
-            'function_type': 'setter',
+            'function_type': 'actuator_setter',
             'skip': False
             }
 
@@ -108,30 +110,6 @@ sensor_fields['getDistanceValue'] = {
             'skip': False
         }
         
-actor_fields['getDistanceCallbackPeriod'] = {
-            'value_type': 'number',
-            'field': 'distanceCallbackPeriod',
-            'field_type': ['uint32'],
-            'field_type_cardinality': [1],
-            'default_value': 100,
-            'max_value': 1000,
-            'min_value': 0,
-            'step_value': 1,
-            'skip': False
-        }
-        
-actor_fields['getDebouncePeriod'] = {
-            'value_type': 'number',
-            'field': 'debouncePeriod',
-            'field_type': ['uint32'],
-            'field_type_cardinality': [1],
-            'default_value': 100,
-            'max_value': 1000,
-            'min_value': 0,
-            'step_value': 1,
-            'skip': False
-        }
-        
 actor_fields['getMovingAverage'] = {
             'value_type': 'number',
             'field': 'movingAverage',
@@ -144,11 +122,22 @@ actor_fields['getMovingAverage'] = {
             'skip': False
         }
         
-actor_fields['getDistanceCallbackThreshold'] = {
-            'value_type': 'number',
+threshold_fields['getDistanceCallbackThreshold'] = {
+            'value_type': 'threshold_buffer',
             'field': 'distanceCallbackThreshold',
             'field_type': ['char', 'uint16', 'uint16'],
             'field_type_cardinality': [1, 1, 1],
+            'default_value': 'x00',
+            'max_value': 1000,
+            'min_value': 0,
+            'skip': False
+        }
+        
+debounce_period_fields['getDebouncePeriod'] = {
+            'value_type': 'number',
+            'field': 'debouncePeriod',
+            'field_type': ['uint32'],
+            'field_type_cardinality': [1],
             'default_value': 100,
             'max_value': 1000,
             'min_value': 0,

@@ -12,7 +12,9 @@ other_sensors = {}
 special_fields = {}
 other_fields = {}
 callbacks = {}
-
+enabled_fields = {}
+debounce_period_fields = {}
+threshold_fields = {}
 
 mod['getCurrentVelocity'] = {
             'field': 'currentVelocity',
@@ -70,20 +72,6 @@ mod['getVelocity'] = {
             'skip': False
             }
 
-mod['getDriveMode'] = {
-            'field': 'driveMode',
-            'subdevice_type': 'actor',
-            'function_type': 'getter',
-            'skip': False
-            }
-
-mod['isEnabled'] = {
-            'field': 'enabled',
-            'subdevice_type': 'actor',
-            'function_type': 'getter',
-            'skip': False
-            }
-
 mod['getMinimumVoltage'] = {
             'field': 'minimumVoltage',
             'subdevice_type': 'actor',
@@ -91,8 +79,8 @@ mod['getMinimumVoltage'] = {
             'skip': False
             }
 
-mod['isStatusLEDEnabled'] = {
-            'field': 'StatusLED',
+mod['getDriveMode'] = {
+            'field': 'driveMode',
             'subdevice_type': 'actor',
             'function_type': 'getter',
             'skip': False
@@ -105,73 +93,87 @@ mod['getAcceleration'] = {
             'skip': False
             }
 
-mod['disableStatusLED'] = {
+mod['isEnabled'] = {
+            'field': 'enabled',
+            'subdevice_type': 'actor',
+            'function_type': 'getter',
+            'skip': False
+            }
+
+mod['isStatusLEDEnabled'] = {
             'field': 'StatusLED',
             'subdevice_type': 'actor',
-            'function_type': 'setter',
+            'function_type': 'getter',
             'skip': False
             }
 
 mod['setAcceleration'] = {
             'field': 'acceleration',
             'subdevice_type': 'actor',
-            'function_type': 'setter',
-            'skip': False
-            }
-
-mod['enableStatusLED'] = {
-            'field': 'StatusLED',
-            'subdevice_type': 'actor',
-            'function_type': 'setter',
-            'skip': False
-            }
-
-mod['setDriveMode'] = {
-            'field': 'driveMode',
-            'subdevice_type': 'actor',
-            'function_type': 'setter',
-            'skip': False
-            }
-
-mod['enable'] = {
-            'field': 'enabled',
-            'subdevice_type': 'actor',
-            'function_type': 'setter',
+            'function_type': 'actuator_setter',
             'skip': False
             }
 
 mod['setCurrentVelocityPeriod'] = {
             'field': 'currentVelocityPeriod',
             'subdevice_type': 'actor',
-            'function_type': 'setter',
-            'skip': False
-            }
-
-mod['setVelocity'] = {
-            'field': 'velocity',
-            'subdevice_type': 'actor',
-            'function_type': 'setter',
+            'function_type': 'actuator_setter',
             'skip': False
             }
 
 mod['setPWMFrequency'] = {
             'field': 'pWMFrequency',
             'subdevice_type': 'actor',
-            'function_type': 'setter',
-            'skip': False
-            }
-
-mod['disable'] = {
-            'field': 'enabled',
-            'subdevice_type': 'actor',
-            'function_type': 'setter',
+            'function_type': 'actuator_setter',
             'skip': False
             }
 
 mod['setMinimumVoltage'] = {
             'field': 'minimumVoltage',
             'subdevice_type': 'actor',
-            'function_type': 'setter',
+            'function_type': 'actuator_setter',
+            'skip': False
+            }
+
+mod['setDriveMode'] = {
+            'field': 'driveMode',
+            'subdevice_type': 'actor',
+            'function_type': 'actuator_setter',
+            'skip': False
+            }
+
+mod['setVelocity'] = {
+            'field': 'velocity',
+            'subdevice_type': 'actor',
+            'function_type': 'actuator_setter',
+            'skip': False
+            }
+
+mod['enable'] = {
+            'field': 'enabled',
+            'subdevice_type': 'actor',
+            'function_type': 'enabler',
+            'skip': False
+            }
+
+mod['enableStatusLED'] = {
+            'field': 'StatusLED',
+            'subdevice_type': 'actor',
+            'function_type': 'enabler',
+            'skip': False
+            }
+
+mod['disable'] = {
+            'field': 'enabled',
+            'subdevice_type': 'actor',
+            'function_type': 'disablers',
+            'skip': False
+            }
+
+mod['disableStatusLED'] = {
+            'field': 'StatusLED',
+            'subdevice_type': 'actor',
+            'function_type': 'disablers',
             'skip': False
             }
 
@@ -316,30 +318,6 @@ actor_fields['getVelocity'] = {
             'skip': False
         }
         
-actor_fields['getDriveMode'] = {
-            'value_type': 'number',
-            'field': 'driveMode',
-            'field_type': ['uint8'],
-            'field_type_cardinality': [1],
-            'default_value': 100,
-            'max_value': 1000,
-            'min_value': 0,
-            'step_value': 1,
-            'skip': False
-        }
-        
-actor_fields['isEnabled'] = {
-            'value_type': 'number',
-            'field': 'enabled',
-            'field_type': ['bool'],
-            'field_type_cardinality': [1],
-            'default_value': 100,
-            'max_value': 1000,
-            'min_value': 0,
-            'step_value': 1,
-            'skip': False
-        }
-        
 actor_fields['getMinimumVoltage'] = {
             'value_type': 'number',
             'field': 'minimumVoltage',
@@ -352,10 +330,10 @@ actor_fields['getMinimumVoltage'] = {
             'skip': False
         }
         
-actor_fields['isStatusLEDEnabled'] = {
+actor_fields['getDriveMode'] = {
             'value_type': 'number',
-            'field': 'StatusLED',
-            'field_type': ['bool'],
+            'field': 'driveMode',
+            'field_type': ['uint8'],
             'field_type_cardinality': [1],
             'default_value': 100,
             'max_value': 1000,
@@ -368,6 +346,30 @@ actor_fields['getAcceleration'] = {
             'value_type': 'number',
             'field': 'acceleration',
             'field_type': ['uint16'],
+            'field_type_cardinality': [1],
+            'default_value': 100,
+            'max_value': 1000,
+            'min_value': 0,
+            'step_value': 1,
+            'skip': False
+        }
+        
+enabled_fields['isEnabled'] = {
+            'value_type': 'number',
+            'field': 'enabled',
+            'field_type': ['bool'],
+            'field_type_cardinality': [1],
+            'default_value': 100,
+            'max_value': 1000,
+            'min_value': 0,
+            'step_value': 1,
+            'skip': False
+        }
+        
+enabled_fields['isStatusLEDEnabled'] = {
+            'value_type': 'number',
+            'field': 'StatusLED',
+            'field_type': ['bool'],
             'field_type_cardinality': [1],
             'default_value': 100,
             'max_value': 1000,

@@ -12,7 +12,9 @@ other_sensors = {}
 special_fields = {}
 other_fields = {}
 callbacks = {}
-
+enabled_fields = {}
+debounce_period_fields = {}
+threshold_fields = {}
 
 mod['getAvailableForGroup'] = {
             'field': 'availableForGroup',
@@ -49,13 +51,6 @@ mod['getInterrupt'] = {
             'skip': False
             }
 
-mod['getDebouncePeriod'] = {
-            'field': 'debouncePeriod',
-            'subdevice_type': 'actor',
-            'function_type': 'getter',
-            'skip': False
-            }
-
 mod['getGroup'] = {
             'field': 'group',
             'subdevice_type': 'actor',
@@ -63,31 +58,38 @@ mod['getGroup'] = {
             'skip': False
             }
 
-mod['setGroup'] = {
-            'field': 'group',
+mod['getDebouncePeriod'] = {
+            'field': 'debouncePeriod',
             'subdevice_type': 'actor',
-            'function_type': 'setter',
-            'skip': False
-            }
-
-mod['setEdgeCountConfig'] = {
-            'field': 'edgeCountConfig',
-            'subdevice_type': 'actor',
-            'function_type': 'setter',
-            'skip': False
-            }
-
-mod['setInterrupt'] = {
-            'field': 'interrupt',
-            'subdevice_type': 'actor',
-            'function_type': 'setter',
+            'function_type': 'callback_debounce_period_getter',
             'skip': False
             }
 
 mod['setDebouncePeriod'] = {
             'field': 'debouncePeriod',
             'subdevice_type': 'actor',
-            'function_type': 'setter',
+            'function_type': 'callback_debounce_period_setter',
+            'skip': False
+            }
+
+mod['setGroup'] = {
+            'field': 'group',
+            'subdevice_type': 'actor',
+            'function_type': 'actuator_setter',
+            'skip': False
+            }
+
+mod['setEdgeCountConfig'] = {
+            'field': 'edgeCountConfig',
+            'subdevice_type': 'actor',
+            'function_type': 'actuator_setter',
+            'skip': False
+            }
+
+mod['setInterrupt'] = {
+            'field': 'interrupt',
+            'subdevice_type': 'actor',
+            'function_type': 'actuator_setter',
             'skip': False
             }
 
@@ -164,11 +166,11 @@ actor_fields['getInterrupt'] = {
             'skip': False
         }
         
-actor_fields['getDebouncePeriod'] = {
+actor_fields['getGroup'] = {
             'value_type': 'number',
-            'field': 'debouncePeriod',
-            'field_type': ['uint32'],
-            'field_type_cardinality': [1],
+            'field': 'group',
+            'field_type': ['char'],
+            'field_type_cardinality': [4],
             'default_value': 100,
             'max_value': 1000,
             'min_value': 0,
@@ -176,11 +178,11 @@ actor_fields['getDebouncePeriod'] = {
             'skip': False
         }
         
-actor_fields['getGroup'] = {
+debounce_period_fields['getDebouncePeriod'] = {
             'value_type': 'number',
-            'field': 'group',
-            'field_type': ['char'],
-            'field_type_cardinality': [4],
+            'field': 'debouncePeriod',
+            'field_type': ['uint32'],
+            'field_type_cardinality': [1],
             'default_value': 100,
             'max_value': 1000,
             'min_value': 0,
